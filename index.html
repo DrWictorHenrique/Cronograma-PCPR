@@ -948,7 +948,7 @@ function viewDesemp(P){
    '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+'<p class="note">Conta como simulado toda bateria de 80 questões ou mais.</p></div></div>';
 }
 
-function bankList(){const o=[];for(const d in BANK)BANK[d].filter(x=>x.tp!=="quest").forEach(x=>o.push({id:d+"."+x.k,d:d,t:x.t}));return o}
+function bankList(){const o=[];for(const d in BANK)BANK[d].forEach(x=>o.push({id:d+"."+x.k,d:d,t:x.t||x.t}));return o}
 function viewMat(){
   const tot=bankList().length,lig=bankList().filter(x=>STATE.links[x.id]).length;
   let out='<div class="bar"><button class="btn pri" id="bulk">Colar links em massa</button><button class="btn" id="bkOut">Fazer backup</button><button class="btn" id="bkIn">Restaurar backup</button><span class="spacer"></span><button class="btn warn" id="wipeL">Limpar todos os vínculos</button></div>'+
@@ -958,13 +958,13 @@ function viewMat(){
    '<span class="pc">'+Math.round(100*lig/Math.max(tot,1))+'%</span>'+
    '<span class="track"><span class="fill" style="width:'+(100*lig/Math.max(tot,1))+'%;background:var(--petrol)"></span></span></div></div>';
   for(const d in BANK){
-    const its=BANK[d].filter(x=>x.tp!=="quest");
+    const its=BANK[d];
     const n=its.filter(x=>STATE.links[d+"."+x.k]).length;
     out+='<div class="card mgroup"><h4><span class="dot" style="background:'+DISC[d].c+'"></span>'+esc(DISC[d].n)+
       '<span style="margin-left:auto;font-weight:400;color:var(--ink-4)">'+n+'/'+its.length+'</span></h4>';
     its.forEach(x=>{
       const id=d+"."+x.k,lk=STATE.links[id];
-      out+='<div class="mrow"><div class="mt">'+esc(x.t)+'<div class="src">'+esc(x.src||"")+'</div>'+
+      out+='<div class="mrow"><div class="mt"><span class="kind '+(x.tp||"aula")+'" style="margin-right:6px">'+esc(KIND[x.tp]||"aula")+'</span>'+esc(x.t)+'<div class="src">'+esc(x.src||"")+'</div>'+
        '<div class="mu'+(lk?"":" empty")+'">'+(lk?esc(lk.label||"")+(lk.label?" · ":"")+esc(lk.url):"sem material vinculado")+'</div></div>'+
        '<button class="ico" data-linkkey="'+id+'" title="Vincular">📎</button></div>';
     });
