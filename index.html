@@ -553,7 +553,7 @@ function generate(){
 const G=generate(),PLAN=G.plan;
 
 /* ---------- estado ---------- */
-let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:{}};
+let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},logs:{}};
 STATE.logs=[];
 let TAB="plano",FILTER="all",ONLYOPEN=false,VIEW="semana",WEEK=null;
 async function grab(k){try{const r=await window.storage.get(k);return r&&r.value?JSON.parse(r.value):null}catch(e){return null}}
@@ -716,6 +716,12 @@ function gh(path,opt){
 function mergeState(a,b){ /* b é o mais recente em caso de conflito */
   const o={};
   ["done","moved","removed","edited","collapsed","links","custom"].forEach(k=>o[k]=Object.assign({},a[k]||{},b[k]||{}));
+  /* exclusões: uma remoção feita em qualquer aparelho vence, se for posterior ao vínculo */
+  o.delLinks=Object.assign({},a.delLinks||{},b.delLinks||{});
+  for(const k in o.delLinks){
+    const lk=o.links[k];
+    if(!lk||!(lk.at>o.delLinks[k]))delete o.links[k];
+  }
   const seen={},lg=[];
   (a.logs||[]).concat(b.logs||[]).forEach(l=>{const k=l.d+"|"+l.disc+"|"+l.hit+"|"+l.tot+"|"+(l.task||"");if(!seen[k]){seen[k]=1;lg.push(l)}});
   o.logs=lg;o.view=b.view||a.view;o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0);
@@ -826,9 +832,10 @@ function viewDesemp(P){
 function bankList(){const o=[];for(const d in BANK)BANK[d].filter(x=>x.tp!=="quest").forEach(x=>o.push({id:d+"."+x.k,d:d,t:x.t}));return o}
 function viewMat(){
   const tot=bankList().length,lig=bankList().filter(x=>STATE.links[x.id]).length;
-  let out='<div class="bar"><button class="btn pri" id="bulk">Colar links em massa</button><button class="btn" id="bkOut">Fazer backup</button><button class="btn" id="bkIn">Restaurar backup</button></div>'+
+  let out='<div class="bar"><button class="btn pri" id="bulk">Colar links em massa</button><button class="btn" id="bkOut">Fazer backup</button><button class="btn" id="bkIn">Restaurar backup</button><span class="spacer"></span><button class="btn warn" id="wipeL">Limpar todos os vínculos</button></div>'+
    '<div class="card"><h3>Biblioteca de materiais · '+lig+' de '+tot+' vinculados</h3>'+
    (RECUP?'<p class="note" style="margin-top:0;color:var(--ok)"><b>'+esc(RECUP)+'.</b> Faça um backup agora para não perder de novo.</p>':'')+
+   '<p class="note" style="margin-top:0;color:var(--carmim)"><b>Use o endereço da página da aula no portal</b> (o que fica na barra do navegador ao abrir a aula), não o link de download do PDF. Links de download do Estratégia trazem <i>Expires</i> e <i>Signature</i> na URL e param de funcionar em poucas horas.</p>'+
    '<p class="note" style="margin-top:0">Cole o link do PDF ou da aula. O mesmo link fica clicável no título do bloco, no cronograma. <b>Faça um backup depois de vincular</b> — o navegador é o único lugar onde isso mora.</p></div>';
   for(const d in BANK){
     out+='<div class="card mgroup"><h4><span class="dot" style="background:'+DISC[d].c+'"></span>'+esc(DISC[d].n)+' · '+DISC[d].q+' questões na prova</h4>';
@@ -942,6 +949,12 @@ function bind(){
       onSave:v=>{const t=String(v[0]).trim();if(!t)return;
         SYNC.token=t;SYNC.gist=String(v[1]).trim();saveSync();setTimeout(()=>syncNow(false),50)}});
   };
+  if($("#wipeL"))$("#wipeL").onclick=()=>{
+    const n=Object.keys(STATE.links||{}).length;
+    if(!n){alert("Não há vínculos para remover.");return}
+    if(!confirm("Remover os "+n+" vínculos de material?\n\nA remoção também é propagada aos outros aparelhos sincronizados. Marcações e registros de questões não são afetados."))return;
+    Object.keys(STATE.links).forEach(k=>dropLink(k));save();render();
+  };
   if($("#bkOut"))$("#bkOut").onclick=()=>{
     const j=JSON.stringify(STATE);
     openModal({title:"Backup completo",sub:"Copie este texto e guarde num arquivo, no Drive ou num e-mail para você mesmo. É o seu seguro contra perder os vínculos.",
@@ -953,7 +966,7 @@ function bind(){
       fields:[{label:"Cole o backup",type:"textarea",value:"",rows:12,ph:'{"done":{...},"links":{...}}'}],
       ok:"Restaurar",
       onSave:v=>{try{const d=JSON.parse(v[0]);
-        ["done","moved","removed","edited","collapsed","links","custom"].forEach(k=>{if(d[k])STATE[k]=Object.assign({},d[k],STATE[k])});
+        ["done","moved","removed","edited","collapsed","links","delLinks","custom"].forEach(k=>{if(d[k])STATE[k]=Object.assign({},d[k],STATE[k])});
         if(Array.isArray(d.logs)){const seen={};STATE.logs=(d.logs.concat(STATE.logs)).filter(l=>{const k=l.d+l.disc+l.hit+l.tot+(l.task||"");if(seen[k])return false;seen[k]=1;return true})}
         alert("Backup restaurado.")}catch(e){alert("Não consegui ler esse backup. Confira se copiou o texto inteiro.")}}});
   };
@@ -970,8 +983,8 @@ function bind(){
           const p=ln.indexOf("="); if(p<0)return;
           const k=ln.slice(0,p).trim(), u=safeUrl(ln.slice(p+1));
           if(!k)return;
-          if(u){const cur=STATE.links[k]||{};STATE.links[k]={url:u,label:cur.label||""};n++}
-          else delete STATE.links[k];
+          if(u){const cur=STATE.links[k]||{};STATE.links[k]={url:u,label:cur.label||"",at:Date.now()};if(STATE.delLinks)delete STATE.delLinks[k];n++}
+          else if(STATE.links[k])dropLink(k);
         });
         alert(n+" vínculos gravados.")}});
   };
@@ -995,7 +1008,7 @@ function bind(){
   if($("#rstLog"))$("#rstLog").onclick=()=>{if(confirm("Apagar todos os registros de desempenho? O cronograma não é afetado."))
     {STATE.logs=[];save();render()}};
   if($("#rst"))$("#rst").onclick=()=>{if(confirm("Isso apaga marcações, edições, links e registros. Continuar?"))
-    {STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:[]};save();render()}};
+    {STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},logs:[]};save();render()}};
   if(MODAL){const c=document.getElementById("mdl"),val=()=>[...c.querySelectorAll(".fld input,.fld select")].map(x=>x.value);
     document.getElementById("mdlS").onclick=()=>{MODAL.onSave(val());save();closeModal()};
     document.getElementById("mdlC").onclick=closeModal;
@@ -1012,13 +1025,14 @@ function logModal(id,disc,day){
     ok:"Registrar",
     onSave:v=>{const h=+v[1],t=+v[2];if(!(t>0)||!(h>=0)||h>t)return;STATE.logs.push({d:v[3]||day,disc:v[0],hit:h,tot:t,task:id})}});
 }
+function dropLink(k){delete STATE.links[k];STATE.delLinks=STATE.delLinks||{};STATE.delLinks[k]=Date.now()}
 function linkModal(k,cur,titulo){
   openModal({title:"Vincular material",sub:"Bloco: <b>"+esc(String(titulo).slice(0,90))+"</b>",
     fields:[{label:"Endereço do PDF ou da aula",value:cur.url||"",ph:"https://... ou pdfs/informatica-08.pdf",
              hint:"Link do Estratégia, do Drive, ou caminho relativo se você guardar os arquivos numa pasta ao lado do index.html."},
             {label:"Nome que aparece no bloco",value:cur.label||"",ph:"Ex.: Informática — Aula 08"}],
     ok:"Vincular",extra:cur.url?"Desvincular":null,
-    onSave:v=>{const u=safeUrl(v[0]);if(u)STATE.links[k]={url:u,label:v[1].trim()}},onExtra:()=>{delete STATE.links[k]}});
+    onSave:v=>{const u=safeUrl(v[0]);if(u){STATE.links[k]={url:u,label:v[1].trim(),at:Date.now()};if(STATE.delLinks)delete STATE.delLinks[k]}},onExtra:()=>{dropLink(k)}});
 }
 function dump(t){const w=window.open("","_blank");if(w)w.document.write("<pre style='font:12px ui-monospace,monospace;white-space:pre-wrap;padding:20px'>"+esc(t)+"</pre>");else alert("Permita pop-ups para exportar.")}
 (async function(){await load();await loadSync();if(STATE.view)VIEW=STATE.view;render();if(SYNC.token)syncNow(true)})();
