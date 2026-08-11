@@ -172,7 +172,8 @@ button,select,input{font-family:inherit}
 .mdl-c p.sub{margin:0 0 16px;font-size:12.5px;color:var(--ink-3)}
 .fld{margin-bottom:13px}
 .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
-.fld input,.fld select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:3px;font-size:14px;background:var(--paper-2);color:var(--ink)}
+.fld textarea{width:100%;font-family:var(--mono);font-size:11.5px;line-height:1.6;resize:vertical;padding:9px 10px;border:1px solid var(--line);border-radius:3px;background:var(--paper-2);color:var(--ink)}
+  .fld input,.fld select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:3px;font-size:14px;background:var(--paper-2);color:var(--ink)}
 .fld input:focus,.fld select:focus{outline:2px solid var(--petrol);outline-offset:-1px;background:#FCFDF9}
 .fld .hint{font-size:11.5px;color:var(--ink-4);margin-top:5px}
 .mdl-a{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
@@ -555,8 +556,25 @@ const G=generate(),PLAN=G.plan;
 let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:{}};
 STATE.logs=[];
 let TAB="plano",FILTER="all",ONLYOPEN=false,VIEW="semana",WEEK=null;
-async function load(){try{const r=await window.storage.get("pcpr-v4");if(r&&r.value)STATE=Object.assign(STATE,JSON.parse(r.value))}catch(e){}}
-let sT=null;function save(){clearTimeout(sT);sT=setTimeout(async()=>{try{await window.storage.set("pcpr-v4",JSON.stringify(STATE))}catch(e){}},250)}
+async function grab(k){try{const r=await window.storage.get(k);return r&&r.value?JSON.parse(r.value):null}catch(e){return null}}
+let RECUP="";
+async function load(){
+  let d=await grab("pcpr-v4");
+  if(!d||!d.links||!Object.keys(d.links).length){
+    const alt=await grab("pcpr-v4-bak")||await grab("pcpr-v3");
+    if(alt&&alt.links&&Object.keys(alt.links).length){
+      d=Object.assign({},alt,d||{});
+      d.links=Object.assign({},alt.links,(d&&d.links)||{});
+      RECUP=Object.keys(d.links).length+" vínculos recuperados de uma cópia anterior";
+    }
+  }
+  if(d)STATE=Object.assign(STATE,d);
+}
+let sT=null;function save(){STATE.updatedAt=Date.now();syncSoon();clearTimeout(sT);sT=setTimeout(async()=>{
+  const j=JSON.stringify(STATE);
+  try{await window.storage.set("pcpr-v4",j)}catch(e){}
+  try{await window.storage.set("pcpr-v4-bak",j)}catch(e){}
+},250)}
 
 function tasksByDay(){
   const map={};
@@ -597,12 +615,13 @@ function ring(pc){const r=26,c=2*Math.PI*r;
 
 /* ---------- modal ---------- */
 let MODAL=null;
-function openModal(c){MODAL=c;render();setTimeout(()=>{const f=document.querySelector(".mdl-c input,.mdl-c select");if(f)f.focus()},30)}
+function openModal(c){MODAL=c;render();setTimeout(()=>{const f=document.querySelector(".mdl-c input,.mdl-c select,.mdl-c textarea");if(f)f.focus()},30)}
 function closeModal(){MODAL=null;render()}
 function modalHtml(){
   if(!MODAL)return"";let f="";
   MODAL.fields.forEach((x,i)=>{
     f+='<div class="fld"><label for="f'+i+'">'+esc(x.label)+'</label>';
+    if(x.type==="textarea"){f+='<textarea id="f'+i+'" rows="'+(x.rows||10)+'" placeholder="'+esc(x.ph||"")+'">'+esc(x.value||"")+'</textarea>'+(x.hint?'<div class="hint">'+x.hint+'</div>':'')+'</div>';return}
     f+=x.type==="select"?'<select id="f'+i+'">'+x.options.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===x.value?" selected":"")+'>'+esc(o[1])+'</option>').join("")+'</select>'
       :'<input id="f'+i+'" type="'+(x.type||"text")+'" value="'+esc(x.value==null?"":x.value)+'" placeholder="'+esc(x.ph||"")+'"'+(x.type==="number"?' min="0"':'')+'>';
     if(x.hint)f+='<div class="hint">'+x.hint+'</div>';f+='</div>';
@@ -685,6 +704,56 @@ function viewPlano(map,tod){
 
 
 /* ---------- visão semanal ---------- */
+/* ---------- sincronização entre dispositivos (Gist privado) ---------- */
+let SYNC={token:"",gist:""},SYNCST="",SYNCING=false;
+const GFILE="cronograma-pcpr.json";
+async function loadSync(){const d=await grab("pcpr-sync");if(d)SYNC=Object.assign(SYNC,d)}
+async function saveSync(){try{await window.storage.set("pcpr-sync",JSON.stringify(SYNC))}catch(e){}}
+function gh(path,opt){
+  opt=opt||{};opt.headers=Object.assign({"Accept":"application/vnd.github+json","Authorization":"Bearer "+SYNC.token},opt.headers||{});
+  return fetch("https://api.github.com"+path,opt);
+}
+function mergeState(a,b){ /* b é o mais recente em caso de conflito */
+  const o={};
+  ["done","moved","removed","edited","collapsed","links","custom"].forEach(k=>o[k]=Object.assign({},a[k]||{},b[k]||{}));
+  const seen={},lg=[];
+  (a.logs||[]).concat(b.logs||[]).forEach(l=>{const k=l.d+"|"+l.disc+"|"+l.hit+"|"+l.tot+"|"+(l.task||"");if(!seen[k]){seen[k]=1;lg.push(l)}});
+  o.logs=lg;o.view=b.view||a.view;o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0);
+  return o;
+}
+async function syncNow(silent){
+  if(!SYNC.token||SYNCING)return;
+  SYNCING=true;SYNCST="sincronizando…";if(!silent)render();
+  try{
+    if(!SYNC.gist){
+      const r=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Cronograma PCPR 2026 — progresso",public:false,files:{[GFILE]:{content:JSON.stringify(STATE)}}})});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      SYNC.gist=(await r.json()).id;await saveSync();
+      SYNCST="conectado · gist criado";
+    }else{
+      const r=await gh("/gists/"+SYNC.gist);
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      const g=await r.json(),f=g.files&&g.files[GFILE];
+      let remote=null;
+      if(f){ let c=f.content; if(f.truncated&&f.raw_url)c=await(await fetch(f.raw_url)).text(); remote=JSON.parse(c) }
+      if(remote){
+        const novo=(remote.updatedAt||0)>(STATE.updatedAt||0);
+        const m=novo?mergeState(STATE,remote):mergeState(remote,STATE);
+        STATE=Object.assign(STATE,m);
+      }
+      STATE.updatedAt=Date.now();
+      const p=await gh("/gists/"+SYNC.gist,{method:"PATCH",body:JSON.stringify({files:{[GFILE]:{content:JSON.stringify(STATE)}}})});
+      if(!p.ok)throw new Error("HTTP "+p.status);
+      SYNCST="sincronizado às "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    }
+    try{const j=JSON.stringify(STATE);await window.storage.set("pcpr-v4",j);await window.storage.set("pcpr-v4-bak",j)}catch(e){}
+  }catch(e){
+    SYNCST="falha na sincronização ("+e.message+") — seus dados locais estão intactos";
+  }
+  SYNCING=false;render();
+}
+let pT=null;
+function syncSoon(){if(!SYNC.token)return;clearTimeout(pT);pT=setTimeout(()=>syncNow(true),5000)}
 const W0="2026-08-09";
 const MES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const DSIG=["dom","seg","ter","qua","qui","sex","sáb"];
@@ -754,8 +823,13 @@ function viewDesemp(P){
    '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+'<p class="note">Conta como simulado toda bateria de 80 questões ou mais.</p></div></div>';
 }
 
+function bankList(){const o=[];for(const d in BANK)BANK[d].filter(x=>x.tp!=="quest").forEach(x=>o.push({id:d+"."+x.k,d:d,t:x.t}));return o}
 function viewMat(){
-  let out='<div class="card"><h3>Biblioteca de materiais</h3><p class="note" style="margin-top:0">Cole aqui o link do PDF ou da aula. O mesmo link também aparece no bloco correspondente do cronograma.</p></div>';
+  const tot=bankList().length,lig=bankList().filter(x=>STATE.links[x.id]).length;
+  let out='<div class="bar"><button class="btn pri" id="bulk">Colar links em massa</button><button class="btn" id="bkOut">Fazer backup</button><button class="btn" id="bkIn">Restaurar backup</button></div>'+
+   '<div class="card"><h3>Biblioteca de materiais · '+lig+' de '+tot+' vinculados</h3>'+
+   (RECUP?'<p class="note" style="margin-top:0;color:var(--ok)"><b>'+esc(RECUP)+'.</b> Faça um backup agora para não perder de novo.</p>':'')+
+   '<p class="note" style="margin-top:0">Cole o link do PDF ou da aula. O mesmo link fica clicável no título do bloco, no cronograma. <b>Faça um backup depois de vincular</b> — o navegador é o único lugar onde isso mora.</p></div>';
   for(const d in BANK){
     out+='<div class="card mgroup"><h4><span class="dot" style="background:'+DISC[d].c+'"></span>'+esc(DISC[d].n)+' · '+DISC[d].q+' questões na prova</h4>';
     BANK[d].filter(x=>x.tp!=="quest").forEach(x=>{
@@ -785,7 +859,17 @@ function viewLacunas(){
 }
 
 function viewAjuda(){
-  return '<div class="card"><h3>Rotina fixa da semana</h3><div class="rot">'+
+  const on=!!SYNC.token;
+  return '<div class="card'+(on?"":" alert")+'"><h3>Sincronização entre dispositivos</h3>'+
+   '<p class="note" style="margin-top:0">'+(on
+     ? 'Ativa. Suas marcações, vínculos e registros de questões vão para um <b>gist privado</b> da sua conta do GitHub e voltam em qualquer aparelho onde você conectar. Estado: <b>'+esc(SYNCST||"aguardando")+'</b>.<br>ID do gist, para colar no outro aparelho: <b style="font-family:var(--mono);font-size:11.5px">'+esc(SYNC.gist||"—")+'</b>'
+     : 'Desligada. Hoje tudo mora só no navegador deste aparelho. Conectando um gist privado do GitHub, celular e notebook passam a compartilhar o mesmo progresso.')+'</p>'+
+   '<div class="bar">'+(on
+     ? '<button class="btn pri" id="syNow">Sincronizar agora</button><button class="btn warn" id="syOff">Desconectar</button>'
+     : '<button class="btn pri" id="syOn">Conectar sincronização</button>')+'</div>'+
+   (on?'<p class="note">Marcações de aparelhos diferentes se somam, nunca se apagam. A contrapartida: <b>desmarcar um bloco num aparelho não o desmarca no outro</b> — é o preço de nunca perder trabalho. Se precisar desfazer, faça nos dois.</p>':'')+
+   '</div>'+
+   '<div class="card"><h3>Rotina fixa da semana</h3><div class="rot">'+
    '<div><b>segunda</b>19h30 – 00h<br>4 blocos + erros</div><div><b>terça</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
    '<div><b>quarta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>quinta</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
    '<div><b>sexta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>sábado</b>8h30–12h20 · 14h–16h50<br>7 blocos · noite livre</div>'+
@@ -846,6 +930,51 @@ function bind(){
       }
     });
   });
+  if($("#syNow"))$("#syNow").onclick=()=>syncNow(false);
+  if($("#syOff"))$("#syOff").onclick=()=>{if(!confirm("Desconectar este aparelho? Os dados locais continuam aqui e o gist permanece no GitHub."))return;
+    SYNC={token:"",gist:""};SYNCST="";saveSync();render()};
+  if($("#syOn"))$("#syOn").onclick=()=>{
+    openModal({title:"Conectar sincronização",
+      sub:"Crie um token em <b>github.com/settings/tokens</b> → Fine-grained → Account permissions → <b>Gists: Read and write</b>. Não marque nenhuma permissão de repositório.",
+      fields:[{label:"Token do GitHub",value:"",ph:"github_pat_…",hint:"Fica guardado só neste aparelho e nunca é enviado ao gist."},
+              {label:"ID do gist (deixe vazio na primeira vez)",value:SYNC.gist||"",ph:"em outro aparelho, cole o ID mostrado aqui"}],
+      ok:"Conectar",
+      onSave:v=>{const t=String(v[0]).trim();if(!t)return;
+        SYNC.token=t;SYNC.gist=String(v[1]).trim();saveSync();setTimeout(()=>syncNow(false),50)}});
+  };
+  if($("#bkOut"))$("#bkOut").onclick=()=>{
+    const j=JSON.stringify(STATE);
+    openModal({title:"Backup completo",sub:"Copie este texto e guarde num arquivo, no Drive ou num e-mail para você mesmo. É o seu seguro contra perder os vínculos.",
+      fields:[{label:"Conteúdo do backup",type:"textarea",value:j,rows:12,hint:"Selecione tudo (Ctrl+A dentro da caixa) e copie."}],
+      ok:"Fechar",onSave:()=>{}});
+  };
+  if($("#bkIn"))$("#bkIn").onclick=()=>{
+    openModal({title:"Restaurar backup",sub:"Cole aqui o texto de um backup anterior. Os vínculos e marcações são mesclados com o que já existe.",
+      fields:[{label:"Cole o backup",type:"textarea",value:"",rows:12,ph:'{"done":{...},"links":{...}}'}],
+      ok:"Restaurar",
+      onSave:v=>{try{const d=JSON.parse(v[0]);
+        ["done","moved","removed","edited","collapsed","links","custom"].forEach(k=>{if(d[k])STATE[k]=Object.assign({},d[k],STATE[k])});
+        if(Array.isArray(d.logs)){const seen={};STATE.logs=(d.logs.concat(STATE.logs)).filter(l=>{const k=l.d+l.disc+l.hit+l.tot+(l.task||"");if(seen[k])return false;seen[k]=1;return true})}
+        alert("Backup restaurado.")}catch(e){alert("Não consegui ler esse backup. Confira se copiou o texto inteiro.")}}});
+  };
+  if($("#bulk"))$("#bulk").onclick=()=>{
+    const txt=bankList().map(x=>{const lk=STATE.links[x.id];
+      return "# "+DISC[x.d].n+" — "+x.t.slice(0,70)+"\n"+x.id+" = "+(lk?lk.url:"")}).join("\n\n");
+    openModal({title:"Colar links em massa",
+      sub:"Cada bloco tem uma linha <b>chave = link</b>. Cole a URL depois do sinal de igual e salve tudo de uma vez. Linhas vazias são ignoradas.",
+      fields:[{label:"Vínculos",type:"textarea",value:txt,rows:16,hint:"As linhas iniciadas por # são só rótulos e podem ser ignoradas."}],
+      ok:"Salvar vínculos",
+      onSave:v=>{let n=0;
+        String(v[0]).split(/\r?\n/).forEach(ln=>{
+          ln=ln.trim(); if(!ln||ln.charAt(0)==="#")return;
+          const p=ln.indexOf("="); if(p<0)return;
+          const k=ln.slice(0,p).trim(), u=safeUrl(ln.slice(p+1));
+          if(!k)return;
+          if(u){const cur=STATE.links[k]||{};STATE.links[k]={url:u,label:cur.label||""};n++}
+          else delete STATE.links[k];
+        });
+        alert(n+" vínculos gravados.")}});
+  };
   if($("#vwS"))$("#vwS").onclick=()=>{VIEW="semana";STATE.view=VIEW;save();render()};
   if($("#vwL"))$("#vwL").onclick=()=>{VIEW="lista";STATE.view=VIEW;save();render()};
   if($("#wkPrev"))$("#wkPrev").onclick=()=>{WEEK=Math.max(0,WEEK-1);render()};
@@ -892,7 +1021,7 @@ function linkModal(k,cur,titulo){
     onSave:v=>{const u=safeUrl(v[0]);if(u)STATE.links[k]={url:u,label:v[1].trim()}},onExtra:()=>{delete STATE.links[k]}});
 }
 function dump(t){const w=window.open("","_blank");if(w)w.document.write("<pre style='font:12px ui-monospace,monospace;white-space:pre-wrap;padding:20px'>"+esc(t)+"</pre>");else alert("Permita pop-ups para exportar.")}
-(async function(){await load();if(STATE.view)VIEW=STATE.view;render()})();
+(async function(){await load();await loadSync();if(STATE.view)VIEW=STATE.view;render();if(SYNC.token)syncNow(true)})();
 </script>
 </body>
 </html>
