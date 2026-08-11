@@ -977,16 +977,18 @@ function bind(){
       sub:"Cada bloco tem uma linha <b>chave = link</b>. Cole a URL depois do sinal de igual e salve tudo de uma vez. Linhas vazias são ignoradas.",
       fields:[{label:"Vínculos",type:"textarea",value:txt,rows:16,hint:"As linhas iniciadas por # são só rótulos e podem ser ignoradas."}],
       ok:"Salvar vínculos",
-      onSave:v=>{let n=0;
+      onSave:v=>{let n=0;const ruins=[];
+        if(!v[0]||!String(v[0]).trim()){alert("A caixa chegou vazia — nada foi gravado.");return}
         String(v[0]).split(/\r?\n/).forEach(ln=>{
           ln=ln.trim(); if(!ln||ln.charAt(0)==="#")return;
           const p=ln.indexOf("="); if(p<0)return;
-          const k=ln.slice(0,p).trim(), u=safeUrl(ln.slice(p+1));
+          const k=ln.slice(0,p).trim(), bruto=ln.slice(p+1).trim(), u=safeUrl(bruto);
           if(!k)return;
+          if(bruto&&!u){ruins.push(k);return}
           if(u){const cur=STATE.links[k]||{};STATE.links[k]={url:u,label:cur.label||"",at:Date.now()};if(STATE.delLinks)delete STATE.delLinks[k];n++}
           else if(STATE.links[k])dropLink(k);
         });
-        alert(n+" vínculos gravados.")}});
+        alert(n+" vínculos gravados"+(ruins.length?", "+ruins.length+" linhas ignoradas.\n\nPrimeiras: "+ruins.slice(0,3).join(" | "):"."))}});
   };
   if($("#vwS"))$("#vwS").onclick=()=>{VIEW="semana";STATE.view=VIEW;save();render()};
   if($("#vwL"))$("#vwL").onclick=()=>{VIEW="lista";STATE.view=VIEW;save();render()};
@@ -1009,7 +1011,7 @@ function bind(){
     {STATE.logs=[];save();render()}};
   if($("#rst"))$("#rst").onclick=()=>{if(confirm("Isso apaga marcações, edições, links e registros. Continuar?"))
     {STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},logs:[]};save();render()}};
-  if(MODAL){const c=document.getElementById("mdl"),val=()=>[...c.querySelectorAll(".fld input,.fld select")].map(x=>x.value);
+  if(MODAL){const c=document.getElementById("mdl"),val=()=>[...c.querySelectorAll(".fld input,.fld select,.fld textarea")].map(x=>x.value);
     document.getElementById("mdlS").onclick=()=>{MODAL.onSave(val());save();closeModal()};
     document.getElementById("mdlC").onclick=closeModal;
     if(MODAL.extra)document.getElementById("mdlX").onclick=()=>{MODAL.onExtra();save();closeModal()};
