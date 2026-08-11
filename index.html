@@ -21,8 +21,8 @@
 <style>
 :root{
   --ink:#0F1418; --ink-2:#2B343B; --ink-3:#5F6C75; --ink-4:#8C979E;
-  --paper:#E9EAE5; --paper-2:#F2F3EF; --surface:#FFFFFF;
-  --line:#CFD2CB; --line-soft:#E1E3DD;
+  --paper:#E3E5DF; --paper-2:#EDEFE9; --surface:#F7F8F3;
+  --line:#CBCFC6; --line-soft:#DDE0D8;
   --carmim:#A32B21; --ocre:#9A7A18; --ok:#2E6B4F; --petrol:#1F4E5F;
   --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -102,7 +102,7 @@ button,select,input{font-family:inherit}
 .day:hover{border-left-color:var(--ink-4)}
 .day.today{border-left-color:var(--carmim);box-shadow:0 0 0 1px var(--carmim),var(--sh)}
 .day.past{opacity:.55}
-.day.exam{border-left-color:var(--ocre);background:#FFFCF3}
+.day.exam{border-left-color:var(--ocre);background:#F5F1E2}
 .day.full{border-left-color:var(--ok)}
 .day-h{display:flex;align-items:center;gap:11px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
 .day-d{font-family:var(--mono);font-size:12.5px;font-weight:700}
@@ -173,10 +173,73 @@ button,select,input{font-family:inherit}
 .fld{margin-bottom:13px}
 .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
 .fld input,.fld select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:3px;font-size:14px;background:var(--paper-2);color:var(--ink)}
-.fld input:focus,.fld select:focus{outline:2px solid var(--petrol);outline-offset:-1px;background:#fff}
+.fld input:focus,.fld select:focus{outline:2px solid var(--petrol);outline-offset:-1px;background:#FCFDF9}
 .fld .hint{font-size:11.5px;color:var(--ink-4);margin-top:5px}
 .mdl-a{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
 .foot{padding:26px 0 0;font-family:var(--mono);font-size:10.5px;color:var(--ink-4);line-height:1.75}
+
+  /* ---------- visão semanal ---------- */
+  .wk-bar{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:12px}
+  .wk-nav{display:flex;align-items:center;gap:6px}
+  .wk-nav b{font-family:var(--mono);font-size:13px;letter-spacing:.02em;min-width:104px;text-align:center}
+  .nav-btn{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:3px;cursor:pointer;color:var(--ink-3);font-size:15px;line-height:1}
+  .nav-btn:hover{border-color:var(--ink);color:var(--ink)}
+  .nav-btn:disabled{opacity:.35;cursor:default}
+  .wk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px;align-items:start}
+  .cal{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;box-shadow:var(--sh);padding:12px}
+  .cal-m{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:4px 0 10px}
+  .cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+  .cal-g span{font-family:var(--mono);font-size:9.5px;color:var(--ink-4);padding:3px 0}
+  .cal-g button{font-family:var(--mono);font-size:11px;border:0;background:none;color:var(--ink-2);padding:5px 0;border-radius:3px;cursor:pointer;position:relative}
+  .cal-g button:hover{background:var(--paper)}
+  .cal-g button.wk{background:var(--paper);font-weight:700;color:var(--ink)}
+  .cal-g button.tod{background:var(--carmim);color:#fff}
+  .cal-g button.off{color:var(--line);cursor:default}
+  .cal-g button.off:hover{background:none}
+  .dcard{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;box-shadow:var(--sh);display:flex;flex-direction:column;overflow:hidden}
+  .dcard.tod{border-color:var(--carmim);box-shadow:0 0 0 1px var(--carmim),var(--sh)}
+  .dcard.pst{opacity:.6}
+  .dcard.ok{border-color:var(--ok)}
+  .dcard-h{padding:10px 12px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:8px}
+  .dcard-h .dt{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .dcard-h .mt{font-family:var(--mono);font-size:10px;color:var(--ink-4);display:block;margin-top:2px}
+  .badge{margin-left:auto;flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:700;border:2px solid var(--ocre);color:var(--ocre)}
+  .badge.z{border-color:var(--ok);color:var(--ok)}
+  .dcard-b{padding:9px 10px;max-height:330px;overflow-y:auto;overscroll-behavior:contain}
+  .dcard-b:empty::after{content:"sem blocos";font-family:var(--mono);font-size:10.5px;color:var(--ink-4)}
+  .act{display:flex;gap:8px;align-items:flex-start;background:var(--paper-2);border:1px solid var(--line-soft);border-left:3px solid var(--line);border-radius:3px;padding:8px 9px;margin-bottom:7px}
+  .act:last-child{margin-bottom:0}
+  .act .ab{flex:1;min-width:0}
+  .act .al{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-4);display:block;margin-bottom:2px}
+  .act .at{font-size:12.3px;line-height:1.32;color:var(--petrol)}
+  .act .as{font-family:var(--mono);font-size:9.5px;color:var(--ink-4);margin-top:3px;display:block}
+  .act.dn{opacity:.5}
+  .act.dn .at{text-decoration:line-through;color:var(--ink-4)}
+  .act .ax{display:flex;flex-direction:column;gap:3px;align-items:center;flex:none}
+  .act .chk{width:16px;height:16px;margin-top:1px}
+  .act .chk.done::after{left:4.5px;top:1px;height:8px}
+  .pin{font-size:11px;text-decoration:none;line-height:1;opacity:.75}
+  .pin:hover{opacity:1}
+
+  /* alternância entre dias e redução de ruído */
+  .dcard.a{background:#F7F8F3}
+  .dcard.b{background:#EFF1EA}
+  .dcard.a .dcard-h{background:rgba(15,20,24,.015)}
+  .dcard.b .dcard-h{background:rgba(15,20,24,.03)}
+  .dcard.a .act{background:#FBFCF8}
+  .dcard.b .act{background:#F6F7F2}
+  .day.a{background:#F7F8F3}
+  .day.b{background:#F1F3EC}
+  .act{border-left-width:3px}
+  .act .at{color:var(--ink-2)}
+  a.at{display:block;text-decoration:none;color:var(--ink-2)}
+  a.at:hover{color:var(--petrol);text-decoration:underline;text-underline-offset:2px}
+  a.at:focus-visible{outline:2px solid var(--petrol);outline-offset:2px;border-radius:2px}
+  .mlink{display:inline-flex;align-items:center;gap:4px;margin-top:5px;max-width:100%;font-family:var(--mono);font-size:9.5px;color:var(--petrol);text-decoration:none;background:rgba(31,78,95,.07);border:1px solid rgba(31,78,95,.18);padding:2px 6px;border-radius:3px}
+  .mlink span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mlink:hover{background:rgba(31,78,95,.13);border-color:var(--petrol)}
+  .t-title a{color:inherit;text-decoration:none}
+  .t-title a:hover{color:var(--petrol);text-decoration:underline;text-underline-offset:2px}
 </style>
 </head>
 <body>
@@ -461,7 +524,7 @@ const WD=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
 const fmt=s=>{const d=s2d(s);return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")};
 function today(){const n=new Date();const t=d2s(new Date(n.getFullYear(),n.getMonth(),n.getDate(),12));return t<START?START:t}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function safeUrl(u){u=String(u||"").trim();return /^(https?:|\.\/|\/|[\w\-.]+\/)/i.test(u)?u:""}
+function safeUrl(u){u=String(u||"").replace(/[\s\u200b]+/g,"").trim();return /^(https?:|\.\/|\/|[\w\-.]+\/)/i.test(u)?u:""}
 
 /* ---------- geração ---------- */
 function take(q,day){for(let i=0;i<q.length;i++){if(!q[i].a||q[i].a<=day)return q.splice(i,1)[0]}return null}
@@ -491,7 +554,7 @@ const G=generate(),PLAN=G.plan;
 /* ---------- estado ---------- */
 let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:{}};
 STATE.logs=[];
-let TAB="plano",FILTER="all",ONLYOPEN=false;
+let TAB="plano",FILTER="all",ONLYOPEN=false,VIEW="semana",WEEK=null;
 async function load(){try{const r=await window.storage.get("pcpr-v4");if(r&&r.value)STATE=Object.assign(STATE,JSON.parse(r.value))}catch(e){}}
 let sT=null;function save(){clearTimeout(sT);sT=setTimeout(async()=>{try{await window.storage.set("pcpr-v4",JSON.stringify(STATE))}catch(e){}},250)}
 
@@ -566,7 +629,7 @@ function render(){
    '<section class="sig"><div class="inner"><div class="sig-lab"><span>as 100 questões da prova, coloridas por matéria</span><span>'+doneAll+' de '+totAll+' blocos concluídos</span></div><div class="grid100">'+cells+'</div><div class="legend">'+legend+'</div></div></section>'+
    '<nav class="nav"><div class="nav-in" role="tablist">'+[["plano","Cronograma"],["desemp","Desempenho"],["mat","Materiais"],["lacunas","Lacunas"],["ajuda","Como usar"]].map(t=>'<button class="tab" role="tab" aria-selected="'+(TAB===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'</button>').join("")+'</div></nav>';
 
-  const main=TAB==="plano"?viewPlano(map,tod):TAB==="desemp"?viewDesemp(P):TAB==="mat"?viewMat():TAB==="lacunas"?viewLacunas():viewAjuda();
+  const main=TAB==="plano"?(VIEW==="semana"?viewSemana(map,tod):viewPlano(map,tod)):TAB==="desemp"?viewDesemp(P):TAB==="mat"?viewMat():TAB==="lacunas"?viewLacunas():viewAjuda();
   document.getElementById("root").innerHTML=head+'<main class="inner">'+main+
    '<div class="foot">O tempo segue o número de questões, não a afinidade.<br>Tecnologia e Português somam 50 das 100 questões: se o dia apertar, corte o bloco jurídico — nunca o de TI.<br>Toda questão errada vira linha no caderno de erros no mesmo dia.</div></main>'+modalHtml();
   bind();
@@ -578,7 +641,8 @@ function taskHtml(t){
   h+='<div class="chk'+(done?" done":"")+'" data-done="'+t.id+'" role="checkbox" tabindex="0" aria-checked="'+done+'"></div>';
   h+='<div class="t-body"><div class="t-top"><span class="chip" style="background:'+DISC[t.disc].c+'">'+esc(DISC[t.disc].n)+'</span>';
   h+='<span class="kind '+(t.tp||"aula")+'">'+esc(KIND[t.tp]||"aula")+'</span><span class="pass">'+t.min+' min</span></div>';
-  h+='<div class="t-title">'+esc(t.t)+'</div>';
+  const _u=lk?safeUrl(lk.url):"";
+  h+='<div class="t-title">'+(_u?'<a href="'+esc(_u)+'" target="_blank" rel="noopener" title="Abrir o material desta aula">'+esc(t.t)+'</a>':esc(t.t))+'</div>';
   if(t.src)h+='<div class="src">'+esc(t.src)+'</div>';
   if(lk&&safeUrl(lk.url))h+='<a class="mat" href="'+esc(safeUrl(lk.url))+'" target="_blank" rel="noopener">📄 <span>'+esc(lk.label||lk.url)+'</span></a>';
   lg.forEach(x=>{const a=x.hit/x.tot;h+='<span class="score" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+' · '+Math.round(a*100)+'%</span>'});
@@ -586,13 +650,21 @@ function taskHtml(t){
   return h;
 }
 
-function viewPlano(map,tod){
+function topCard(map,tod){
   const l0=map[tod]||[],dn0=l0.filter(t=>STATE.done[t.id]).length,pc0=l0.length?Math.round(100*dn0/l0.length):0,nx=l0.find(t=>!STATE.done[t.id]);
-  let html='<div class="card today-card">'+ring(pc0)+'<div class="today-t"><b>'+WD[s2d(tod).getDay()].replace(/^./,c=>c.toUpperCase())+', '+fmt(tod)+'</b><span>'+dn0+' de '+l0.length+' blocos · '+(l0.reduce((a,t)=>a+t.min,0)/60).toFixed(1).replace(".",",")+'h programadas</span>'+
+  return '<div class="card today-card">'+ring(pc0)+'<div class="today-t"><b>'+WD[s2d(tod).getDay()].replace(/^./,c=>c.toUpperCase())+', '+fmt(tod)+'</b><span>'+dn0+' de '+l0.length+' blocos · '+(l0.reduce((a,t)=>a+t.min,0)/60).toFixed(1).replace(".",",")+'h programadas</span>'+
    (nx?'<div class="next"><b style="font-weight:600">'+esc(nx.time||"")+' — '+esc(DISC[nx.disc].n)+'</b><br>'+esc(nx.t)+(nx.src?'<br><span style="font-family:var(--mono);font-size:11px;color:var(--ink-4)">'+esc(nx.src)+'</span>':'')+'</div>':'<div class="next" style="border-color:#2E6B4F">Dia concluído. Fecha o caderno de erros e descansa.</div>')+'</div></div>';
-  html+='<div class="bar"><select class="sel" id="flt"><option value="all">Todas as matérias</option>'+Object.keys(DISC).map(k=>'<option value="'+k+'"'+(FILTER===k?" selected":"")+'>'+esc(DISC[k].n)+'</option>').join("")+'</select>'+
-   '<button class="btn'+(ONLYOPEN?" on":"")+'" id="oo">Só pendentes</button><button class="btn" id="pull">Puxar atrasados</button><button class="btn" id="jump">Ir para hoje</button><span class="spacer"></span><button class="btn" id="exp">Exportar</button></div>';
-  let body="",lp="";
+}
+function barHtml(){
+  return '<div class="bar"><button class="btn'+(VIEW==="semana"?" on":"")+'" id="vwS">Semana</button><button class="btn'+(VIEW==="lista"?" on":"")+'" id="vwL">Lista corrida</button>'+
+   '<select class="sel" id="flt"><option value="all">Todas as matérias</option>'+Object.keys(DISC).map(k=>'<option value="'+k+'"'+(FILTER===k?" selected":"")+'>'+esc(DISC[k].n)+'</option>').join("")+'</select>'+
+   '<button class="btn'+(ONLYOPEN?" on":"")+'" id="oo">Só pendentes</button><button class="btn" id="pull">Puxar atrasados</button>'+
+   (VIEW==="semana"?'<button class="btn" id="wkNow">Semana atual</button>':'<button class="btn" id="jump">Ir para hoje</button>')+
+   '<span class="spacer"></span><button class="btn" id="exp">Exportar</button></div>';
+}
+function viewPlano(map,tod){
+  let html=topCard(map,tod)+barHtml();
+  let body="",lp="",ALT=0;
   Object.keys(map).sort().forEach(day=>{
     if(day<START)return;
     const l=map[day].filter(t=>FILTER==="all"||t.disc===FILTER).filter(t=>!ONLYOPEN||!STATE.done[t.id]);
@@ -601,7 +673,7 @@ function viewPlano(map,tod){
       body+='<div class="phase"><h2>'+m[0]+'</h2><p>'+m[1]+'</p></div>'}
     if(!l.length&&(FILTER!=="all"||ONLYOPEN))return;
     const mins=l.reduce((a,t)=>a+t.min,0),d2=l.filter(t=>STATE.done[t.id]).length,p2=l.length?Math.round(100*d2/l.length):0,col=STATE.collapsed[day],wd=s2d(day).getDay();
-    body+='<div class="day'+(day===tod?" today":"")+(day<tod?" past":"")+(day===EXAM?" exam":"")+(p2===100&&l.length?" full":"")+'"><div class="day-h" data-toggle="'+day+'"><span class="day-d">'+fmt(day)+'</span><span class="day-w">'+WD[wd]+'</span>';
+    body+='<div class="day '+(ALT++%2?"b":"a")+(day===tod?" today":"")+(day<tod?" past":"")+(day===EXAM?" exam":"")+(p2===100&&l.length?" full":"")+'"><div class="day-h" data-toggle="'+day+'"><span class="day-d">'+fmt(day)+'</span><span class="day-w">'+WD[wd]+'</span>';
     if(day<=PHASE1_END)body+='<span class="win">'+JANELA[wd]+'</span>';
     if(day===tod)body+='<span class="tag">hoje</span>';
     body+='<span class="day-m"><span class="mini"><i style="width:'+p2+'%"></i></span>'+d2+'/'+l.length+' · '+(mins/60).toFixed(1).replace(".",",")+'h '+(col?"▸":"▾")+'</span></div>';
@@ -609,6 +681,62 @@ function viewPlano(map,tod){
     body+='</div>';
   });
   return html+body;
+}
+
+
+/* ---------- visão semanal ---------- */
+const W0="2026-08-09";
+const MES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const DSIG=["dom","seg","ter","qua","qui","sex","sáb"];
+const TIPO={aula:"Aula",quest:"Tarefa",sim:"Simulado",gap:"Material",rev:"Revisão"};
+function weekOf(d){return Math.floor((s2d(d)-s2d(W0))/6048e5)}
+function weekStart(i){return addD(W0,i*7)}
+const WMAX=weekOf(EXAM);
+
+function miniCal(wi,map){
+  const ws=weekStart(wi),mid=s2d(addD(ws,3)),y=mid.getFullYear(),m=mid.getMonth(),tod=today();
+  const first=new Date(y,m,1).getDay(),nd=new Date(y,m+1,0).getDate();
+  let g="";DSIG.forEach(d=>g+='<span>'+d.charAt(0).toUpperCase()+'</span>');
+  for(let i=0;i<first;i++)g+='<button class="off" disabled></button>';
+  for(let d=1;d<=nd;d++){
+    const iso=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    const inw=iso>=ws&&iso<=addD(ws,6),has=!!map[iso];
+    g+='<button class="'+(iso===tod?"tod":inw?"wk":has?"":"off")+'" '+(has?'data-goday="'+iso+'"':'disabled')+'>'+d+'</button>';
+  }
+  return '<div class="cal"><div class="wk-nav" style="justify-content:center"><button class="nav-btn" id="wkPrev"'+(wi<=0?" disabled":"")+'>‹</button>'+
+   '<b>Semana '+(wi+1)+'</b><button class="nav-btn" id="wkNext"'+(wi>=WMAX?" disabled":"")+'>›</button></div>'+
+   '<div class="cal-m">'+MES[m]+'</div><div class="cal-g">'+g+'</div></div>';
+}
+
+function actHtml(t,day){
+  const done=!!STATE.done[t.id],lk=STATE.links[t.id],u=lk?safeUrl(lk.url):"";
+  let h='<div class="act'+(done?" dn":"")+'" style="border-left-color:'+DISC[t.disc].c+'">';
+  h+='<div class="ab"><span class="al">'+esc(TIPO[t.tp]||"Aula")+' · '+esc(t.time||"")+'</span>';
+  h+=u?'<a class="at" href="'+esc(u)+'" target="_blank" rel="noopener" title="Abrir o material desta aula">'+esc(t.t)+'</a>'
+      :'<div class="at">'+esc(t.t)+'</div>';
+  h+='<span class="as">'+t.min+'min · '+esc(DISC[t.disc].n)+(t.src?" · "+esc(t.src):"")+'</span>';
+  if(u)h+='<a class="mlink" href="'+esc(u)+'" target="_blank" rel="noopener">📄 <span>'+esc(lk.label||"abrir material")+'</span></a>';
+  h+='</div><div class="ax"><div class="chk'+(done?" done":"")+'" data-done="'+t.id+'" role="checkbox" tabindex="0" aria-checked="'+done+'"></div>';
+  h+='<button class="ico" style="padding:2px 3px;font-size:11px" data-log="'+t.id+'" data-disc="'+t.disc+'" data-day="'+day+'" title="Registrar acertos">◎</button></div></div>';
+  return h;
+}
+
+function viewSemana(map,tod){
+  if(WEEK===null)WEEK=Math.max(0,Math.min(weekOf(tod),WMAX));
+  const ws=weekStart(WEEK);
+  let cards=miniCal(WEEK,map);
+  for(let i=0;i<7;i++){
+    const day=addD(ws,i);
+    if(day<START||day>EXAM){continue}
+    const l=(map[day]||[]).filter(t=>FILTER==="all"||t.disc===FILTER).filter(t=>!ONLYOPEN||!STATE.done[t.id]);
+    const mins=l.reduce((a,t)=>a+t.min,0),pend=l.filter(t=>!STATE.done[t.id]).length;
+    cards+='<div class="dcard '+(i%2?"b":"a")+(day===tod?" tod":"")+(day<tod?" pst":"")+(l.length&&!pend?" ok":"")+'">';
+    cards+='<div class="dcard-h"><div><span class="dt">'+DSIG[s2d(day).getDay()]+' · '+fmt(day)+'</span>'+
+      '<span class="mt">'+(mins>=60?Math.floor(mins/60)+"h"+(mins%60?String(mins%60).padStart(2,"0"):"m"):mins+"m")+' · '+l.length+' atividade'+(l.length===1?"":"s")+'</span></div>'+
+      '<span class="badge'+(pend?"":" z")+'">'+(pend||"✓")+'</span></div>';
+    cards+='<div class="dcard-b">'+l.map(t=>actHtml(t,day)).join("")+'</div></div>';
+  }
+  return topCard(map,tod)+barHtml()+'<div class="wk-grid">'+cards+'</div>';
 }
 
 function viewDesemp(P){
@@ -703,6 +831,27 @@ function bind(){
       {label:"Horário",value:"20:30"},{label:"Duração (min)",type:"number",value:"50"}],
       onSave:v=>{if(!v[0].trim())return;STATE.custom[day]=STATE.custom[day]||[];
         STATE.custom[day].push({id:"C."+Date.now(),disc:DISC[v[1]]?v[1]:"REV",tp:v[2],t:v[0].trim(),src:"Bloco criado por você",min:+v[4]||50,time:v[3]})}})});
+  $$("a[href]").forEach(el=>{
+    if(el.dataset.ab)return; el.dataset.ab="1";
+    el.addEventListener("click",function(e){
+      if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+      const u=el.getAttribute("href");
+      if(!u||u.charAt(0)==="#")return;
+      e.preventDefault();
+      let w=null;
+      try{w=window.open(u,"_blank","noopener")}catch(_){}
+      if(!w){
+        try{ if(window.top!==window.self){window.top.location.href=u;return} }catch(_){}
+        window.location.href=u;
+      }
+    });
+  });
+  if($("#vwS"))$("#vwS").onclick=()=>{VIEW="semana";STATE.view=VIEW;save();render()};
+  if($("#vwL"))$("#vwL").onclick=()=>{VIEW="lista";STATE.view=VIEW;save();render()};
+  if($("#wkPrev"))$("#wkPrev").onclick=()=>{WEEK=Math.max(0,WEEK-1);render()};
+  if($("#wkNext"))$("#wkNext").onclick=()=>{WEEK=Math.min(WMAX,WEEK+1);render()};
+  if($("#wkNow"))$("#wkNow").onclick=()=>{WEEK=Math.max(0,Math.min(weekOf(today()),WMAX));render()};
+  $$("[data-goday]").forEach(el=>el.onclick=()=>{WEEK=weekOf(el.dataset.goday);render()});
   if($("#flt"))$("#flt").onchange=e=>{FILTER=e.target.value;render()};
   if($("#oo"))$("#oo").onclick=()=>{ONLYOPEN=!ONLYOPEN;render()};
   if($("#jump"))$("#jump").onclick=()=>{const t=today(),el=[...$$("[data-toggle]")].find(x=>x.dataset.toggle===t);if(el)el.scrollIntoView({behavior:"smooth",block:"center"})};
@@ -743,7 +892,7 @@ function linkModal(k,cur,titulo){
     onSave:v=>{const u=safeUrl(v[0]);if(u)STATE.links[k]={url:u,label:v[1].trim()}},onExtra:()=>{delete STATE.links[k]}});
 }
 function dump(t){const w=window.open("","_blank");if(w)w.document.write("<pre style='font:12px ui-monospace,monospace;white-space:pre-wrap;padding:20px'>"+esc(t)+"</pre>");else alert("Permita pop-ups para exportar.")}
-(async function(){await load();render()})();
+(async function(){await load();if(STATE.view)VIEW=STATE.view;render()})();
 </script>
 </body>
 </html>
