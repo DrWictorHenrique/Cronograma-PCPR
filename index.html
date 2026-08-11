@@ -1049,6 +1049,58 @@ function bind(){
       {label:"Horário",value:"20:30"},{label:"Duração (min)",type:"number",value:"50"}],
       onSave:v=>{if(!v[0].trim())return;STATE.custom[day]=STATE.custom[day]||[];
         STATE.custom[day].push({id:"C."+Date.now(),disc:DISC[v[1]]?v[1]:"REV",tp:v[2],t:v[0].trim(),src:"Bloco criado por você",min:+v[4]||50,time:v[3]})}})});
+  if($("#syNow"))$("#syNow").onclick=()=>syncNow(false);
+  if($("#syOff"))$("#syOff").onclick=()=>{if(!confirm("Desconectar este aparelho? Os dados locais continuam aqui e o gist permanece no GitHub."))return;
+    SYNC={token:"",gist:""};SYNCST="";saveSync();render()};
+  if($("#syOn"))$("#syOn").onclick=()=>{
+    openModal({title:"Conectar sincronização",
+      sub:"Crie um token em <b>github.com/settings/tokens</b> → Fine-grained → Account permissions → <b>Gists: Read and write</b>.",
+      fields:[{label:"Token do GitHub",value:"",ph:"github_pat_…",hint:"Fica guardado só neste aparelho e nunca é enviado ao gist."},
+              {label:"ID do gist (vazio na primeira vez)",value:SYNC.gist||"",ph:"no outro aparelho, cole o ID mostrado aqui"}],
+      ok:"Conectar",
+      onSave:v=>{const t=String(v[0]).trim();if(!t)return;
+        SYNC.token=t;SYNC.gist=String(v[1]).trim();saveSync();setTimeout(()=>syncNow(false),50)}});
+  };
+  if($("#wipeL"))$("#wipeL").onclick=()=>{
+    const n=Object.keys(STATE.links||{}).length;
+    if(!n){alert("Não há vínculos para remover.");return}
+    if(!confirm("Remover os "+n+" vínculos de material?\n\nA remoção também é propagada aos outros aparelhos sincronizados. Marcações e registros de questões não são afetados."))return;
+    Object.keys(STATE.links).forEach(k=>dropLink(k));save();render();
+  };
+  if($("#bkOut"))$("#bkOut").onclick=()=>{
+    openModal({title:"Backup completo",sub:"Copie este texto e guarde num arquivo ou num e-mail para você mesmo.",
+      fields:[{label:"Conteúdo do backup",type:"textarea",value:JSON.stringify(STATE),rows:12,hint:"Clique dentro da caixa, Ctrl+A e Ctrl+C."}],
+      ok:"Fechar",onSave:()=>{}});
+  };
+  if($("#bkIn"))$("#bkIn").onclick=()=>{
+    openModal({title:"Restaurar backup",sub:"Cole o texto de um backup anterior. É mesclado com o que já existe.",
+      fields:[{label:"Cole o backup",type:"textarea",value:"",rows:12,ph:'{"done":{...},"links":{...}}'}],
+      ok:"Restaurar",
+      onSave:v=>{try{const d=JSON.parse(v[0]);
+        ["done","moved","removed","edited","collapsed","links","delLinks","custom"].forEach(k=>{if(d[k])STATE[k]=Object.assign({},d[k],STATE[k])});
+        if(Array.isArray(d.logs)){const seen={};STATE.logs=(d.logs.concat(STATE.logs)).filter(l=>{const k=l.d+l.disc+l.hit+l.tot+(l.task||"");if(seen[k])return false;seen[k]=1;return true})}
+        alert("Backup restaurado.")}catch(e){alert("Não consegui ler esse backup. Confira se copiou o texto inteiro.")}}});
+  };
+  if($("#bulk"))$("#bulk").onclick=()=>{
+    const txt=bankList().map(x=>{const lk=STATE.links[x.id];
+      return "# "+DISC[x.d].n+" — "+String(x.t).slice(0,70)+"\n"+x.id+" = "+(lk?lk.url:"")}).join("\n\n");
+    openModal({title:"Colar links em massa",
+      sub:"Cada bloco tem uma linha <b>chave = link</b>. Chaves ausentes do texto não são alteradas.",
+      fields:[{label:"Vínculos",type:"textarea",value:txt,rows:16,hint:"Linhas iniciadas por # são rótulos e são ignoradas."}],
+      ok:"Salvar vínculos",
+      onSave:v=>{let n=0;const ruins=[];
+        if(!v[0]||!String(v[0]).trim()){alert("A caixa chegou vazia — nada foi gravado.");return}
+        String(v[0]).split(/\r?\n/).forEach(ln=>{
+          ln=ln.trim(); if(!ln||ln.charAt(0)==="#")return;
+          const p=ln.indexOf("="); if(p<0)return;
+          const k=ln.slice(0,p).trim(), bruto=ln.slice(p+1).trim(), u=safeUrl(bruto);
+          if(!k)return;
+          if(bruto&&!u){ruins.push(k);return}
+          if(u){const cur=STATE.links[k]||{};STATE.links[k]={url:u,label:cur.label||"",at:Date.now()};if(STATE.delLinks)delete STATE.delLinks[k];n++}
+          else if(STATE.links[k])dropLink(k);
+        });
+        alert(n+" vínculos gravados"+(ruins.length?", "+ruins.length+" linhas ignoradas.\n\nPrimeiras: "+ruins.slice(0,3).join(" | "):"."))}});
+  };
   if($("#vwS"))$("#vwS").onclick=()=>{VIEW="semana";STATE.view=VIEW;save();render()};
   if($("#vwL"))$("#vwL").onclick=()=>{VIEW="lista";STATE.view=VIEW;save();render()};
   if($("#wkPrev"))$("#wkPrev").onclick=()=>{WEEK=Math.max(0,WEEK-1);render()};
