@@ -3,613 +3,776 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0C2B4A">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Contrato">
-<title>Contrato de Locação</title>
+<meta name="theme-color" content="#0F1418">
+<meta name="robots" content="noindex">
+<title>Cronograma PCPR 2026 — Agente de Polícia Judiciária</title>
+<script>
+/* Armazenamento: usa window.storage dentro do Claude, localStorage fora dele. */
+(function(){
+  if (window.storage && typeof window.storage.get === "function") return;
+  var mem={}, has=(function(){try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true}catch(e){return false}})();
+  window.storage={
+    get:async k=>{var v=has?localStorage.getItem(k):(k in mem?mem[k]:null);return v==null?null:{key:k,value:v,shared:false}},
+    set:async(k,v)=>{has?localStorage.setItem(k,v):mem[k]=v;return{key:k,value:v,shared:false}},
+    delete:async k=>{has?localStorage.removeItem(k):delete mem[k];return{key:k,deleted:true,shared:false}},
+    list:async p=>{var ks=[];if(has){for(var i=0;i<localStorage.length;i++){var kk=localStorage.key(i);if(!p||kk.indexOf(p)===0)ks.push(kk)}}else{for(var m in mem)if(!p||m.indexOf(p)===0)ks.push(m)}return{keys:ks,prefix:p,shared:false}}
+  };
+})();
+</script>
 <style>
-  :root{
-    --tinta:#0F1B2A; --azul:#16456B; --azul-forte:#0C2B4A; --azul-claro:#EAF1F7;
-    --linha:#C9D6E2; --linha-forte:#9DB3C6; --ok:#0F7A4E; --alerta:#B4530A;
-    --fraco:#5D6E7E; --papel:#FFFFFF; --fundo:#EDF1F5;
-    --sombra:0 1px 2px rgba(15,27,42,.05), 0 8px 26px rgba(15,27,42,.09);
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0;color:var(--tinta);background:var(--fundo);
-    background-image:radial-gradient(1200px 380px at 50% -80px,#E1EAF3 0%,rgba(225,234,243,0) 70%);
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    font-size:15px;line-height:1.45;
-    -webkit-print-color-adjust:exact;print-color-adjust:exact;
-  }
+:root{
+  --ink:#0F1418; --ink-2:#2B343B; --ink-3:#5F6C75; --ink-4:#8C979E;
+  --paper:#E9EAE5; --paper-2:#F2F3EF; --surface:#FFFFFF;
+  --line:#CFD2CB; --line-soft:#E1E3DD;
+  --carmim:#A32B21; --ocre:#9A7A18; --ok:#2E6B4F; --petrol:#1F4E5F;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --sh:0 1px 2px rgba(15,20,24,.05),0 4px 16px -6px rgba(15,20,24,.10);
+  --max:1080px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--paper)}
+body{font-family:var(--sans);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+button,select,input{font-family:inherit}
+.boot{padding:56px 24px;font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.inner{max-width:var(--max);margin:0 auto;padding:0 22px}
+@media(max-width:520px){.inner{padding:0 14px}}
 
-  /* ===== painel de preenchimento ===== */
-  .barra{
-    position:static;color:#fff;
-    background:linear-gradient(155deg,#0C2B4A 0%,#16456B 52%,#1D5B87 100%);
-    box-shadow:inset 0 -1px 0 rgba(255,255,255,.14),0 6px 18px rgba(12,43,74,.16);
-  }
-  .barra-int{max-width:940px;margin:0 auto;padding:12px clamp(12px,3vw,22px) 16px}
-  .marca{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .marca h1{margin:0;font-size:clamp(13.5px,2.1vw,15px);letter-spacing:.13em;
-    text-transform:uppercase;color:#fff;font-weight:600}
+/* ---------- cabeçalho ---------- */
+.hd{background:var(--ink);color:#EDEEEA;padding:30px 0 0;position:relative;overflow:hidden}
+.hd::after{content:"";position:absolute;inset:auto 0 0;height:3px;background:linear-gradient(90deg,var(--carmim) 0 25%,var(--petrol) 25% 50%,var(--ocre) 50% 62%,#3E6B52 62% 100%)}
+.hd-grid{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding-bottom:22px}
+@media(max-width:640px){.hd-grid{grid-template-columns:1fr;gap:16px}}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#7E8F98;margin-bottom:10px}
+.hd h1{margin:0;font-size:clamp(24px,5vw,40px);font-weight:800;letter-spacing:-.035em;text-transform:uppercase;line-height:.96}
+.hd h1 em{font-style:normal;color:#7E8F98}
+.metrics{display:flex;gap:26px}
+@media(max-width:640px){.metrics{gap:20px}}
+.metric{font-family:var(--mono);line-height:1}
+.metric b{display:block;font-size:clamp(28px,6.5vw,44px);font-weight:700;letter-spacing:-.05em}
+.metric i{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7E8F98;display:block;margin-top:7px}
+.metric.good b{color:#7FBFA0} .metric.mid b{color:#E0B85A} .metric.bad b{color:#E08B7F}
 
-  .grupo{margin-bottom:11px}
-  .grupo > h2{
-    margin:0 0 7px;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
-    color:rgba(255,255,255,.55);font-weight:700;
-  }
-  .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px}
-  .campo.largo{grid-column:span 2}
-  .campo label{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
-    color:rgba(255,255,255,.66);margin-bottom:3px;font-weight:600}
-  .campo input,.campo select{
-    width:100%;padding:7px 9px;border:1px solid rgba(255,255,255,.18);border-radius:6px;
-    font:inherit;font-size:14px;background:rgba(255,255,255,.96);color:var(--tinta);min-height:38px;
-  }
-  .campo input:focus,.campo select:focus{outline:2px solid rgba(255,255,255,.85);outline-offset:1px;background:#fff;border-color:transparent}
-  .campo input::placeholder{color:#93A4B3}
-  .campo input.maiuscula{text-transform:uppercase;letter-spacing:.04em;font-weight:600}
-  .campo .erro{display:block;font-size:10.5px;color:#FFD2A6;margin-top:3px;min-height:13px}
+/* ---------- barra das 100 questões ---------- */
+.sig{background:#0B0F12;color:#DDE0DC;padding:20px 0 22px}
+.sig-lab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6F7D85;margin-bottom:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.grid100{display:grid;grid-template-columns:repeat(25,1fr);gap:2px}
+@media(max-width:640px){.grid100{grid-template-columns:repeat(20,1fr)}}
+.q{aspect-ratio:1;border-radius:1px;opacity:.2;transition:opacity .5s ease}
+.q.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.q{transition:none}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px}
+.legend div{font-family:var(--mono);font-size:10px;color:#8B979E;display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:1px;display:inline-block;flex:none}
 
-  .acoes{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;align-items:center}
-  .btn{font:inherit;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:pointer;
-    border:1px solid rgba(255,255,255,.34);background:rgba(255,255,255,.12);color:#fff;
-    display:inline-flex;align-items:center;gap:7px;min-height:38px;
-    transition:background .14s ease,border-color .14s ease,color .14s ease}
-  .btn:hover{background:rgba(255,255,255,.22)}
-  .btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-  .btn.principal{background:#fff;color:#0C2B4A;border-color:#fff}
-  .btn.principal:hover{background:#E6EFF7}
-  .btn.discreto{background:transparent;border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.82);font-weight:500}
-  .btn.discreto:hover{background:rgba(255,255,255,.14);color:#fff}
-  .btn.armado{background:rgba(244,164,73,.2);border-color:#F0B368;color:#FFDCAE}
-  #estado{flex:1 1 180px;font-size:12.5px;color:#CFE2F2;text-align:right;margin:0;min-height:18px}
+/* ---------- navegação ---------- */
+.nav{position:sticky;top:0;z-index:30;background:rgba(233,234,229,.94);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:0 22px;display:flex;gap:2px;align-items:stretch;overflow-x:auto}
+@media(max-width:520px){.nav-in{padding:0 8px}}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-3);padding:14px 14px 12px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--carmim);font-weight:700}
+.tab:focus-visible{outline:2px solid var(--petrol);outline-offset:-2px}
 
-  @media (max-width:820px){
-    .campo.largo{grid-column:span 1}
-  }
+.bar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:14px 0 4px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);padding:7px 11px;border-radius:3px;cursor:pointer;transition:border-color .15s,color .15s}
+.btn:hover{border-color:var(--ink);color:var(--ink)}
+.btn:focus-visible{outline:2px solid var(--petrol);outline-offset:2px}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.pri{background:var(--carmim);border-color:var(--carmim);color:#fff}
+.btn.pri:hover{background:#8C231A;border-color:#8C231A;color:#fff}
+.btn.warn:hover{border-color:var(--carmim);color:var(--carmim)}
+.sel{font-family:var(--mono);font-size:11px;padding:7px 8px;border:1px solid var(--line);background:var(--surface);border-radius:3px;color:var(--ink-2)}
+.spacer{flex:1}
 
-  /* botao flutuante: em tela pequena a barra rola para fora, este fica ao alcance */
-  .flutua{display:none}
-  @media (max-width:820px){
-    .flutua{
-      display:inline-flex;align-items:center;gap:7px;position:fixed;z-index:40;
-      right:14px;bottom:calc(14px + env(safe-area-inset-bottom));
-      font:inherit;font-size:14px;font-weight:600;padding:12px 18px;border-radius:26px;
-      background:#0C2B4A;color:#fff;border:1px solid rgba(255,255,255,.25);
-      box-shadow:0 6px 18px rgba(12,43,74,.34);cursor:pointer;
-    }
-    .flutua:active{background:#16456B}
-  }
+/* ---------- cartões ---------- */
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;box-shadow:var(--sh);padding:18px;margin-top:14px}
+.card h3{margin:0 0 14px;font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2)}
+.note{font-size:12.5px;color:var(--ink-3);margin:10px 0 0;line-height:1.55}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.cols{grid-template-columns:1fr}}
 
-  /* ===== folha do contrato ===== */
-  .folha{
-    max-width:860px;margin:26px auto 70px;background:var(--papel);
-    padding:clamp(20px,4vw,54px);border-radius:10px;box-shadow:var(--sombra);
-    font-family:"Times New Roman",Times,Georgia,serif;font-size:16px;line-height:1.55;color:#111;
-  }
-  .folha h2.titulo{text-align:center;font-size:17px;margin:0 0 26px;line-height:1.35;text-transform:uppercase}
-  .folha{counter-reset:secao}
-  .folha h3{font-size:16px;margin:26px 0 10px;text-transform:uppercase}
-  .folha h3::before{counter-increment:secao;content:counter(secao,upper-roman) ". "}
-  .folha p{margin:0 0 10px;text-align:justify}
-  .folha ol{margin:0 0 10px;padding-left:26px}
-  .folha ol li{margin-bottom:8px;text-align:justify}
-  .cl{font-weight:700}
-  .v{background:#FFF3BF;padding:0 3px;border-radius:2px;font-weight:600}
-  .v.vazio{background:#FFE3E3;color:#8A2B2B;font-weight:400}
-  .assinaturas{margin-top:44px}
-  .assinaturas .linha{border-top:1px solid #111;margin:34px 0 4px}
-  .assinaturas p{text-align:left;margin:0}
-  .testemunhas{margin-top:30px}
-  .testemunhas p{margin-bottom:16px}
+/* hoje */
+.today-card{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{flex:none}
+.today-t{flex:1;min-width:180px}
+.today-t b{display:block;font-size:15px;letter-spacing:-.01em}
+.today-t span{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.next{margin-top:10px;font-size:13px;color:var(--ink-2);border-left:2px solid var(--carmim);padding-left:10px}
 
-  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+/* fases e dias */
+.phase{margin:30px 0 10px;padding-bottom:9px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.phase h2{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.13em;font-weight:800}
+.phase p{margin:0;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+.day{background:var(--surface);border:1px solid var(--line-soft);border-left:3px solid var(--line);border-radius:3px;margin-top:8px;box-shadow:var(--sh);transition:border-color .15s}
+.day:hover{border-left-color:var(--ink-4)}
+.day.today{border-left-color:var(--carmim);box-shadow:0 0 0 1px var(--carmim),var(--sh)}
+.day.past{opacity:.55}
+.day.exam{border-left-color:var(--ocre);background:#FFFCF3}
+.day.full{border-left-color:var(--ok)}
+.day-h{display:flex;align-items:center;gap:11px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
+.day-d{font-family:var(--mono);font-size:12.5px;font-weight:700;letter-spacing:.03em}
+.day-w{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-3)}
+.win{font-family:var(--mono);font-size:10.5px;color:var(--petrol)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;border-radius:2px;color:var(--carmim)}
+.day-m{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap;display:flex;align-items:center;gap:8px}
+.mini{width:52px;height:4px;background:var(--paper);border-radius:2px;overflow:hidden;display:inline-block}
+.mini i{display:block;height:100%;background:var(--ok)}
+.day-b{padding:0 14px 12px}
 
-  /* ===== impressão ===== */
-  @page{size:A4;margin:20mm 18mm}
-  @media print{
-    body{background:#fff}
-    .barra{display:none !important}
-    .folha{max-width:none;margin:0;padding:0;border-radius:0;box-shadow:none;font-size:11.5pt;line-height:1.5}
-    .folha h2.titulo{font-size:12pt;margin-bottom:18px}
-    .folha h3{font-size:11.5pt;margin:16px 0 8px;break-after:avoid}
-    .folha p,.folha li{orphans:3;widows:3}
-    .v{background:transparent !important;padding:0;font-weight:400}
-    .v.vazio{background:transparent !important;color:#111}
-    .assinaturas,.testemunhas{break-inside:avoid}
-  }
+.task{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line-soft)}
+.task:first-child{border-top:0}
+.hora{font-family:var(--mono);font-size:11px;color:var(--ink-4);flex:none;width:42px;padding-top:3px;text-align:right;letter-spacing:-.02em}
+.chk{flex:none;width:18px;height:18px;margin-top:2px;border:1.5px solid var(--line);background:var(--surface);border-radius:3px;cursor:pointer;position:relative;transition:background .15s,border-color .15s}
+.chk:hover{border-color:var(--ink)}
+.chk:focus-visible{outline:2px solid var(--petrol);outline-offset:2px}
+.chk.done{background:var(--ok);border-color:var(--ok)}
+.chk.done::after{content:"";position:absolute;left:5.5px;top:1.5px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.t-body{flex:1;min-width:0}
+.t-top{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:3px}
+.chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#fff;padding:2px 6px;border-radius:2px;white-space:nowrap}
+.pass{font-family:var(--mono);font-size:10px;color:var(--ink-4)}
+.t-title{font-size:13.7px;line-height:1.38}
+.task.done .t-title{text-decoration:line-through;color:var(--ink-4)}
+.mat{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-family:var(--mono);font-size:10.5px;color:var(--petrol);text-decoration:none;border:1px solid var(--line);background:var(--paper-2);padding:3px 7px;border-radius:3px;max-width:100%}
+.mat:hover{border-color:var(--petrol)}
+.mat span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score{display:inline-block;margin-top:6px;margin-left:6px;font-family:var(--mono);font-size:10.5px;padding:3px 7px;border-radius:3px;color:#fff}
+.t-act{display:flex;gap:1px;flex:none;opacity:.28;transition:opacity .18s}
+.task:hover .t-act,.t-act:focus-within{opacity:1}
+@media(hover:none){.t-act{opacity:.7}}
+.ico{border:0;background:none;cursor:pointer;font-family:var(--mono);font-size:12.5px;color:var(--ink-3);padding:4px 5px;border-radius:3px;line-height:1}
+.ico:hover{background:var(--paper);color:var(--ink)}
+.ico.rm:hover{color:var(--carmim)}
+.ico:focus-visible{outline:2px solid var(--petrol);outline-offset:1px}
+.add{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);background:none;border:1px dashed var(--line);width:100%;padding:7px;margin-top:9px;cursor:pointer;border-radius:3px;letter-spacing:.06em;text-transform:uppercase}
+.add:hover{border-color:var(--ink-3);color:var(--ink)}
+
+/* estatística */
+.stat{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:var(--mono);font-size:11px}
+.stat .nm{width:154px;flex:none;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.stat .track{flex:1;height:9px;background:var(--paper);border-radius:2px;overflow:hidden;position:relative}
+.stat .fill{height:100%;transition:width .5s ease}
+.stat .pc{width:92px;text-align:right;flex:none;color:var(--ink-3)}
+@media(max-width:600px){.stat .nm{width:96px;font-size:10px}.stat .pc{width:70px;font-size:10px}}
+.rot{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;font-family:var(--mono);font-size:11px}
+.rot div{border-left:2px solid var(--line);padding-left:10px}
+.rot b{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--ink-4);margin-bottom:3px}
+
+/* materiais */
+.mgroup{margin-bottom:20px}
+.mgroup h4{margin:0 0 8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.mrow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line-soft);font-size:13px}
+.mrow .mt{flex:1;min-width:0}
+.mrow .mu{font-family:var(--mono);font-size:10.5px;color:var(--petrol);word-break:break-all}
+.mrow .mu.empty{color:var(--ink-4)}
+
+/* gráfico */
+.chart{width:100%;height:auto;display:block}
+.axis{font-family:var(--mono);font-size:9px;fill:var(--ink-4)}
+.empty{font-family:var(--mono);font-size:11.5px;color:var(--ink-4);padding:22px 0;text-align:center;border:1px dashed var(--line);border-radius:3px}
+
+/* modal */
+.mdl{position:fixed;inset:0;z-index:80;background:rgba(15,20,24,.5);display:flex;align-items:center;justify-content:center;padding:18px}
+.mdl-c{background:var(--surface);border-radius:5px;max-width:460px;width:100%;padding:20px;box-shadow:0 20px 60px -12px rgba(0,0,0,.4);max-height:88vh;overflow:auto}
+.mdl-c h4{margin:0 0 4px;font-size:14px;letter-spacing:-.01em}
+.mdl-c p.sub{margin:0 0 16px;font-size:12.5px;color:var(--ink-3)}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:3px;font-size:14px;background:var(--paper-2);color:var(--ink)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--petrol);outline-offset:-1px;background:#fff}
+.fld .hint{font-size:11.5px;color:var(--ink-4);margin-top:5px}
+.mdl-a{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.foot{padding:26px 0 0;font-family:var(--mono);font-size:10.5px;color:var(--ink-4);line-height:1.75}
 </style>
 </head>
 <body>
-
-<div class="barra">
- <div class="barra-int">
-  <div class="marca"><h1>Contrato de locação — preencher</h1></div>
-
-  <div class="grupo">
-    <h2>Locatário</h2>
-    <div class="campos">
-      <div class="campo largo"><label for="c-nome">Nome completo</label><input id="c-nome" autocomplete="off"></div>
-      <div class="campo"><label for="c-rg">RG</label><input id="c-rg" placeholder="0.000.000-0/UF" autocomplete="off"></div>
-      <div class="campo"><label for="c-cpf">CPF</label><input id="c-cpf" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off"><span class="erro" id="e-cpf"></span></div>
-      <div class="campo"><label for="c-cnh">CNH n.º</label><input id="c-cnh" inputmode="numeric" autocomplete="off"></div>
-      <div class="campo"><label for="c-cat">Categoria</label><input id="c-cat" class="maiuscula" placeholder="AB" autocomplete="off"></div>
-      <div class="campo"><label for="c-val">CNH válida até</label><input id="c-val" type="date"></div>
-      <div class="campo largo"><label for="c-end">Endereço completo</label><input id="c-end" placeholder="Rua, n.º, bairro — Cidade/UF" autocomplete="off"></div>
-      <div class="campo"><label for="c-cep">CEP</label><input id="c-cep" placeholder="00000-000" inputmode="numeric" autocomplete="off"></div>
-    </div>
-  </div>
-
-  <div class="grupo">
-    <h2>Veículo</h2>
-    <div class="campos">
-      <div class="campo"><label for="c-marca">Marca</label><input id="c-marca" autocomplete="off"></div>
-      <div class="campo"><label for="c-modelo">Modelo</label><input id="c-modelo" autocomplete="off"></div>
-      <div class="campo"><label for="c-ano">Ano</label><input id="c-ano" inputmode="numeric" autocomplete="off"></div>
-      <div class="campo"><label for="c-cor">Cor</label><input id="c-cor" autocomplete="off"></div>
-      <div class="campo"><label for="c-placa">Placa</label><input id="c-placa" class="maiuscula" autocomplete="off"></div>
-      <div class="campo"><label for="c-renavam">Renavam</label><input id="c-renavam" inputmode="numeric" autocomplete="off"></div>
-      <div class="campo largo"><label for="c-chassi">Chassi</label><input id="c-chassi" class="maiuscula" autocomplete="off"></div>
-    </div>
-  </div>
-
-  <div class="grupo">
-    <h2>Prazo, valores e pagamento</h2>
-    <div class="campos">
-      <div class="campo"><label for="c-inicio">Início</label><input id="c-inicio" type="date"></div>
-      <div class="campo"><label for="c-fim">Término</label><input id="c-fim" type="date"></div>
-      <div class="campo"><label for="c-semanal">Valor semanal</label><input id="c-semanal" placeholder="650,00" inputmode="decimal" autocomplete="off"></div>
-      <div class="campo"><label for="c-dia">Vence toda</label>
-        <select id="c-dia">
-          <option>segunda-feira</option><option>terça-feira</option><option>quarta-feira</option>
-          <option>quinta-feira</option><option selected>sexta-feira</option>
-          <option>sábado</option><option>domingo</option>
-        </select>
-      </div>
-      <div class="campo"><label for="c-caucao">Caução</label><input id="c-caucao" placeholder="1.200,00" inputmode="decimal" autocomplete="off"></div>
-      <div class="campo"><label for="c-multa">Cláusula penal</label><input id="c-multa" value="1.700,00" inputmode="decimal" autocomplete="off"></div>
-      <div class="campo"><label for="c-assin">Data da assinatura</label><input id="c-assin" type="date"></div>
-    </div>
-  </div>
-
-  <div class="acoes">
-    <button type="button" class="btn principal" id="btn-pdf">Salvar em PDF</button>
-    <button type="button" class="btn discreto" id="btn-limpar">Limpar tudo</button>
-    <p id="estado"></p>
-  </div>
- </div>
-</div>
-
-<button type="button" class="flutua" id="btn-pdf-flutua">Salvar em PDF</button>
-
-<div class="folha" id="folha">
-
-<h2 class="titulo">Contrato de locação de automóvel para uso em aplicativos de mobilidade</h2>
-
-<h3>Identificação das partes contratantes</h3>
-
-<p><b>LOCADORA:</b> Vanessa Karpstein Franco, brasileira, solteira, microempresária, inscrita no CPF sob o nº 043.579.599-69, residente e domiciliada à R. Sergipe, n.º 972, Bairro Guaíra, Curitiba, Paraná.</p>
-
-<p>A LOCADORA declara ser legítima responsável do veículo objeto deste Contrato, e que o bem se encontra livre e desembaraçado de ônus que impeçam a presente locação.</p>
-
-<p><b>LOCATÁRIO:</b> <span class="v" id="v-nome"></span>, brasileiro, motorista de aplicativo, portador da Cédula de Identidade RG n.º <span class="v" id="v-rg"></span>, inscrito no CPF sob o n.º <span class="v" id="v-cpf"></span>, titular da Carteira Nacional de Habilitação n.º <span class="v" id="v-cnh"></span>, categoria <span class="v" id="v-cat"></span>, válida até <span class="v" id="v-val"></span>, com a observação “exerce atividade remunerada” (EAR), residente e domiciliado na <span class="v" id="v-end"></span>, CEP <span class="v" id="v-cep"></span>.</p>
-
-<p>As partes acima identificadas têm, entre si, justo e acertado o presente Contrato de Locação de Automóvel Para uso em Aplicativos de Mobilidade, que se regerá pelas cláusulas seguintes e pelas condições descritas no presente.</p>
-
-<h3>Do objeto do contrato</h3>
-
-<p><span class="cl">CLÁUSULA PRIMEIRA.</span> O presente Contrato tem como OBJETO a locação do seguinte automóvel de responsabilidade da LOCADORA:</p>
-
-<p><b>Marca:</b> <span class="v" id="v-marca"></span><br>
-<b>Modelo:</b> <span class="v" id="v-modelo"></span><br>
-<b>Ano:</b> <span class="v" id="v-ano"></span><br>
-<b>Cor:</b> <span class="v" id="v-cor"></span><br>
-<b>Placa:</b> <span class="v" id="v-placa"></span><br>
-<b>Renavam:</b> <span class="v" id="v-renavam"></span><br>
-<b>Chassi:</b> <span class="v" id="v-chassi"></span></p>
-
-<p><b>§ 1.º</b> O VEÍCULO é entregue em perfeitas condições de uso, com as revisões e manutenções em dia, conforme Termo de Vistoria e Entrega (Anexo I), instruído com registro fotográfico datado, assinado por ambas as partes, que integra este instrumento para todos os fins de direito, servindo de parâmetro objetivo para a vistoria de devolução.</p>
-
-<p><b>§ 2.º</b> O VEÍCULO é entregue licenciado e segurado, apto à circulação. Compete exclusivamente ao LOCATÁRIO obter e manter vigentes o cadastro municipal e as demais autorizações exigidas para o transporte remunerado privado individual de passageiros, arcando com eventuais taxas.</p>
-
-<h3>Do uso</h3>
-
-<p><span class="cl">CLÁUSULA SEGUNDA.</span> O automóvel, objeto deste contrato, será utilizado exclusivamente pelo LOCATÁRIO para uso profissional nas plataformas UBER e 99 POP (ou outras plataformas de transporte de passageiros).</p>
-
-<p><b>§1.º</b> É expressamente vedado ao LOCATÁRIO: a) conduzir o VEÍCULO sem CNH válida ou estando suspenso/cassado o direito de dirigir; b) conduzir sob influência de álcool ou de qualquer substância psicoativa (arts. 165 e 306 do CTB); c) participar de competições, rachas ou manobras perigosas (art. 308 do CTB); d) permitir a condução por terceiro, ainda que familiar, a qualquer título; e) utilizar o VEÍCULO para transporte de cargas, mudanças, reboque, ou para qualquer atividade ilícita; f) instalar acessórios, adesivos, película fora do padrão legal, aparelhos de som ou GNV, ou alterar quaisquer características originais do VEÍCULO (arts. 98 e 230, VII, do CTB); g) retirar o VEÍCULO dos limites da Região Metropolitana de Curitiba sem autorização prévia da LOCADORA; h) remover, danificar ou desligar o equipamento de rastreamento.</p>
-
-<p><b>§2.º</b> A prática de qualquer das condutas referidas no parágrafo anterior constitui infração grave, autorizando a resolução imediata do contrato, a retomada do VEÍCULO, a retenção da caução e a exigência da multa contratual, sem prejuízo das perdas e danos (arts. 389, 402 e 570 do Código Civil).</p>
-
-<p><b>§3.º</b> Fica o LOCATÁRIO responsável por seguir as diretrizes e atender às exigências de credenciamento das referidas plataformas.</p>
-
-<p><span class="cl">CLÁUSULA TERCEIRA – DAS RESPONSABILIDADES DO LOCATÁRIO</span></p>
-
-<p>O LOCATÁRIO se compromete a:</p>
-
-<ol type="a">
-<li>Utilizar o veículo apenas para fins lícitos e dentro das normas de trânsito vigentes.</li>
-<li>Arcar com as despesas de combustível, pedágios, multas e eventuais danos causados ao veículo por mau uso.</li>
-<li>Não ceder, sublocar, emprestar ou entregar o VEÍCULO a terceiro, nem permitir que por terceiro seja conduzido, a qualquer título, gratuita ou onerosamente, ainda que se trate de cônjuge, companheiro, familiar ou preposto, e ainda que por período breve ou em situação de emergência.</li>
-<li>Devolver o veículo no mesmo estado de conservação em que recebeu, salvo desgastes naturais.</li>
-<li>O LOCATÁRIO responde civil, administrativa e criminalmente por quaisquer acidentes, infrações ou danos causados na condução do VEÍCULO durante a locação. Caso a LOCADORA venha a ser demandada por terceiro em razão de fato imputável ao LOCATÁRIO, fica desde já assegurado o direito de regresso pela integralidade do valor despendido, inclusive custas processuais e honorários advocatícios, na forma do art. 934 do Código Civil, obrigando-se ainda o LOCATÁRIO a requerer sua integração ao polo passivo da respectiva demanda.</li>
-<li>Comunicar à LOCADORA, <b>em até 24 (vinte e quatro) horas</b> da ocorrência, qualquer sinistro, colisão, furto, roubo, incêndio, apreensão, remoção ou avaria que envolva o VEÍCULO, ainda que de pequena monta e ainda que não pretenda acionar o seguro, lavrando <b>Boletim de Ocorrência</b> sempre que houver terceiro envolvido, vítima, suspeita de crime ou dano de origem desconhecida, e encaminhando cópia à LOCADORA no mesmo prazo.</li>
-<li>Permanecer no local do acidente até a chegada da autoridade de trânsito ou policial, na forma do art. 176 do Código de Trânsito Brasileiro, prestando as informações necessárias e colhendo, sempre que possível, a identificação e os dados do seguro dos demais envolvidos e das testemunhas.</li>
-<li><b>Abster-se de assumir culpa, firmar acordo, transigir ou realizar qualquer pagamento a terceiros</b> em razão de sinistro envolvendo o VEÍCULO, sem prévia e expressa anuência escrita da LOCADORA, sob pena de responder integralmente pelos prejuízos daí decorrentes.</li>
-<li>Apresentar o VEÍCULO, no local e na data indicados pela LOCADORA, para as <b>revisões preventivas</b> previstas pelo fabricante e para as <b>vistorias periódicas</b> de conservação, comunicando com antecedência mínima de 48 (quarenta e oito) horas a quilometragem apurada sempre que solicitado.</li>
-<li>Não reter o VEÍCULO após o término ou a resolução do contrato, ciente de que a recusa de devolução caracteriza <b>esbulho possessório</b> (art. 1.210 do Código Civil) e, em tese, o crime de <b>apropriação indébita</b> (art. 168 do Código Penal).</li>
-</ol>
-
-<p><b>Parágrafo único.</b> O descumprimento das alíneas "f" a "i" que resulte em perda, redução ou negativa de cobertura securitária, ou em agravamento do dano, transfere ao LOCATÁRIO a responsabilidade integral pelo prejuízo, independentemente de culpa no evento originário.</p>
-
-<p><span class="cl">CLÁUSULA QUARTA.</span> O LOCATÁRIO renuncia expressamente a qualquer indenização e ao direito de retenção por benfeitorias úteis ou voluptuárias que venha a realizar no VEÍCULO, as quais, se realizadas, incorporam-se ao bem sem direito a ressarcimento, na forma do art. 578 do Código Civil. Benfeitorias necessárias somente serão ressarcidas se previamente autorizadas por escrito pela LOCADORA.</p>
-
-<h3>Da devolução</h3>
-
-<p><span class="cl">CLÁUSULA QUINTA.</span> O LOCATÁRIO deverá devolver o automóvel à LOCADORA nas mesmas condições em que estava quando o recebeu, ou seja, em perfeitas condições de uso, conforme vistoria, respondendo pelos danos ou prejuízos causados.</p>
-
-<p><b>§1.º</b> A devolução dar-se-á no endereço R. Sergipe, 972, bairro Guaíra – Curitiba/PR, mediante Termo de Vistoria de Devolução, com a entrega do VEÍCULO nas mesmas condições constantes do Anexo I.</p>
-
-<p><b>§2.º</b> Não restituído o VEÍCULO no prazo, e uma vez notificado o LOCATÁRIO por qualquer meio idôneo (inclusive WhatsApp), incidirá aluguel-pena diário equivalente ao dobro do valor diário da locação, enquanto perdurar a retenção, respondendo ainda o LOCATÁRIO pelos danos que o VEÍCULO vier a sofrer, ainda que decorrentes de caso fortuito, tudo na forma do art. 575 do Código Civil, sem prejuízo da retomada judicial do bem.</p>
-
-<h3>Do prazo</h3>
-
-<p><span class="cl">CLÁUSULA SEXTA.</span> A locação vigorará pelo prazo determinado de <b>03 (três)</b> meses, com início em <b><span class="v" id="v-inicio"></span></b> e término em <b><span class="v" id="v-fim"></span></b>, <b>prorrogando-se automaticamente por períodos sucessivos e iguais</b>, mantidas todas as condições, salvo manifestação escrita em contrário de qualquer das partes com antecedência mínima de <b>10 (dez)</b> dias do termo final.</p>
-
-<p><b>§1.º</b> A prorrogação fica condicionada à inexistência de parcelas em aberto e à regularidade das obrigações contratuais.</p>
-
-<p><b>§2.º</b> Findo o prazo sem prorrogação, o VEÍCULO deverá ser restituído no mesmo dia, na forma da Cláusula Quinta.</p>
-
-<h3>Da rescisão</h3>
-
-<p><span class="cl">CLÁUSULA SÉTIMA.</span> É assegurada às partes a rescisão do presente contrato a qualquer momento, desde que haja comunicação à outra parte com antecedência mínima de 10 (dez) dias.</p>
-
-<p><b>§1.º</b> O inadimplemento contratual de quaisquer das partes justifica a rescisão, dispensado o prazo de comunicação.</p>
-
-<p><b>§2.º</b> Resolve-se o contrato <b>de pleno direito, independentemente de notificação ou interpelação judicial</b> (art. 474 do Código Civil), autorizada a retomada imediata do VEÍCULO, nas seguintes hipóteses: a) atraso superior a <b>05 (cinco)</b> dias no pagamento de qualquer parcela; b) uso do VEÍCULO em desacordo com as Cláusulas Segunda e Terceira; c) sublocação, empréstimo ou cessão a terceiro; d) suspensão ou cassação do direito de dirigir, ou vencimento da CNH sem renovação; e) descadastramento do LOCATÁRIO nas plataformas de mobilidade; f) sinistro com perda total, furto ou roubo do VEÍCULO; g) prestação de informação falsa na contratação; h) remoção, desligamento ou violação do equipamento de rastreamento.</p>
-
-<p><b>§3.º</b> Operada a resolução, o LOCATÁRIO obriga-se a restituir o VEÍCULO em até 24 (vinte e quatro) horas da comunicação, sob pena de incidência do aluguel-pena da Cláusula Quinta e das medidas possessórias cabíveis.</p>
-
-<p><span class="cl">CLÁUSULA OITAVA.</span> O descumprimento de qualquer obrigação contratual sujeitará a parte inadimplente ao pagamento de cláusula penal compensatória no valor de <b>R$ <span class="v" id="v-multa"></span> (<span class="v" id="v-multa-ext"></span>)</b>, sem prejuízo da resolução do contrato.</p>
-
-<p><b>§1.º</b> A multa moratória prevista na Cláusula Nona é cumulável com a presente, por se destinarem a inadimplementos distintos (arts. 409 e 411 do Código Civil).</p>
-
-<p><b>§2.º</b> Fica expressamente ressalvado o direito à indenização suplementar pelo prejuízo excedente ao valor da multa, na forma do art. 416, parágrafo único, do Código Civil, valendo a cláusula penal como mínimo indenizatório.</p>
-
-<p><b>§3.º</b> O valor da cláusula penal não excederá o valor da obrigação principal, na forma do art. 412 do Código Civil.</p>
-
-<h3>Do pagamento, da multa por inadimplemento e da caução</h3>
-
-<p><span class="cl">CLÁUSULA NONA.</span> O valor da locação é de <b>R$ <span class="v" id="v-semanal"></span> (<span class="v" id="v-semanal-ext"></span>)</b> por semana de forma adiantada por meio de transferência bancária para a conta de titularidade da LOCADORA, PIX, CPF: 799.571.029-15 (MARCOS AURÉLIO FRANCO, Caixa Econômica Federal) e comprovante da transferência enviada para o Whatsapp: (41) 99632-6375 ou (41) 99936-8839.</p>
-
-<p><b>§1.º</b> O pagamento é antecipado, vencendo-se <span class="v" id="v-dia"></span>. O inadimplemento constitui o LOCATÁRIO em mora de pleno direito, independentemente de interpelação (art. 397 do Código Civil), incidindo sobre o valor devido: a) multa moratória de 10% (dez por cento); b) juros de mora de 1% (um por cento) ao mês, <i>pro rata die</i> (art. 406 do Código Civil); c) correção monetária pelo IPCA/IBGE; e d) honorários advocatícios contratuais de 20% (vinte por cento) na hipótese de cobrança extrajudicial ou judicial, na forma dos arts. 389, 395 e 404 do Código Civil.</p>
-
-<p><b>§2.º</b> Os valores pagos serão imputados, sucessivamente, a despesas, multas de trânsito, encargos moratórios, cláusula penal e, por último, ao principal, na forma do art. 354 do Código Civil.</p>
-
-<p><b>§3.º</b> É vedado ao LOCATÁRIO reter, compensar ou abater unilateralmente qualquer valor da contraprestação, ainda que sob alegação de despesas realizadas com o VEÍCULO, ressalvada a hipótese de prévia autorização escrita da LOCADORA.</p>
-
-<p><span class="cl">CLÁUSULA DÉCIMA.</span> Para garantia do cumprimento das obrigações assumidas neste Contrato, o LOCATÁRIO entrega à LOCADORA, neste ato, a quantia de <b>R$ <span class="v" id="v-caucao"></span> (<span class="v" id="v-caucao-ext"></span>)</b>, a título de caução.</p>
-
-<p><b>§1º.</b> A caução será destinada à compensação de eventuais danos causados ao veículo locado, conforme avaliação a ser realizada no momento da devolução, bem como para cobertura de valores inadimplidos referentes à locação ou penalidades contratuais.</p>
-
-<p><b>§2º.</b> Inexistindo pendência financeira, infração contratual ou dano ao VEÍCULO, a caução será restituída em até <b>20 (vinte)</b> dias úteis contados da devolução. Havendo autuações de trânsito registradas no período da locação e ainda pendentes de notificação, julgamento ou pagamento, a restituição ficará suspensa até a respectiva quitação e baixa, hipótese em que a LOCADORA informará ao LOCATÁRIO, a cada 30 (trinta) dias, o saldo retido e sua justificativa.</p>
-
-<p><b>§3º.</b> Constatados danos ao veículo ou pendências financeiras, a LOCADORA poderá reter total ou parcialmente a caução, mediante apresentação de justificativa e dos comprovantes correspondentes.</p>
-
-<p><b>§4.º</b> Utilizada a caução, total ou parcialmente, durante a vigência do contrato, o LOCATÁRIO obriga-se a recompô-la integralmente em até 05 (cinco) dias, sob pena de resolução.</p>
-
-<p><b>§5.º</b> A caução não substitui o pagamento da contraprestação, sendo vedado ao LOCATÁRIO pretender quitar semanas de locação mediante sua utilização.</p>
-
-<p><b>§6.º</b> A caução não será remunerada e será restituída pelo valor nominal.</p>
-
-<h3>Da multa, impostos e encargos incidentes sobre o veículo</h3>
-
-<p><span class="cl">CLÁUSULA DÉCIMA PRIMEIRA.</span> Fica o LOCATÁRIO integralmente responsável pelas infrações de trânsito cometidas durante a locação, respondendo pelo pagamento das multas e pela assunção da respectiva pontuação, devendo para tal disponibilizar a documentação requerida e no prazo indicado pelo Departamento de Trânsito do Estado do Paraná – DETRAN/PR.</p>
-
-<p><span class="cl">CLÁUSULA DÉCIMA SEGUNDA.</span> Os impostos e encargos incidentes sobre o veículo, IPVA, licenciamento anual, seguro obrigatório de danos pessoais causados por veículos automotores, sob qualquer denominação legal, e taxas correlatas serão suportados exclusivamente pela LOCADORA.</p>
-
-<p><span class="cl">CLÁUSULA DÉCIMA TERCEIRA.</span> O VEÍCULO é objeto de seguro contratado e custeado pela LOCADORA com coberturas de casco (colisão, incêndio, furto e roubo), cujas condições gerais o LOCATÁRIO declara conhecer.</p>
-
-<p><b>§1.º</b> O LOCATÁRIO responde pelo pagamento da franquia, em qualquer sinistro ocorrido na constância da locação, salvo quando comprovadamente causado por terceiro identificado e por este integralmente ressarcido.</p>
-
-<p><b>§2.º</b> Responde o LOCATÁRIO integralmente pelo prejuízo, independentemente de cobertura securitária, quando o sinistro decorrer de conduta que implique perda da cobertura, notadamente: condução sob influência de álcool ou substância psicoativa, condução sem CNH válida, evasão do local do acidente, uso do VEÍCULO em atividade ilícita ou em desacordo com as Cláusulas Segunda e Terceira.</p>
-
-<p><b>§3.º</b> Em caso de furto, roubo ou perda total, o LOCATÁRIO responde pelas contraprestações vencidas até a data do sinistro, obrigando-se a fornecer, em até 48 (quarenta e oito) horas, toda a documentação exigida pela seguradora, respondendo pelos prejuízos decorrentes de sua omissão.</p>
-
-<p><span class="cl">CLÁUSULA DÉCIMA QUARTA.</span> Incumbe à LOCADORA manter o VEÍCULO em estado de servir ao uso a que se destina durante toda a locação, na forma do art. 566, inciso II, do Código Civil, observado o disposto nos parágrafos seguintes.</p>
-
-<p><b>§1.º</b> As manutenções preventivas e corretivas decorrentes do uso regular serão realizadas e custeadas pela LOCADORA, exclusivamente nos estabelecimentos por ela indicados, obrigando-se o LOCATÁRIO a apresentar o VEÍCULO na data agendada.</p>
-
-<p><b>§2.º</b> Respondem por conta do LOCATÁRIO os reparos decorrentes de mau uso, negligência, colisão, falta de fluidos, uso de combustível adulterado, danos à embreagem, aos pneus por atrito anormal, e demais avarias não caracterizáveis como desgaste natural.</p>
-
-<p><b>§3.º</b> Durante a paralisação do VEÍCULO para manutenção preventiva ou corretiva não imputável ao LOCATÁRIO, superior a 1 (um) dia, a LOCADORA suspenderá proporcionalmente a contraprestação, afastada, em qualquer caso, indenização por lucros cessantes.</p>
-
-<p><b>§4.º</b> Não haverá suspensão da contraprestação quando a paralisação decorrer de conduta imputável ao LOCATÁRIO.</p>
-
-<p><b>§5.º</b> Consideram-se desgaste natural os pneus com sulco superior a 1,6 mm (art. 230, XVIII, do CTB), respondendo o LOCATÁRIO pela substituição decorrente de corte, bolha, atrito com meio-fio ou desalinhamento por impacto.</p>
-
-<h3>Do foro</h3>
-
-<p><span class="cl">CLÁUSULA DÉCIMA QUINTA.</span> Para dirimir quaisquer controvérsias oriundas do CONTRATO, as partes elegem o foro da comarca de Curitiba/PR.</p>
-
-<p>Por estarem assim justos e contratados, firmam o presente instrumento, devidamente reconhecido em Cartório, em duas vias de igual teor, juntamente com 2 (duas) testemunhas.</p>
-
-<p><b><span class="v" id="v-assin"></span></b></p>
-
-<div class="assinaturas">
-  <div class="linha"></div>
-  <p>Vanessa Karpstein Franco</p>
-  <p>CPF: 043.579.599-69</p>
-  <p>(LOCADORA)</p>
-
-  <div class="linha"></div>
-  <p><span class="v" id="v-nome2"></span></p>
-  <p>CPF: <span class="v" id="v-cpf2"></span></p>
-  <p>(LOCATÁRIO)</p>
-</div>
-
-<div class="testemunhas">
-  <p>Testemunha 1: ______________________________ CPF: ____________________</p>
-  <p>Testemunha 2: ______________________________ CPF: ____________________</p>
-</div>
-
-</div>
+<div id="root"><div class="boot">Montando o plano…</div></div>
 
 <script>
-(function(){
-  "use strict";
+const EXAM="2026-10-11", START="2026-08-10", PHASE1_END="2026-09-29";
 
-  var estado = document.getElementById("estado"), relogio = null;
-  function avisar(txt, fixo){
-    estado.textContent = txt;
-    if(relogio) clearTimeout(relogio);
-    if(!fixo) relogio = setTimeout(function(){ estado.textContent=""; }, 4500);
+const DISC={
+  TI:{n:"Tecnologia & Cibersegurança",q:25,c:"#1F4E5F"},
+  PORT:{n:"Língua Portuguesa",q:25,c:"#3E6B52"},
+  CF:{n:"Ciências Forenses",q:10,c:"#7C4A3E"},
+  DIR:{n:"Bloco Jurídico",q:15,c:"#A32B21"},
+  RLM:{n:"Raciocínio Lógico-Mat.",q:5,c:"#4A5578"},
+  EST:{n:"Estatística",q:5,c:"#5E7B85"},
+  LEG:{n:"Legisl. Estadual/Instit.",q:5,c:"#9A7A18"},
+  PR:{n:"Realidade do Paraná",q:5,c:"#3F7A78"},
+  CONT:{n:"Contabilidade Geral",q:5,c:"#8A6A2F"},
+  REV:{n:"Revisão & Simulados",q:0,c:"#0F1418"}
+};
+const PASS={1:"1ª passada · teoria + questões",2:"2ª passada · revisão ativa",3:"3ª passada · revisão relâmpago",9:"treino de questões"};
+
+const BANK={
+ TI:[
+  {id:"a",p:3,t:"Segurança da informação: confidencialidade, integridade, disponibilidade, autenticidade e rastreabilidade; controle de acesso e autenticação"},
+  {id:"b",p:3,t:"Malware, ransomware, phishing, engenharia social e vulnerabilidades"},
+  {id:"c",p:3,t:"Criptografia, certificado e assinatura digital, backup e recuperação de dados"},
+  {id:"d",p:3,t:"Crimes cibernéticos, fraudes eletrônicas e invasão de dispositivos"},
+  {id:"e",p:3,t:"Evidências digitais: coleta, preservação, rastreabilidade e cadeia de custódia digital"},
+  {id:"f",p:3,t:"Redes: modelo TCP/IP, endereçamento IP, DNS, VPN, firewall, protocolos e portas"},
+  {id:"g",p:3,t:"Internet e intranet, navegadores, correio eletrônico, computação em nuvem e compartilhamento de arquivos"},
+  {id:"h",p:3,t:"Windows 11 (BR): interface, gerenciamento de arquivos, atalhos, contas e recursos de segurança"},
+  {id:"i",p:3,t:"Microsoft 365 (BR) e LibreOffice: Word, Excel (fórmulas e funções) e PowerPoint"},
+  {id:"j",p:3,t:"Fundamentos: hardware, software, periféricos, armazenamento, BIOS/UEFI, drivers e firmware"},
+  {id:"k",p:3,t:"Cookies, cache, metadados, registros eletrônicos, redes sociais e plataformas digitais"},
+  {id:"l",p:3,t:"LGPD (13.709/2018): fundamentos, bases legais, tratamento pelo poder público e para segurança pública"},
+  {id:"m",p:3,t:"Lei dos Crimes Informáticos (12.737/2012) e Lei 14.155/2021: invasão de dispositivo, furto e estelionato eletrônicos"},
+  {id:"n",p:3,t:"Inteligência cibernética e fontes abertas (OSINT)"},
+  {id:"o",p:3,t:"Políticas de segurança, segurança em redes e nuvem, prevenção e resposta a incidentes"},
+  {id:"p",p:2,t:"Marco Civil da Internet (12.965/2014): princípios, guarda de registros e requisição de dados"},
+  {id:"q",p:2,t:"Lógica de programação, aplicações web, HTML, CSS, JavaScript, bancos de dados e APIs"},
+  {id:"r",p:2,t:"Sigilo funcional e uso ético da tecnologia; Android e iOS"}],
+ PORT:[
+  {id:"a",p:3,t:"Interpretação e compreensão de texto: inferência, pressuposto, tese e intenção do autor"},
+  {id:"b",p:3,t:"Coesão, coerência e intertextualidade; organização estrutural dos textos"},
+  {id:"c",p:3,t:"Semântica: sentido próprio e figurado, sinônimos, antônimos, parônimos, hiperônimos; polissemia e ambiguidade"},
+  {id:"d",p:3,t:"Norma culta: regência, concordância verbal e nominal, colocação pronominal"},
+  {id:"e",p:3,t:"Crase, ortografia e acentuação gráfica"},
+  {id:"f",p:3,t:"Pontuação e sinais gráficos"},
+  {id:"g",p:3,t:"Classes de palavras: aspectos morfológicos, sintáticos, semânticos e textuais; modalizadores"},
+  {id:"h",p:3,t:"Sintaxe: termos e orações; ordem direta e inversa"},
+  {id:"i",p:3,t:"Reescrita: deslocamento, substituição, modificação, correção e problemas estruturais da frase"},
+  {id:"j",p:3,t:"Modos de organização discursiva e tipos textuais; textos literários e não literários"},
+  {id:"k",p:3,t:"Funções da linguagem, tipos de discurso, registros de linguagem e atos de comunicação"},
+  {id:"l",p:3,t:"Estrutura e formação de palavras, abreviação, vocabulário (neologismos, estrangeirismos, latinismos) e dicionários"}],
+ CF:[
+  {id:"a",p:2,t:"Criminalística: vestígios, indícios e evidências; local de crime, preservação e cadeia de custódia (arts. 158-A a 158-F do CPP)"},
+  {id:"b",p:2,t:"Identificação humana: papiloscopia, antropologia forense, odontologia legal, DNA, reconhecimento facial e IA pericial"},
+  {id:"c",p:2,t:"Tanatologia: morte, fenômenos cadavéricos, cronotanatognose e necropsia"},
+  {id:"d",p:2,t:"Traumatologia forense: lesões corporais e instrumentos lesivos"},
+  {id:"e",p:2,t:"Criminologia: conceito, objeto, métodos, escolas e criminologia crítica"},
+  {id:"f",p:2,t:"Teorias criminológicas: Chicago, anomia, associação diferencial, subcultura, labelling, janelas quebradas"},
+  {id:"g",p:2,t:"Vitimologia: classificação das vítimas, vitimização primária/secundária/terciária e vitimização digital"},
+  {id:"h",p:1,t:"Medicina legal: conceito, divisões, importância e perícia médico-legal"},
+  {id:"i",p:1,t:"Asfixiologia forense e balística forense"},
+  {id:"j",p:1,t:"Sexologia forense"},
+  {id:"k",p:1,t:"Toxicologia forense: intoxicações e exames toxicológicos"},
+  {id:"l",p:1,t:"Psicopatologia forense, imputabilidade penal e perícia psiquiátrica"},
+  {id:"m",p:1,t:"Documentoscopia, grafoscopia, análise documental e de assinaturas, falsificações"},
+  {id:"n",p:1,t:"Controle social, prevenção do delito, política criminal, perfil criminal e indicadores de criminalidade"},
+  {id:"o",p:1,t:"Criminologia digital: deep web, dark web, ambientes criminógenos e perfil do criminoso cibernético"}],
+ DIR:[
+  {id:"dh1",p:1,t:"Direitos Humanos — Teoria geral: conceito, características, princípios e evolução histórica (14,42% da disciplina)"},
+  {id:"dh2",p:1,t:"Direitos Humanos — Sistema global: ONU, DUDH, PIDCP e PIDESC"},
+  {id:"dh3",p:1,t:"Direitos Humanos — Sistema interamericano: Pacto de San José, Comissão e Corte IDH"},
+  {id:"dh4",p:1,t:"Direitos Humanos — CF/88 e tratados (§§ 2º e 3º do art. 5º; controle de convencionalidade)"},
+  {id:"dh5",p:1,t:"Direitos Humanos — Grupos vulneráveis: mulheres, idosos, crianças, indígenas, PCD, LGBTQIA+ e refugiados"},
+  {id:"dh6",p:1,t:"Direitos Humanos — Segurança pública: uso proporcional da força, prevenção da tortura, direitos da pessoa presa, Política Nacional e Agenda 2030"},
+  {id:"ad1",p:1,t:"Administrativo — Princípios da Administração Pública e LINDB aplicada"},
+  {id:"ad2",p:1,t:"Administrativo — Organização: direta, indireta, autarquias, fundações, EP e SEM"},
+  {id:"ad3",p:1,t:"Administrativo — Atos administrativos: requisitos, atributos, espécies, revogação, invalidação e convalidação"},
+  {id:"ad4",p:1,t:"Administrativo — Poderes administrativos, poder de polícia e abuso de poder"},
+  {id:"ad5",p:1,t:"Administrativo — Agentes públicos, investidura, deveres, responsabilidades e PAD"},
+  {id:"ad6",p:1,t:"Administrativo — Responsabilidade civil do Estado, improbidade (8.429/92 pós-14.230/21), controle e licitações (alto nível)"},
+  {id:"ct1",p:1,t:"Constitucional — Princípios fundamentais e direitos individuais e coletivos (art. 5º)"},
+  {id:"ct2",p:1,t:"Constitucional — Remédios constitucionais, nacionalidade, direitos políticos e sociais"},
+  {id:"ct3",p:1,t:"Constitucional — Organização do Estado, Poderes e controle de constitucionalidade"},
+  {id:"ct4",p:1,t:"Constitucional — Segurança pública (art. 144), atribuições das polícias e Constituição do Paraná"},
+  {id:"pen1",p:1,t:"Penal — Teoria do delito em questões FGV (15,69%): tipicidade, dolo/culpa, erro, ilicitude, culpabilidade, tentativa"},
+  {id:"pen2",p:1,t:"Penal — Aplicação da lei penal (8,76%), crimes contra a pessoa (9,12%) e contra a Administração (7,03%), só por questões"},
+  {id:"pen3",p:1,t:"Penal extravagante — Drogas, Desarmamento, Maria da Penha, Hediondos, ORCRIM e o novo Marco Legal do Crime Organizado (Lei 15.358/2026)"},
+  {id:"pp1",p:1,t:"Processo Penal — Inquérito, notitia/delatio criminis, indiciamento e garantias do investigado (por questões)"},
+  {id:"pp2",p:1,t:"Processo Penal — Provas, cadeia de custódia, reconhecimento de pessoas (art. 226 e jurisprudência) e busca e apreensão"},
+  {id:"pp3",p:1,t:"Processo Penal — Prisões, liberdade provisória, cautelares diversas, juiz das garantias e ANPP"}],
+ RLM:[
+  {id:"b",p:2,t:"Equivalências e negações lógicas (De Morgan, condicional) — ponto de atenção"},
+  {id:"a",p:1,t:"Proposições, conectivos e tabelas-verdade"},
+  {id:"c",p:1,t:"Quantificadores, predicados e negação de quantificadores"},
+  {id:"d",p:1,t:"Conjuntos, operações e diagramas"},
+  {id:"e",p:1,t:"Números inteiros, racionais e reais; operações; porcentagem e juros"},
+  {id:"f",p:1,t:"Proporcionalidade direta e inversa; regra de três simples e composta; divisão proporcional"},
+  {id:"g",p:1,t:"Medidas de comprimento, área, volume, massa e tempo"},
+  {id:"h",p:1,t:"Estrutura lógica de relações arbitrárias: associação lógica, verdades e mentiras"},
+  {id:"i",p:1,t:"Raciocínio verbal, sequencial, orientação espacial e temporal"},
+  {id:"j",p:1,t:"Interpretação de dados em gráficos e tabelas"},
+  {id:"k",p:1,t:"Problemas aritméticos, geométricos e matriciais"},
+  {id:"l",p:1,t:"Problemas de contagem e noções de probabilidade"},
+  {id:"m",p:1,t:"Geometria básica: ângulos, triângulos, polígonos, perímetro e área"},
+  {id:"n",p:1,t:"Plano cartesiano: coordenadas e distância"}],
+ EST:[
+  {id:"a",p:1,t:"Conceitos básicos, estatística descritiva e variáveis qualitativas/quantitativas"},
+  {id:"b",p:1,t:"Organização e apresentação de dados: tabelas, distribuição de frequências e gráficos"},
+  {id:"c",p:1,t:"Medidas de posição: média, mediana e moda"},
+  {id:"d",p:1,t:"Medidas de dispersão: amplitude, variância, desvio-padrão e coeficiente de variação"},
+  {id:"e",p:1,t:"Porcentagem, probabilidade básica e noções de amostragem"},
+  {id:"f",p:1,t:"Leitura de indicadores estatísticos; padrões, inconsistências e anomalias"},
+  {id:"g",p:1,t:"Detecção de outliers (boxplot, IQR, escore-z) e estatística aplicada a indicadores de criminalidade"}],
+ LEG:[
+  {id:"a",p:1,t:"Lei Orgânica da Polícia Civil do PR — Lei Estadual 23.213/2026 (lei novíssima: prioridade máxima)"},
+  {id:"b",p:1,t:"Estruturação das carreiras da PCPR — LC Estadual 259/2023 e alterações"},
+  {id:"c",p:1,t:"Código Disciplinar da PCPR — Lei Estadual 21.894/2024"},
+  {id:"d",p:1,t:"Lei Orgânica Nacional das Polícias Civis — Lei Federal 14.735/2023"},
+  {id:"e",p:1,t:"Constituição do Paraná: Administração Pública, servidores, segurança pública e Polícia Civil"},
+  {id:"f",p:1,t:"Estatuto dos servidores do PR — Lei 6.174/1970: provimento, vacância, direitos, deveres, sindicância e PAD"},
+  {id:"g",p:1,t:"Abuso de Autoridade (13.869/2019), Identificação Criminal (12.037/2009), LAI (12.527/2011) e LGPD institucional"}],
+ PR:[
+  {id:"a",p:1,t:"Aspectos históricos: formação territorial, processos coloniais, tropeirismo, Contestado e movimentos sociais"},
+  {id:"b",p:1,t:"Geografia física: relevo, clima, hidrografia e vegetação"},
+  {id:"c",p:1,t:"Geografia humana e econômica: população, densidade demográfica e atividades econômicas"},
+  {id:"d",p:1,t:"Divisão político-administrativa, municípios e regiões de desenvolvimento"},
+  {id:"e",p:1,t:"Cultura paranaense: patrimônio material e imaterial, festas, artes, literatura e música"},
+  {id:"f",p:1,t:"Indicadores sociais e econômicos: IDH, segurança pública, saúde, educação e mobilidade"},
+  {id:"g",p:1,t:"Governo estadual, políticas públicas, programas sociais e temas atuais do Paraná"}],
+ CONT:[
+  {id:"a",p:1,t:"Teoria e princípios, patrimônio, equação fundamental, contas e partidas dobradas"},
+  {id:"b",p:1,t:"Escrituração contábil: lançamentos, razonetes e balancete"},
+  {id:"c",p:1,t:"Demonstrações contábeis: Balanço Patrimonial e DRE (estrutura e leitura)"},
+  {id:"d",p:1,t:"Análise das demonstrações: liquidez, endividamento e rentabilidade"},
+  {id:"e",p:1,t:"Operações comerciais e bancárias, estoques, tributos sobre compras e vendas, folha e provisões"},
+  {id:"f",p:1,t:"Irregularidades contábeis, fraudes, inconsistências e indícios de ocultação patrimonial (item mais “policial” do edital)"},
+  {id:"g",p:1,t:"Custos, SIC, CPC/CFC e legislação societária — leitura panorâmica"}]
+};
+
+const DRILL={
+ TI:["Bateria FGV — segurança da informação e controle de acesso (30 questões)","Bateria FGV — malware, phishing e engenharia social (30 questões)","Bateria FGV — redes, IP, DNS, VPN e firewall (30 questões)","Bateria FGV — Windows 11 e Microsoft 365/Excel (30 questões)","Bateria FGV — LGPD, Marco Civil e crimes informáticos (30 questões)","Bateria FGV — crimes cibernéticos, evidências digitais e OSINT (30 questões)","Simulado temático de TI — 25 questões em 50 minutos, sem consulta"],
+ PORT:["Bateria FGV — interpretação: 2 textos longos, 15 questões cronometradas","Bateria FGV — crase, pontuação e concordância (30 questões)","Bateria FGV — semântica, parônimos e ambiguidade (30 questões)","Bateria FGV — reescrita de frases e norma culta (30 questões)","Bateria FGV — coesão, coerência e tipologia textual (30 questões)","Simulado temático de Português — 25 questões em 50 minutos"],
+ CF:["Bateria — criminalística, local de crime e cadeia de custódia (25 questões)","Bateria — medicina legal: tanatologia, traumatologia e identificação (25 questões)","Bateria — criminologia, teorias e vitimologia (25 questões)","Simulado temático de Ciências Forenses — 15 questões"],
+ DIR:["Bateria FGV — Direitos Humanos (25 questões)","Bateria FGV — Direito Administrativo (25 questões)","Bateria FGV — Direito Constitucional (25 questões)","Bateria FGV — Penal e Processo Penal (30 questões)","Simulado temático jurídico — 15 questões mistas"],
+ RLM:["Bateria — lógica proposicional, equivalências e negações (25 questões)","Bateria — porcentagem, juros, proporcionalidade e regra de três (25 questões)","Bateria — conjuntos, contagem e probabilidade (25 questões)","Bateria — gráficos, tabelas e problemas aritméticos (25 questões)","Bateria — geometria e plano cartesiano (20 questões)"],
+ EST:["Bateria — medidas de posição e dispersão (25 questões)","Bateria — tabelas de frequência e gráficos (25 questões)","Bateria — probabilidade, amostragem e outliers (25 questões)","Bateria — indicadores de criminalidade e leitura de dados (20 questões)"],
+ LEG:["Lei seca comentada — Lei 23.213/2026 (Lei Orgânica da PCPR) + questões","Lei seca comentada — LC 259/2023 e Lei 21.894/2024 + questões","Lei seca comentada — Lei 14.735/2023 e Lei 6.174/1970 + questões","Bateria — Constituição do PR, Abuso de Autoridade, LAI e LGPD (25 questões)"],
+ PR:["Bateria — história e geografia do Paraná (25 questões)","Bateria — cultura, indicadores e temas atuais do PR (25 questões)","Flashcards e mapa mental da Realidade do Paraná"],
+ CONT:["Bateria — patrimônio, contas e escrituração (20 questões)","Bateria — demonstrações contábeis e análise (20 questões)","Bateria — fraudes contábeis e ocultação patrimonial (15 questões)"]
+};
+const REV_CYCLE=[
+ {t:"Revisão da semana: releitura ativa dos resumos e refazimento integral do caderno de erros",min:150},
+ {t:"SIMULADO FGV — 100 questões cronometradas, das 13h às 18h, sem consulta",min:300}];
+
+const TEMPLATE={1:["TI","TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PORT","PORT","CF","LEG","TI","DIR","PORT","ERR"],4:["TI","CF","EST"],5:["TI","TI","PORT","RLM","CF","PORT","TI","CONT","PR","ERR"],6:["TI","TI","PORT","CF","DIR","LEG","EST"],0:["PORT","TI","RLM","REV"]};
+const TIMES={1:["19:30","20:30","21:30","22:30","23:30"],2:["07:30","08:30","09:30"],3:["07:30","08:30","09:30","10:30","18:30","19:30","20:30","21:30","22:30","23:30"],4:["07:30","08:30","09:30"],5:["07:30","08:30","09:30","10:30","18:30","19:30","20:30","21:30","22:30","23:30"],6:["08:30","09:30","10:30","11:30","14:00","15:00","16:00"],0:["08:30","09:30","10:30","13:00"]};
+const JANELA={1:"19h30–00h",2:"7h30–10h30",3:"7h30–11h30 · 18h30–00h",4:"7h30–10h30",5:"7h30–11h30 · 18h30–00h",6:"8h30–12h20 · 14h–16h50",0:"8h30–11h20 · 13h"};
+
+const RETA={
+ "2026-09-30":[["TI",3,"Revisão relâmpago: segurança da informação e criptografia + 30 questões",50,"07:30"],["TI",3,"Revisão relâmpago: malware, phishing e engenharia social + 30 questões",50,"08:30"],["PORT",9,"Interpretação FGV — 15 questões cronometradas",50,"09:30"],["LEG",1,"Lei seca: Lei 23.213/2026 (Lei Orgânica da PCPR)",50,"10:30"],["CF",2,"Cadeia de custódia (158-A a 158-F) e criminalística",50,"18:30"],["TI",3,"Revisão: redes, IP, DNS, VPN e firewall",50,"19:30"],["DIR",1,"Direitos Humanos: teoria geral e sistemas de proteção",50,"20:30"],["PORT",3,"Crase, pontuação e concordância",50,"21:30"],["RLM",2,"Proposicional, equivalências e negações",50,"22:30"],["REV",1,"Caderno de erros do dia",30,"23:30"]],
+ "2026-10-01":[["TI",3,"Revisão: Windows 11 e Excel (fórmulas mais cobradas)",50,"07:30"],["CF",2,"Revisão relâmpago de medicina legal: tanatologia e traumatologia",50,"08:30"],["EST",1,"Medidas de posição, dispersão e outliers — 20 questões",50,"09:30"]],
+ "2026-10-02":[["TI",3,"Revisão: LGPD, Marco Civil, Leis 12.737/2012 e 14.155/2021",50,"07:30"],["TI",3,"Revisão: crimes cibernéticos, evidências digitais e OSINT",50,"08:30"],["PORT",3,"Semântica e reescrita de frases",50,"09:30"],["LEG",1,"Lei seca: LC 259/2023 e Lei 21.894/2024",50,"10:30"],["DIR",1,"Administrativo: atos, poderes, agentes públicos e improbidade",50,"18:30"],["DIR",1,"Constitucional: art. 5º, art. 144 e Constituição do PR",50,"19:30"],["CONT",1,"Demonstrações contábeis e indícios de ocultação patrimonial",50,"20:30"],["PR",1,"Revisão geral da Realidade do Paraná",50,"21:30"],["CF",2,"Criminologia, teorias e vitimologia",50,"22:30"],["REV",1,"Caderno de erros do dia",30,"23:30"]],
+ "2026-10-03":[["REV",1,"SIMULADO FINAL — 100 questões, das 13h às 18h, nas condições exatas da prova",300,"13:00"]],
+ "2026-10-04":[["REV",1,"Correção detalhada do simulado final, questão por questão",150,"08:30"],["REV",1,"Refazimento dos erros e anotação dos padrões que se repetem",60,"11:30"],["REV",1,"Revisão dirigida só dos tópicos que você errou no simulado",60,"14:00"]],
+ "2026-10-05":[["TI",3,"Revisão geral de segurança da informação e incidentes",50,"19:30"],["PORT",9,"Bateria final de interpretação — 15 questões",50,"20:30"],["DIR",1,"Penal e Processo Penal: bateria de questões FGV",50,"21:30"],["LEG",1,"Lei seca: Lei 14.735/2023 e Lei 6.174/1970",50,"22:30"],["REV",1,"Caderno de erros do dia",30,"23:30"]],
+ "2026-10-06":[["TI",3,"Revisão: fundamentos, nuvem, navegadores e correio eletrônico",50,"07:30"],["CF",2,"Revisão: identificação humana e criminalística",50,"08:30"],["EST",1,"Questões mistas de Estatística e RLM",50,"09:30"]],
+ "2026-10-07":[["REV",1,"Caderno de erros de TI — releitura integral",50,"07:30"],["PORT",9,"Interpretação — 15 questões",50,"08:30"],["LEG",1,"Flashcards de legislação institucional",50,"09:30"],["PR",1,"Flashcards da Realidade do Paraná",50,"10:30"],["DIR",1,"Direitos Humanos — revisão final por incidência",50,"18:30"],["CF",2,"Ciências Forenses — revisão relâmpago geral",50,"19:30"],["TI",3,"TI — revisão relâmpago geral",50,"20:30"],["REV",1,"Caderno de erros do dia e fechamento (dormir antes das 00h)",30,"21:30"]],
+ "2026-10-08":[["REV",1,"Caderno de erros geral — todas as matérias",50,"07:30"],["TI",3,"Resumo final de TI: os 10 pontos que mais caem",50,"08:30"],["PORT",9,"15 questões de interpretação para manter o ritmo",50,"09:30"]],
+ "2026-10-09":[["REV",1,"Revisão passiva: resumos de TI e cibersegurança",50,"07:30"],["REV",1,"Revisão passiva: Direitos Humanos e legislação institucional",50,"08:30"],["REV",1,"Revisão passiva: Realidade do Paraná e Ciências Forenses",50,"09:30"],["REV",1,"Fechamento leve. Noite livre: dormir cedo e ajustar o relógio",30,"10:30"]],
+ "2026-10-10":[["REV",1,"Revisão passiva leve, no máximo 90 minutos. Nada de conteúdo novo",90,"09:00"],["REV",1,"Logística: documento oficial com foto, canetas, local de prova (divulgado em 05/10), trajeto e horário de chegada",20,"10:30"]],
+ "2026-10-11":[["REV",1,"PROVA OBJETIVA — 13h às 18h · 100 questões · corte de 50 pontos",300,"13:00"]]
+};
+
+/* ---------- datas ---------- */
+const d2s=d=>d.toISOString().slice(0,10);
+const s2d=s=>{const[y,m,dd]=s.split("-").map(Number);return new Date(y,m-1,dd,12,0,0)};
+const addD=(s,n)=>{const d=s2d(s);d.setDate(d.getDate()+n);return d2s(d)};
+const WD=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
+const fmt=s=>{const d=s2d(s);return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")};
+function today(){const n=new Date();const t=d2s(new Date(n.getFullYear(),n.getMonth(),n.getDate(),12));return t<START?START:t}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function safeUrl(u){u=String(u||"").trim();return /^(https?:|\.\/|\/|[\w\-.]+\/)/i.test(u)?u:""}
+
+/* ---------- geração ---------- */
+function buildQueues(){
+  const qs={};
+  for(const d in BANK){
+    const a=[],maxP=Math.max.apply(null,BANK[d].map(x=>x.p));
+    for(let k=1;k<=maxP;k++)BANK[d].forEach(t=>{if(t.p>=k)a.push({id:d+"."+t.id+".p"+k,disc:d,title:t.t,pass:k,min:50})});
+    qs[d]=a;
   }
-
-  /* ---------- número por extenso ---------- */
-  var U=["","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
-         "onze","doze","treze","quatorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
-  var D=["","","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
-  var C=["","cento","duzentos","trezentos","quatrocentos","quinhentos","seiscentos","setecentos","oitocentos","novecentos"];
-
-  function ate999(n){
-    if(n === 0) return "";
-    if(n === 100) return "cem";
-    var p=[], c=Math.floor(n/100), r=n%100;
-    if(c) p.push(C[c]);
-    if(r){
-      if(r < 20) p.push(U[r]);
-      else{
-        var d=Math.floor(r/10), u=r%10;
-        p.push(u ? D[d]+" e "+U[u] : D[d]);
-      }
-    }
-    return p.join(" e ");
-  }
-
-  function extensoInteiro(n){
-    if(n === 0) return "zero";
-    var partes=[];
-    var mi=Math.floor(n/1000000), mil=Math.floor((n%1000000)/1000), res=n%1000;
-    if(mi) partes.push(mi === 1 ? "um milhão" : ate999(mi)+" milhões");
-    if(mil) partes.push(mil === 1 ? "mil" : ate999(mil)+" mil");
-    if(res) partes.push(ate999(res));
-    if(partes.length < 2) return partes.join("");
-    var ultimo = partes.pop();
-    var junta = (res === 0 || res < 100 || res % 100 === 0) ? " e " : ", ";
-    return partes.join(", ") + junta + ultimo;
-  }
-
-  function extensoReais(centavos){
-    var i=Math.floor(centavos/100), c=centavos%100, p=[];
-    if(i) p.push(extensoInteiro(i) + (i === 1 ? " real" : " reais"));
-    if(c) p.push(extensoInteiro(c) + (c === 1 ? " centavo" : " centavos"));
-    if(!p.length) return "zero reais";
-    return p.join(" e ");
-  }
-
-  /* aceita "650", "650,00", "1.200,50", "1200.5" */
-  function paraCentavos(txt){
-    if(!txt) return null;
-    var s = String(txt).trim().replace(/[R$\s]/g,"");
-    if(s.indexOf(",") > -1) s = s.replace(/\./g,"").replace(",",".");
-    else s = s.replace(/\./g,"");   /* sem vírgula, o ponto é separador de milhar */
-    var n = parseFloat(s);
-    if(isNaN(n) || n < 0) return null;
-    return Math.round(n*100);
-  }
-  function moeda(centavos){
-    var s = (centavos/100).toFixed(2).replace(".",",");
-    return s.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
-  /* ---------- datas ---------- */
-  var MESES=["janeiro","fevereiro","março","abril","maio","junho","julho",
-             "agosto","setembro","outubro","novembro","dezembro"];
-  function z(n){ n=String(n); return n.length<2 ? "0"+n : n; }
-  function partesData(iso){
-    if(!iso) return null;
-    var p = iso.split("-");
-    if(p.length !== 3) return null;
-    return {a:+p[0], m:+p[1], d:+p[2]};
-  }
-  function curta(iso){
-    var p = partesData(iso);
-    return p ? z(p.d)+"/"+z(p.m)+"/"+p.a : "";
-  }
-  function porExtenso(iso){
-    var p = partesData(iso);
-    return p ? "Curitiba, "+z(p.d)+" de "+MESES[p.m-1]+" de "+p.a : "";
-  }
-  function somaMeses(iso, n){
-    var p = partesData(iso);
-    if(!p) return "";
-    var d = new Date(p.a, p.m-1+n, p.d);
-    return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate());
-  }
-
-  /* ---------- CPF ---------- */
-  function mascaraCPF(v){
-    var n = v.replace(/\D/g,"").slice(0,11);
-    if(n.length > 9) return n.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,"$1.$2.$3-$4");
-    if(n.length > 6) return n.replace(/(\d{3})(\d{3})(\d{1,3})/,"$1.$2.$3");
-    if(n.length > 3) return n.replace(/(\d{3})(\d{1,3})/,"$1.$2");
-    return n;
-  }
-  function cpfValido(v){
-    var n = v.replace(/\D/g,"");
-    if(n.length !== 11 || /^(\d)\1{10}$/.test(n)) return false;
-    for(var k=9;k<=10;k++){
-      var s=0;
-      for(var i=0;i<k;i++) s += +n[i]*((k+1)-i);
-      if(((s*10)%11)%10 !== +n[k]) return false;
-    }
-    return true;
-  }
-  function mascaraCEP(v){
-    var n = v.replace(/\D/g,"").slice(0,8);
-    return n.length > 5 ? n.slice(0,5)+"-"+n.slice(5) : n;
-  }
-
-  /* ---------- ligação campo → contrato ---------- */
-  function põe(id, texto, vazio){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if(texto){ el.textContent = texto; el.classList.remove("vazio"); }
-    else { el.textContent = vazio || "____________"; el.classList.add("vazio"); }
-  }
-
-  var campos = ["c-nome","c-rg","c-cpf","c-cnh","c-cat","c-val","c-end","c-cep",
-                "c-marca","c-modelo","c-ano","c-cor","c-placa","c-renavam","c-chassi",
-                "c-inicio","c-fim","c-semanal","c-dia","c-caucao","c-multa","c-assin"];
-  function g(id){ return document.getElementById(id).value.trim(); }
-
-  function render(){
-    põe("v-nome", g("c-nome"), "____________________________");
-    põe("v-nome2", g("c-nome"), "____________________________");
-    põe("v-rg", g("c-rg"), "_____________");
-    põe("v-cpf", g("c-cpf"), "_______________");
-    põe("v-cpf2", g("c-cpf"), "_______________");
-    põe("v-cnh", g("c-cnh"), "_____________");
-    põe("v-cat", g("c-cat").toUpperCase(), "____");
-    põe("v-val", curta(g("c-val")), "__/__/____");
-    põe("v-end", g("c-end"), "________________________________");
-    põe("v-cep", g("c-cep"), "__________");
-
-    põe("v-marca", g("c-marca"), "____________");
-    põe("v-modelo", g("c-modelo"), "____________");
-    põe("v-ano", g("c-ano"), "______");
-    põe("v-cor", g("c-cor"), "__________");
-    põe("v-placa", g("c-placa").toUpperCase(), "__________");
-    põe("v-renavam", g("c-renavam"), "_____________");
-    põe("v-chassi", g("c-chassi").toUpperCase(), "___________________");
-
-    põe("v-inicio", curta(g("c-inicio")), "__/__/____");
-    põe("v-fim", curta(g("c-fim")), "__/__/____");
-
-    var dia = g("c-dia");
-    var artigo = /-feira$/.test(dia) ? "toda " : "todo ";
-    põe("v-dia", dia ? artigo + dia : "", "____________");
-
-    [["c-semanal","v-semanal","v-semanal-ext"],
-     ["c-caucao","v-caucao","v-caucao-ext"],
-     ["c-multa","v-multa","v-multa-ext"]].forEach(function(t){
-      var cts = paraCentavos(g(t[0]));
-      põe(t[1], cts === null ? "" : moeda(cts), "________");
-      põe(t[2], cts === null ? "" : extensoReais(cts), "________________________");
+  qs.REV=[];for(let i=0;i<9;i++){const r=REV_CYCLE[i%2];qs.REV.push({id:"REV.c"+i,disc:"REV",title:r.t,pass:1,min:r.min})}
+  return qs;
+}
+function generate(){
+  const qs=buildQueues(),plan={},ptr={},dr={};
+  for(const k in qs)ptr[k]=0; for(const k in DRILL)dr[k]=0;
+  let cur=START;
+  while(cur<=PHASE1_END){
+    const wd=s2d(cur).getDay(),slots=TEMPLATE[wd],ts=TIMES[wd];plan[cur]=[];
+    slots.forEach((d,i)=>{
+      if(d==="ERR"){plan[cur].push({id:"E."+cur,disc:"REV",title:"Caderno de erros: registrar e refazer os erros do dia",pass:1,min:30,date:cur,time:ts[i]});return}
+      const q=qs[d];
+      if(ptr[d]<q.length){const t=q[ptr[d]++];plan[cur].push(Object.assign({},t,{date:cur,time:ts[i]}))}
+      else if(DRILL[d]){const n=dr[d]++;plan[cur].push({id:d+".d"+n,disc:d,title:DRILL[d][n%DRILL[d].length],pass:9,min:50,date:cur,time:ts[i]})}
     });
+    cur=addD(cur,1);
+  }
+  for(const day in RETA)plan[day]=RETA[day].map((b,i)=>({id:"F."+day+"."+i,disc:b[0],pass:b[1],title:b[2],min:b[3],time:b[4],date:day}));
+  return plan;
+}
+const PLAN=generate();
+/* chave de material: passadas do mesmo tópico compartilham o mesmo PDF */
+function matKey(t){const p=String(t.id).split(".");return(p.length>=3&&/^p\d+$/.test(p[2]))?p[0]+"."+p[1]:t.id}
 
-    põe("v-assin", porExtenso(g("c-assin")), "Curitiba, ____ de ______________ de ______");
+/* ---------- estado ---------- */
+let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:[]};
+let TAB="plano",FILTER="all",ONLYOPEN=false;
 
-    var nome = g("c-nome");
-    document.title = nome ? "Contrato de Locação — " + nome : "Contrato de Locação";
+async function load(){try{const r=await window.storage.get("pcpr-v3");if(r&&r.value)STATE=Object.assign(STATE,JSON.parse(r.value))}catch(e){}}
+let sT=null;function save(){clearTimeout(sT);sT=setTimeout(async()=>{try{await window.storage.set("pcpr-v3",JSON.stringify(STATE))}catch(e){}},250)}
+
+function tasksByDay(){
+  const map={};
+  for(const day in PLAN)PLAN[day].forEach(t=>{
+    if(STATE.removed[t.id])return;const d=STATE.moved[t.id]||t.date;
+    (map[d]=map[d]||[]).push(Object.assign({},t,{date:d,title:STATE.edited[t.id]||t.title}));
+  });
+  for(const day in STATE.custom)STATE.custom[day].forEach(t=>{
+    if(STATE.removed[t.id])return;const d=STATE.moved[t.id]||day;
+    (map[d]=map[d]||[]).push(Object.assign({},t,{date:d,title:STATE.edited[t.id]||t.title}));
+  });
+  for(const d in map)map[d].sort((a,b)=>(a.time||"99").localeCompare(b.time||"99"));
+  return map;
+}
+
+/* ---------- desempenho ---------- */
+function accColor(a){return a>=.75?"#2E6B4F":a>=.6?"#9A7A18":a>=.45?"#B8631F":"#A32B21"}
+function discAcc(logs){
+  const by={};logs.forEach(l=>{(by[l.disc]=by[l.disc]||[]).push(l)});
+  const out={};
+  for(const d in by){
+    const last=by[d].slice(-4);
+    const h=last.reduce((a,l)=>a+l.hit,0),t=last.reduce((a,l)=>a+l.tot,0);
+    if(t>0)out[d]={a:h/t,h:h,t:t,n:by[d].length};
+  }
+  return out;
+}
+function projected(logs){
+  const acc=discAcc(logs);
+  const H=logs.reduce((a,l)=>a+l.hit,0),T=logs.reduce((a,l)=>a+l.tot,0);
+  const base=T>0?H/T:0;
+  let s=0,known=0;
+  for(const k in DISC){if(!DISC[k].q)continue;
+    if(acc[k]){s+=DISC[k].q*acc[k].a;known+=DISC[k].q}else s+=DISC[k].q*base}
+  return{score:s,known:known,geral:base,H:H,T:T,acc:acc};
+}
+function timeline(){
+  const ls=STATE.logs.slice().sort((a,b)=>a.d.localeCompare(b.d));
+  const dates=[...new Set(ls.map(l=>l.d))];
+  return dates.map(d=>({d:d,v:projected(ls.filter(l=>l.d<=d)).score}));
+}
+
+function lineChart(pts){
+  if(pts.length<1)return '<div class="empty">Registre ao menos uma bateria de questões para o gráfico aparecer.</div>';
+  const W=640,H=210,L=32,R=10,T=14,B=24,iw=W-L-R,ih=H-T-B;
+  const n=pts.length,x=i=>L+(n===1?iw/2:iw*i/(n-1)),y=v=>T+ih-(ih*Math.max(0,Math.min(100,v))/100);
+  let d="",area="";
+  pts.forEach((p,i)=>{d+=(i?" L":"M")+x(i).toFixed(1)+" "+y(p.v).toFixed(1)});
+  area="M"+x(0).toFixed(1)+" "+(T+ih)+" L"+d.slice(1)+" L"+x(n-1).toFixed(1)+" "+(T+ih)+" Z";
+  let g="";[0,25,50,75,100].forEach(v=>{
+    g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="'+(v===50?"#A32B21":"#E1E3DD")+'" stroke-width="1"'+(v===50?' stroke-dasharray="4 3"':'')+'/>';
+    g+='<text class="axis" x="'+(L-6)+'" y="'+(y(v)+3)+'" text-anchor="end">'+v+'</text>';
+  });
+  let dots="";pts.forEach((p,i)=>{dots+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.v).toFixed(1)+'" r="3.2" fill="#0F1418"/>'});
+  let lab="";[0,Math.floor((n-1)/2),n-1].filter((v,i,a)=>a.indexOf(v)===i&&v>=0).forEach(i=>{
+    lab+='<text class="axis" x="'+x(i).toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle">'+fmt(pts[i].d)+'</text>'});
+  const last=pts[pts.length-1].v;
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Evolução da nota projetada">'+g+
+   '<path d="'+area+'" fill="rgba(31,78,95,.10)"/><path d="'+d+'" fill="none" stroke="#1F4E5F" stroke-width="2.2" stroke-linejoin="round"/>'+dots+lab+
+   '<text class="axis" x="'+(W-R)+'" y="'+(y(last)-9)+'" text-anchor="end" style="fill:#0F1418;font-weight:700">'+last.toFixed(0)+' pts</text></svg>';
+}
+function ring(pc){
+  const r=26,c=2*Math.PI*r;
+  return '<svg class="ring" width="66" height="66" viewBox="0 0 66 66" role="img" aria-label="'+pc+'% do dia concluído">'+
+   '<circle cx="33" cy="33" r="'+r+'" fill="none" stroke="#E1E3DD" stroke-width="6"/>'+
+   '<circle cx="33" cy="33" r="'+r+'" fill="none" stroke="'+(pc>=100?"#2E6B4F":"#A32B21")+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+(c*(1-pc/100)).toFixed(1)+'" transform="rotate(-90 33 33)"/>'+
+   '<text x="33" y="37" text-anchor="middle" style="font:700 15px var(--mono);fill:#0F1418">'+pc+'</text></svg>';
+}
+
+/* ---------- modal ---------- */
+let MODAL=null;
+function openModal(cfg){MODAL=cfg;render();setTimeout(()=>{const f=document.querySelector(".mdl-c input,.mdl-c select");if(f)f.focus()},30)}
+function closeModal(){MODAL=null;render()}
+function modalHtml(){
+  if(!MODAL)return"";
+  let f="";
+  MODAL.fields.forEach((x,i)=>{
+    f+='<div class="fld"><label for="f'+i+'">'+esc(x.label)+'</label>';
+    if(x.type==="select")f+='<select id="f'+i+'">'+x.options.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===x.value?" selected":"")+'>'+esc(o[1])+'</option>').join("")+'</select>';
+    else f+='<input id="f'+i+'" type="'+(x.type||"text")+'" value="'+esc(x.value==null?"":x.value)+'" placeholder="'+esc(x.ph||"")+'"'+(x.type==="number"?' min="0"':'')+'>';
+    if(x.hint)f+='<div class="hint">'+x.hint+'</div>';
+    f+='</div>';
+  });
+  return '<div class="mdl" id="mdl"><div class="mdl-c" role="dialog" aria-modal="true"><h4>'+esc(MODAL.title)+'</h4>'+
+   (MODAL.sub?'<p class="sub">'+MODAL.sub+'</p>':'')+f+
+   '<div class="mdl-a">'+(MODAL.extra?'<button class="btn warn" id="mdlX">'+esc(MODAL.extra)+'</button>':'')+
+   '<span class="spacer"></span><button class="btn" id="mdlC">Cancelar</button><button class="btn pri" id="mdlS">'+esc(MODAL.ok||"Salvar")+'</button></div></div></div>';
+}
+
+/* ---------- render ---------- */
+function render(){
+  const map=tasksByDay(),tod=today(),days=Object.keys(map).sort();
+  const dleft=Math.round((s2d(EXAM)-s2d(tod))/864e5);
+  let doneAll=0,totAll=0;const per={};
+  for(const day in map)map[day].forEach(t=>{
+    if(t.disc==="REV")return;
+    per[t.disc]=per[t.disc]||{d:0,t:0};per[t.disc].t++;totAll++;
+    if(STATE.done[t.id]){per[t.disc].d++;doneAll++}
+  });
+  const P=projected(STATE.logs);
+  const cls=P.T===0?"":(P.score>=70?"good":P.score>=50?"mid":"bad");
+
+  let cells="",legend="";
+  for(const k in DISC){if(!DISC[k].q)continue;
+    const p=per[k]?per[k].d/Math.max(per[k].t,1):0,f=Math.round(DISC[k].q*p);
+    for(let i=0;i<DISC[k].q;i++)cells+='<div class="q'+(i<f?" on":"")+'" style="background:'+DISC[k].c+'"></div>';
+    legend+='<div><span class="dot" style="background:'+DISC[k].c+'"></span>'+esc(DISC[k].n)+' · '+DISC[k].q+'q</div>';
   }
 
-  campos.forEach(function(id){
-    var el = document.getElementById(id);
-    el.addEventListener("input", render);
-    el.addEventListener("change", render);
-  });
+  const head='<header class="hd"><div class="inner"><div class="hd-grid"><div>'+
+   '<div class="eyebrow">PCPR 2026 · Agente de Polícia Judiciária · banca FGV</div>'+
+   '<h1>Plano de ataque<br><em>por peso de prova</em></h1></div>'+
+   '<div class="metrics"><div class="metric"><b>'+dleft+'</b><i>dias até 11/10</i></div>'+
+   '<div class="metric '+cls+'"><b>'+(P.T?P.score.toFixed(0):"—")+'</b><i>nota projetada /100</i></div>'+
+   '<div class="metric"><b>'+Math.round(100*doneAll/Math.max(totAll,1))+'%</b><i>plano cumprido</i></div></div>'+
+   '</div></div></header>'+
+   '<section class="sig"><div class="inner"><div class="sig-lab"><span>as 100 questões da prova, coloridas por matéria</span><span>'+doneAll+' de '+totAll+' blocos concluídos</span></div>'+
+   '<div class="grid100">'+cells+'</div><div class="legend">'+legend+'</div></div></section>'+
+   '<nav class="nav"><div class="nav-in" role="tablist">'+
+   [["plano","Cronograma"],["desemp","Desempenho"],["mat","Materiais"],["ajuda","Como usar"]].map(t=>
+     '<button class="tab" role="tab" aria-selected="'+(TAB===t[0])+'" data-tab="'+t[0]+'">'+t[1]+'</button>').join("")+
+   '</div></nav>';
 
-  /* máscaras e conferências */
-  var elCpf = document.getElementById("c-cpf"), erroCpf = document.getElementById("e-cpf");
-  elCpf.addEventListener("input", function(){
-    var pos = elCpf.selectionStart === elCpf.value.length;
-    elCpf.value = mascaraCPF(elCpf.value);
-    if(pos) elCpf.selectionStart = elCpf.selectionEnd = elCpf.value.length;
-    var n = elCpf.value.replace(/\D/g,"");
-    erroCpf.textContent = (n.length === 11 && !cpfValido(elCpf.value)) ? "CPF não confere — verifique" : "";
-    render();
-  });
-  var elCep = document.getElementById("c-cep");
-  elCep.addEventListener("input", function(){ elCep.value = mascaraCEP(elCep.value); render(); });
+  let main="";
+  if(TAB==="plano")main=viewPlano(map,tod,per);
+  else if(TAB==="desemp")main=viewDesemp(P);
+  else if(TAB==="mat")main=viewMat();
+  else main=viewAjuda();
 
-  /* término = início + 3 meses (só enquanto não for editado à mão) */
-  var fimManual = false;
-  document.getElementById("c-fim").addEventListener("input", function(){ fimManual = true; });
-  document.getElementById("c-inicio").addEventListener("change", function(){
-    if(!fimManual && this.value){
-      document.getElementById("c-fim").value = somaMeses(this.value, 3);
-      render();
+  document.getElementById("root").innerHTML=head+'<main class="inner">'+main+
+   '<div class="foot">O tempo segue o número de questões, não a afinidade.<br>'+
+   'Tecnologia e Português somam 50 das 100 questões: se o dia apertar, corte o bloco jurídico — nunca o de TI.<br>'+
+   'Toda questão errada vira linha no caderno de erros no mesmo dia.</div></main>'+modalHtml();
+  bind();
+}
+
+function viewPlano(map,tod,per){
+  const list=(map[tod]||[]);
+  const dn=list.filter(t=>STATE.done[t.id]).length;
+  const pc=list.length?Math.round(100*dn/list.length):0;
+  const nxt=list.find(t=>!STATE.done[t.id]);
+  let html='<div class="card today-card">'+ring(pc)+
+   '<div class="today-t"><b>'+WD[s2d(tod).getDay()].replace(/^./,c=>c.toUpperCase())+', '+fmt(tod)+'</b>'+
+   '<span>'+dn+' de '+list.length+' blocos · '+(list.reduce((a,t)=>a+t.min,0)/60).toFixed(1).replace(".",",")+'h programadas</span>'+
+   (nxt?'<div class="next"><b style="font-weight:600">'+esc(nxt.time||"")+' — '+esc(DISC[nxt.disc].n)+'</b><br>'+esc(nxt.title)+'</div>':'<div class="next" style="border-color:#2E6B4F">Dia concluído. Fecha o caderno de erros e descansa.</div>')+
+   '</div></div>';
+
+  html+='<div class="bar"><select class="sel" id="flt"><option value="all">Todas as matérias</option>'+
+   Object.keys(DISC).map(k=>'<option value="'+k+'"'+(FILTER===k?" selected":"")+'>'+esc(DISC[k].n)+'</option>').join("")+'</select>'+
+   '<button class="btn'+(ONLYOPEN?" on":"")+'" id="oo">Só pendentes</button>'+
+   '<button class="btn" id="pull">Puxar atrasados</button>'+
+   '<button class="btn" id="jump">Ir para hoje</button><span class="spacer"></span>'+
+   '<button class="btn" id="exp">Exportar</button></div>';
+
+  let body="",lastPhase="";
+  Object.keys(map).sort().forEach(day=>{
+    if(day<START)return;
+    const l=map[day].filter(t=>FILTER==="all"||t.disc===FILTER).filter(t=>!ONLYOPEN||!STATE.done[t.id]);
+    const phase=day<="2026-09-07"?"F1":(day<="2026-09-29"?"F2":"F3");
+    if(phase!==lastPhase){lastPhase=phase;
+      const m={F1:["Fase 1 · 10/08 a 07/09 — Construção","Primeira passada nas matérias de maior peso"],
+               F2:["Fase 2 · 08/09 a 29/09 — Consolidação","2ª e 3ª passadas + volume de questões"],
+               F3:["Fase 3 · 30/09 a 11/10 — Reta final","Só revisão, lei seca e simulado"]}[phase];
+      body+='<div class="phase"><h2>'+m[0]+'</h2><p>'+m[1]+'</p></div>';
     }
+    if(!l.length&&(FILTER!=="all"||ONLYOPEN))return;
+    const mins=l.reduce((a,t)=>a+(t.min||50),0),d2=l.filter(t=>STATE.done[t.id]).length;
+    const p2=l.length?Math.round(100*d2/l.length):0;
+    const col=STATE.collapsed[day],wd=s2d(day).getDay();
+    body+='<div class="day'+(day===tod?" today":"")+(day<tod?" past":"")+(day===EXAM?" exam":"")+(p2===100&&l.length?" full":"")+'">';
+    body+='<div class="day-h" data-toggle="'+day+'"><span class="day-d">'+fmt(day)+'</span><span class="day-w">'+WD[wd]+'</span>';
+    if(day<=PHASE1_END)body+='<span class="win">'+JANELA[wd]+'</span>';
+    if(day===tod)body+='<span class="tag">hoje</span>';
+    body+='<span class="day-m"><span class="mini"><i style="width:'+p2+'%"></i></span>'+d2+'/'+l.length+' · '+(mins/60).toFixed(1).replace(".",",")+'h '+(col?"▸":"▾")+'</span></div>';
+    if(!col){
+      body+='<div class="day-b">';
+      l.forEach(t=>{
+        const done=!!STATE.done[t.id],lk=STATE.links[matKey(t)];
+        const lg=STATE.logs.filter(x=>x.task===t.id);
+        body+='<div class="task'+(done?" done":"")+'"><span class="hora">'+(t.time||"")+'</span>';
+        body+='<div class="chk'+(done?" done":"")+'" data-done="'+t.id+'" role="checkbox" tabindex="0" aria-checked="'+done+'"></div>';
+        body+='<div class="t-body"><div class="t-top"><span class="chip" style="background:'+DISC[t.disc].c+'">'+esc(DISC[t.disc].n)+'</span>';
+        body+='<span class="pass">'+esc(PASS[t.pass]||"revisão")+' · '+t.min+' min</span></div>';
+        body+='<div class="t-title">'+esc(t.title)+'</div>';
+        if(lk&&safeUrl(lk.url))body+='<a class="mat" href="'+esc(safeUrl(lk.url))+'" target="_blank" rel="noopener">📄 <span>'+esc(lk.label||lk.url)+'</span></a>';
+        lg.forEach(x=>{const a=x.hit/x.tot;body+='<span class="score" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+' · '+Math.round(a*100)+'%</span>'});
+        body+='</div>';
+        body+='<div class="t-act"><button class="ico" data-log="'+t.id+'" title="Registrar acertos">◎</button>'+
+              '<button class="ico" data-link="'+t.id+'" title="Vincular material">📎</button>'+
+              '<button class="ico" data-edit="'+t.id+'" title="Editar">✎</button>'+
+              '<button class="ico" data-push="'+t.id+'" title="Adiar um dia">→</button>'+
+              '<button class="ico rm" data-rm="'+t.id+'" title="Remover">✕</button></div></div>';
+      });
+      body+='<button class="add" data-add="'+day+'">+ acrescentar bloco neste dia</button></div>';
+    }
+    body+='</div>';
   });
+  return html+body;
+}
 
-  /* data de assinatura começa em hoje */
-  (function(){
-    var h = new Date();
-    document.getElementById("c-assin").value = h.getFullYear()+"-"+z(h.getMonth()+1)+"-"+z(h.getDate());
-  })();
+function viewDesemp(P){
+  const tl=timeline();
+  let bars="";
+  Object.keys(DISC).filter(k=>DISC[k].q).sort((a,b)=>DISC[b].q-DISC[a].q).forEach(k=>{
+    const a=P.acc[k];const pc=a?Math.round(a.a*100):0;
+    bars+='<div class="stat"><span class="nm"><span class="dot" style="background:'+DISC[k].c+'"></span>'+esc(DISC[k].n)+'</span>'+
+     '<span class="track"><span class="fill" style="width:'+pc+'%;background:'+(a?accColor(a.a):"#CFD2CB")+'"></span></span>'+
+     '<span class="pc">'+(a?pc+"% · "+a.h+"/"+a.t:"sem dados")+'</span></div>';
+  });
+  const sims=STATE.logs.filter(l=>l.tot>=80);
+  let simHtml=sims.length?sims.slice().sort((a,b)=>a.d.localeCompare(b.d)).map(s=>
+    '<div class="stat"><span class="nm">'+fmt(s.d)+'</span><span class="track"><span class="fill" style="width:'+Math.round(100*s.hit/s.tot)+'%;background:'+accColor(s.hit/s.tot)+'"></span></span><span class="pc">'+s.hit+'/'+s.tot+'</span></div>').join("")
+    :'<div class="empty">Nenhum simulado registrado ainda. O primeiro está marcado para o domingo 23/08.</div>';
 
-  /* botões */
-  function gerarPDF(){
-    var faltam = [];
-    if(!g("c-nome")) faltam.push("nome");
-    if(!g("c-cpf")) faltam.push("CPF");
-    if(!g("c-placa")) faltam.push("placa");
-    if(paraCentavos(g("c-semanal")) === null) faltam.push("valor semanal");
-    if(faltam.length){
-      avisar("Faltou preencher: " + faltam.join(", ") + ".", true);
-      document.getElementById("c-nome").scrollIntoView({block:"center"});
-      return;
-    }
-    avisar("Se a janela não abrir, use Ctrl+P e escolha “Salvar como PDF”.", true);
-    try{ window.print(); }catch(e){ avisar("Use Ctrl+P para salvar em PDF.", true); }
-  }
-  document.getElementById("btn-pdf").addEventListener("click", gerarPDF);
-  document.getElementById("btn-pdf-flutua").addEventListener("click", gerarPDF);
+  return '<div class="bar"><button class="btn pri" id="newlog">+ Registrar bateria de questões</button>'+
+   '<span class="spacer"></span><button class="btn" id="expLog">Exportar registros</button><button class="btn warn" id="rstLog">Apagar registros</button></div>'+
+   '<div class="card"><h3>Nota projetada na prova</h3>'+lineChart(tl)+
+   '<p class="note">A projeção multiplica sua taxa de acerto recente em cada matéria (últimas 4 baterias) pelo número de questões que aquela matéria vale na prova, e soma. A linha tracejada vermelha é o corte de 50 pontos. '+
+   (P.T?('Base atual: '+P.T+' questões resolvidas, '+Math.round(P.geral*100)+'% de acerto geral. '+(P.known<100?('Matérias ainda sem registro usam a média geral como estimativa — '+(100-P.known)+' das 100 questões estão nessa condição.'):'Todas as matérias já têm registro próprio.')):'Registre suas baterias para a projeção começar a valer.')+'</p></div>'+
+   '<div class="cols"><div class="card"><h3>Acerto por matéria</h3>'+bars+
+   '<p class="note">Verde acima de 75%, amarelo de 60 a 75%, laranja de 45 a 60%, vermelho abaixo disso. Onde estiver vermelho em matéria de peso alto, é ali que a próxima semana precisa ser reforçada.</p></div>'+
+   '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+
+   '<p class="note">Conta como simulado toda bateria com 80 questões ou mais.</p></div></div>';
+}
 
-  var btnLimpar = document.getElementById("btn-limpar"), armado = false, armadoRel = null;
-  btnLimpar.addEventListener("click", function(){
-    if(!armado){
-      armado = true;
-      btnLimpar.textContent = "Confirmar";
-      btnLimpar.classList.add("armado");
-      avisar("Toque de novo para apagar tudo.");
-      armadoRel = setTimeout(desarmar, 5000);
-      return;
-    }
-    campos.forEach(function(id){
-      var el = document.getElementById(id);
-      if(el.tagName === "SELECT") el.selectedIndex = 4; else el.value = "";
+function viewMat(){
+  let out='<div class="card"><h3>Biblioteca de materiais</h3>'+
+   '<p class="note" style="margin-top:0">Vincule aqui o PDF ou a aula de cada tópico. O link é gravado no tópico, não no bloco: ao vincular uma vez, ele aparece automaticamente nas três passadas daquele mesmo assunto ao longo do cronograma.</p></div>';
+  for(const d in BANK){
+    out+='<div class="card mgroup"><h4><span class="dot" style="background:'+DISC[d].c+'"></span>'+esc(DISC[d].n)+' · '+DISC[d].q+' questões</h4>';
+    BANK[d].forEach(t=>{
+      const k=d+"."+t.id,lk=STATE.links[k];
+      out+='<div class="mrow"><div class="mt">'+esc(t.t)+
+       '<div class="mu'+(lk?'':' empty')+'">'+(lk?esc(lk.label||"")+(lk.label?' · ':'')+esc(lk.url):'sem material vinculado')+'</div></div>'+
+       '<button class="ico" data-linkkey="'+k+'" title="Vincular">📎</button></div>';
     });
-    document.getElementById("c-multa").value = "1.700,00";
-    fimManual = false;
-    erroCpf.textContent = "";
-    var h = new Date();
-    document.getElementById("c-assin").value = h.getFullYear()+"-"+z(h.getMonth()+1)+"-"+z(h.getDate());
-    render(); desarmar(); avisar("Campos apagados.");
-  });
-  function desarmar(){
-    armado = false;
-    btnLimpar.textContent = "Limpar tudo";
-    btnLimpar.classList.remove("armado");
-    if(armadoRel) clearTimeout(armadoRel);
+    out+='</div>';
   }
+  return out;
+}
 
-  render();
-})();
+function viewAjuda(){
+  return '<div class="card"><h3>Rotina fixa da semana</h3><div class="rot">'+
+   '<div><b>segunda</b>19h30 – 00h<br>4 blocos + erros</div><div><b>terça</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
+   '<div><b>quarta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>quinta</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
+   '<div><b>sexta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>sábado</b>8h30–12h20 · 14h–16h50<br>7 blocos · noite livre</div>'+
+   '<div><b>domingo</b>8h30–11h20 · 13h<br>3 blocos + revisão ou simulado</div></div>'+
+   '<p class="note">Blocos de 50 minutos com 10 de intervalo: ~41 blocos por semana, cerca de 34 horas efetivas. As noites de terça, quinta, sábado e domingo estão vazias de propósito.</p></div>'+
+   '<div class="card"><h3>Os cinco botões de cada bloco</h3>'+
+   '<div class="mrow"><div class="mt"><b>◎ Registrar acertos</b><div class="mu">Alimenta o gráfico. Anote acertos e total logo depois da bateria, enquanto está fresco.</div></div></div>'+
+   '<div class="mrow"><div class="mt"><b>📎 Vincular material</b><div class="mu">Cola o link do PDF ou da aula. Vale para todas as passadas do mesmo tópico.</div></div></div>'+
+   '<div class="mrow"><div class="mt"><b>✎ Editar</b><div class="mu">Muda o texto do bloco sem quebrar o resto do plano.</div></div></div>'+
+   '<div class="mrow"><div class="mt"><b>→ Adiar</b><div class="mu">Empurra o bloco um dia para frente.</div></div></div>'+
+   '<div class="mrow"><div class="mt"><b>✕ Remover</b><div class="mu">Tira o bloco do cronograma de vez.</div></div></div>'+
+   '<p class="note">Tudo fica gravado no navegador em que você abriu. Notebook e celular guardam cópias separadas: para migrar, use Exportar.</p></div>'+
+   '<div class="card"><h3>Zona de risco</h3>'+
+   '<p class="note" style="margin-top:0">Limpar os dados de navegação apaga as marcações junto. Antes de fazer isso, exporte.</p>'+
+   '<div class="bar"><button class="btn warn" id="rst">Zerar tudo e voltar ao plano original</button></div></div>';
+}
+
+/* ---------- eventos ---------- */
+function bind(){
+  const R=document.getElementById("root"),$=s=>R.querySelector(s),$$=s=>R.querySelectorAll(s);
+  $$("[data-tab]").forEach(el=>el.onclick=()=>{TAB=el.dataset.tab;render();window.scrollTo({top:0,behavior:"smooth"})});
+
+  $$("[data-done]").forEach(el=>{
+    const f=()=>{const id=el.dataset.done;STATE.done[id]?delete STATE.done[id]:STATE.done[id]=1;save();render()};
+    el.onclick=f;el.onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();f()}};
+  });
+  $$("[data-toggle]").forEach(el=>el.onclick=e=>{
+    if(e.target.closest("button"))return;
+    const d=el.dataset.toggle;STATE.collapsed[d]?delete STATE.collapsed[d]:STATE.collapsed[d]=1;save();render();
+  });
+  $$("[data-edit]").forEach(el=>el.onclick=()=>{
+    const id=el.dataset.edit,cur=el.closest(".task").querySelector(".t-title").textContent;
+    openModal({title:"Editar bloco",fields:[{label:"Descrição",value:cur}],
+      onSave:v=>{if(v[0].trim())STATE.edited[id]=v[0].trim()}});
+  });
+  $$("[data-rm]").forEach(el=>el.onclick=()=>{STATE.removed[el.dataset.rm]=1;save();render()});
+  $$("[data-push]").forEach(el=>el.onclick=()=>{
+    const id=el.dataset.push,cur=el.closest(".day").querySelector(".day-h").dataset.toggle;
+    STATE.moved[id]=addD(cur,1);save();render();
+  });
+  $$("[data-log]").forEach(el=>el.onclick=()=>{
+    const id=el.dataset.log,row=el.closest(".task");
+    const disc=Object.keys(DISC).find(k=>DISC[k].n===row.querySelector(".chip").textContent)||"TI";
+    const day=el.closest(".day").querySelector(".day-h").dataset.toggle;
+    openModal({title:"Registrar bateria de questões",sub:"Entra no gráfico de desempenho e na nota projetada.",
+      fields:[{label:"Matéria",type:"select",value:disc,options:Object.keys(DISC).filter(k=>DISC[k].q).map(k=>[k,DISC[k].n])},
+              {label:"Acertos",type:"number",value:"",ph:"22"},
+              {label:"Total de questões",type:"number",value:"",ph:"30"},
+              {label:"Data",type:"date",value:day}],
+      onSave:v=>{const h=+v[1],t=+v[2];if(!(t>0)||!(h>=0)||h>t)return;
+        STATE.logs.push({d:v[3]||day,disc:v[0],hit:h,tot:t,task:id})}});
+  });
+  $$("[data-link]").forEach(el=>el.onclick=()=>{
+    const row=el.closest(".task"),id=el.dataset.link;
+    const t={id:id};const k=matKey(t),cur=STATE.links[k]||{};
+    linkModal(k,cur,row.querySelector(".t-title").textContent);
+  });
+  $$("[data-linkkey]").forEach(el=>el.onclick=()=>{
+    const k=el.dataset.linkkey,cur=STATE.links[k]||{};
+    linkModal(k,cur,el.closest(".mrow").querySelector(".mt").childNodes[0].textContent);
+  });
+  $$("[data-add]").forEach(el=>el.onclick=()=>{
+    const day=el.dataset.add;
+    openModal({title:"Novo bloco",fields:[
+      {label:"O que estudar",value:"",ph:"Ex.: refazer erros de Excel"},
+      {label:"Matéria",type:"select",value:"TI",options:Object.keys(DISC).map(k=>[k,DISC[k].n])},
+      {label:"Horário",value:"20:30",ph:"20:30"},
+      {label:"Duração (min)",type:"number",value:"50"}],
+      onSave:v=>{if(!v[0].trim())return;
+        STATE.custom[day]=STATE.custom[day]||[];
+        STATE.custom[day].push({id:"C."+Date.now(),disc:DISC[v[1]]?v[1]:"REV",pass:1,title:v[0].trim(),min:+v[3]||50,time:v[2]})}});
+  });
+
+  if($("#flt"))$("#flt").onchange=e=>{FILTER=e.target.value;render()};
+  if($("#oo"))$("#oo").onclick=()=>{ONLYOPEN=!ONLYOPEN;render()};
+  if($("#jump"))$("#jump").onclick=()=>{const t=today(),el=[...$$("[data-toggle]")].find(x=>x.dataset.toggle===t);if(el)el.scrollIntoView({behavior:"smooth",block:"center"})};
+  if($("#pull"))$("#pull").onclick=()=>{const tod=today(),map=tasksByDay();
+    Object.keys(map).forEach(day=>{if(day<tod)map[day].forEach(t=>{if(!STATE.done[t.id])STATE.moved[t.id]=tod})});save();render()};
+  if($("#exp"))$("#exp").onclick=()=>{
+    const map=tasksByDay();let out="CRONOGRAMA PCPR 2026 — Agente de Polícia Judiciária\n\n";
+    Object.keys(map).sort().forEach(d=>{out+=fmt(d)+" ("+WD[s2d(d).getDay()]+")\n";
+      map[d].forEach(t=>{const lk=STATE.links[matKey(t)];
+        out+="  "+(t.time||"     ")+" ["+(STATE.done[t.id]?"x":" ")+"] "+DISC[t.disc].n+" — "+t.title+" ("+t.min+"min)"+(lk?"\n         material: "+lk.url:"")+"\n"});out+="\n"});
+    dump(out);
+  };
+  if($("#expLog"))$("#expLog").onclick=()=>{
+    let o="REGISTROS DE DESEMPENHO — PCPR 2026\n\ndata;materia;acertos;total;percentual\n";
+    STATE.logs.slice().sort((a,b)=>a.d.localeCompare(b.d)).forEach(l=>o+=l.d+";"+DISC[l.disc].n+";"+l.hit+";"+l.tot+";"+Math.round(100*l.hit/l.tot)+"%\n");
+    o+="\nJSON completo (para reimportar manualmente):\n"+JSON.stringify(STATE);dump(o);
+  };
+  if($("#rstLog"))$("#rstLog").onclick=()=>{if(confirm("Apagar todos os registros de desempenho? O cronograma não é afetado."))
+    {STATE.logs=[];save();render()}};
+  if($("#rst"))$("#rst").onclick=()=>{if(confirm("Isso apaga marcações, edições, links e registros. Continuar?"))
+    {STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},logs:[]};save();render()}};
+
+  if(MODAL){
+    const c=document.getElementById("mdl");
+    const val=()=>[...c.querySelectorAll(".fld input,.fld select")].map(x=>x.value);
+    document.getElementById("mdlS").onclick=()=>{MODAL.onSave(val());save();closeModal()};
+    document.getElementById("mdlC").onclick=closeModal;
+    if(MODAL.extra)document.getElementById("mdlX").onclick=()=>{MODAL.onExtra();save();closeModal()};
+    c.onclick=e=>{if(e.target===c)closeModal()};
+    document.onkeydown=e=>{if(e.key==="Escape")closeModal()};
+  }else document.onkeydown=null;
+}
+function linkModal(k,cur,titulo){
+  openModal({title:"Vincular material",
+    sub:"Vale para todas as passadas de: <b>"+esc(String(titulo).slice(0,90))+"</b>",
+    fields:[{label:"Endereço do PDF ou da aula",value:cur.url||"",ph:"https://... ou pdfs/ti-seguranca.pdf",
+             hint:"Aceita link do Estratégia, do Drive, ou caminho relativo se você guardar os arquivos numa pasta ao lado do index.html."},
+            {label:"Nome que aparece no bloco",value:cur.label||"",ph:"Ex.: Aula 03 — Segurança da Informação"}],
+    ok:"Vincular",extra:cur.url?"Desvincular":null,
+    onSave:v=>{const u=safeUrl(v[0]);if(u)STATE.links[k]={url:u,label:v[1].trim()};},
+    onExtra:()=>{delete STATE.links[k]}});
+}
+function dump(txt){
+  const w=window.open("","_blank");
+  if(w)w.document.write("<pre style='font:12px ui-monospace,monospace;white-space:pre-wrap;padding:20px'>"+esc(txt)+"</pre>");
+  else alert("Permita pop-ups para exportar.");
+}
+(async function(){await load();render()})();
 </script>
 </body>
 </html>
