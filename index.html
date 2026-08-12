@@ -604,9 +604,9 @@ const REV_DAYS={
  "2026-09-27":{t:"SIMULADO — 2ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",min:300}
 };
 
-const TEMPLATE={1:["TI","TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PORT","PORT","CF","LEG","DIR","DIR","PORT","ERR"],4:["TI","CF","EST"],5:["TI","TI","PORT","RLM","CF","DIR","TI","CONT","PR","ERR"],6:["TI","TI","PORT","CF","DIR","LEG","EST"],0:["PORT","TI","RLM","REV"]};
-const TIMES={1:["19:30","20:30","21:30","22:30","23:30"],2:["07:30","08:30","09:30"],3:["07:30","08:30","09:30","10:30","18:30","19:30","20:30","21:30","22:30","23:30"],4:["07:30","08:30","09:30"],5:["07:30","08:30","09:30","10:30","18:30","19:30","20:30","21:30","22:30","23:30"],6:["08:30","09:30","10:30","11:30","14:00","15:00","16:00"],0:["08:30","09:30","10:30","13:00"]};
-const JANELA={1:"19h30–00h",2:"7h30–10h30",3:"7h30–11h30 · 18h30–00h",4:"7h30–10h30",5:"7h30–11h30 · 18h30–00h",6:"8h30–12h20 · 14h–16h50",0:"8h30–11h20 · 13h"};
+const TEMPLATE={1:["TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PORT","PORT","CF","LEG","DIR","ERR"],4:["TI","CF","EST"],5:["TI","TI","PORT","RLM","CF","DIR","CONT","ERR"],6:["TI","TI","PORT","CF","DIR","LEG","PR"],0:["PORT","RLM","EST","REV"]};
+const TIMES={1:["19:30","20:40","21:50","23:00"],2:["07:30","08:40","09:50"],3:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],4:["07:30","08:40","09:50"],5:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],6:["08:30","09:40","10:50","14:00","15:10","16:20","17:30"],0:["08:30","09:40","10:50","13:00"]};
+const JANELA={1:"19h30–23h30",2:"7h30–10h40",3:"7h30–11h50 · 18h30–22h30",4:"7h30–10h40",5:"7h30–11h50 · 18h30–22h30",6:"8h30–11h40 · 14h–18h20",0:"8h30–11h40 · 13h"};
 
 const RETA={
  "2026-09-30":[["TI","rev","Revisão relâmpago: segurança da informação (Aula 08) + 30 questões",50,"07:30"],["TI","rev","Revisão relâmpago: malware, phishing e engenharia social (Aula 09) + 30 questões",50,"08:30"],["PORT","quest","Interpretação FGV — 15 questões cronometradas",50,"09:30"],["LEG","rev","Lei seca: Lei 23.213/2026 (Lei Orgânica da PCPR)",50,"10:30"],["CF","rev","Cadeia de custódia (158-A a 158-F) e criminalística",50,"18:30"],["TI","rev","Revisão: redes, IP, DNS, VPN e firewall (Aulas 00 a 02 e 10)",50,"19:30"],["DIR","rev","Direitos Humanos: teoria geral e sistemas de proteção (Aulas 00 e 02)",50,"20:30"],["PORT","rev","Crase, pontuação e concordância (Aulas 00, 07 e 03)",50,"21:30"],["RLM","rev","Equivalências e negações (Aula 00) — 25 questões",50,"22:30"],["REV","rev","Caderno de erros do dia",30,"23:30"]],
@@ -1002,11 +1002,11 @@ function viewAjuda(){
    (on?'<p class="note">Marcações de aparelhos diferentes se somam, nunca se apagam. A contrapartida: <b>desmarcar um bloco num aparelho não o desmarca no outro</b> — é o preço de nunca perder trabalho. Se precisar desfazer, faça nos dois.</p>':'')+
    '</div>'+
    '<div class="card"><h3>Rotina fixa da semana</h3><div class="rot">'+
-   '<div><b>segunda</b>19h30 – 00h<br>4 blocos + erros</div><div><b>terça</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
-   '<div><b>quarta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>quinta</b>7h30 – 10h30<br>3 blocos · noite livre</div>'+
-   '<div><b>sexta</b>7h30–11h30 · 18h30–00h<br>9 blocos + erros</div><div><b>sábado</b>8h30–12h20 · 14h–16h50<br>7 blocos · noite livre</div>'+
-   '<div><b>domingo</b>8h30–11h20 · 13h<br>3 blocos + revisão ou simulado</div></div>'+
-   '<p class="note">Blocos de 50 minutos com 10 de intervalo. Cerca de 42 blocos por semana. As noites de terça, quinta, sábado e domingo estão vazias de propósito.</p></div>'+
+   '<div><b>segunda</b>19h30 – 23h30<br>3 blocos + erros</div><div><b>terça</b>7h30 – 10h40<br>3 blocos · noite livre</div>'+
+   '<div><b>quarta</b>7h30–11h50 · 18h30–22h30<br>7 blocos + erros</div><div><b>quinta</b>7h30 – 10h40<br>3 blocos · noite livre</div>'+
+   '<div><b>sexta</b>7h30–11h50 · 18h30–22h30<br>7 blocos + erros</div><div><b>sábado</b>8h30–11h40 · 14h–18h20<br>7 blocos · noite livre</div>'+
+   '<div><b>domingo</b>8h30–11h40 · 13h<br>3 blocos + revisão ou simulado</div></div>'+
+   '<p class="note">Blocos de 50 minutos com <b>20 de intervalo</b> entre eles. São 33 blocos por semana, cerca de 27 horas efetivas — carga reduzida em 12/08 para caber na rotina sem virar madrugada. Quarta e sexta terminam às 22h30, segunda às 23h30. As noites de terça, quinta, sábado e domingo estão vazias de propósito.</p></div>'+
    '<div class="card"><h3>As quatro etiquetas dos blocos</h3>'+
    '<div class="mrow"><div class="mt"><span class="kind aula">aula</span> Assistir a videoaula e ler o PDF correspondente do Estratégia.</div></div>'+
    '<div class="mrow"><div class="mt"><span class="kind quest">questões</span> Bateria no caderno de questões, cronometrada. Registre o resultado no ◎ logo depois.</div></div>'+
@@ -1148,20 +1148,6 @@ function linkModal(k,cur,titulo){
     onSave:v=>{const u=safeUrl(v[0]);if(u){STATE.links[k]={url:u,label:v[1].trim(),at:Date.now()};if(STATE.delLinks)delete STATE.delLinks[k]}},onExtra:()=>{dropLink(k)}});
 }
 function dump(t){const w=window.open("","_blank");if(w)w.document.write("<pre style='font:12px ui-monospace,monospace;white-space:pre-wrap;padding:20px'>"+esc(t)+"</pre>");else alert("Permita pop-ups para exportar.")}
-if(!window.__abOnce){window.__abOnce=1;
-  document.addEventListener("click",function(e){
-    const a=e.target.closest&&e.target.closest("a[href]");
-    if(!a)return;
-    if(e.defaultPrevented)return;
-    if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
-    const u=a.getAttribute("href");
-    if(!u||u.charAt(0)==="#")return;
-    e.preventDefault();e.stopPropagation();
-    let w=null;try{w=window.open(u,"_blank","noopener")}catch(_){}
-    if(!w){try{if(window.top!==window.self){window.top.location.href=u;return}}catch(_){}
-      window.location.href=u}
-  },true);
-}
 (async function(){await load();await loadSync();if(STATE.view)VIEW=STATE.view;render();if(SYNC.token)syncNow(true)})();
 </script>
 </body>
