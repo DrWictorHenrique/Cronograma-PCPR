@@ -791,6 +791,9 @@ const TEMPLATE={1:["TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PO
 const TIMES={1:["19:30","20:40","21:50","23:00"],2:["07:30","08:40","09:50"],3:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],4:["07:30","08:40","09:50"],5:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],6:["08:30","09:40","10:50","14:00","15:10","16:20","17:30"],0:["08:30","09:40","10:50","13:00"]};
 const JANELA={1:"19h30–23h30",2:"7h30–10h40",3:"7h30–11h50 · 18h30–22h30",4:"7h30–10h40",5:"7h30–11h50 · 18h30–22h30",6:"8h30–11h40 · 14h–18h20",0:"8h30–11h40 · 13h"};
 
+/* cronograma fixado para hoje: as três prioridades reais, sem o simulado de 5h */
+const PIN={"2026-08-23":["PORT.pt08","TI.if06","TI.if07"]};
+
 const RETA={
  "2026-09-30":[["TI","rev","Revisão relâmpago: segurança da informação (Aula 08) + 30 questões",50,"07:30"],["TI","rev","Revisão relâmpago: malware, phishing e engenharia social (Aula 09) + 30 questões",50,"08:30"],["PORT","quest","Interpretação FGV — 15 questões cronometradas",50,"09:30"],["LEG","rev","Lei seca: Lei 23.213/2026 (Lei Orgânica da PCPR)",50,"10:30"],["CF","rev","Cadeia de custódia (158-A a 158-F) e criminalística",50,"18:30"],["TI","rev","Revisão: redes, IP, DNS, VPN e firewall (Aulas 00 a 02 e 10)",50,"19:30"],["DIR","rev","Direitos Humanos: teoria geral e sistemas de proteção (Aulas 00 e 02)",50,"20:30"],["PORT","rev","Crase, pontuação e concordância (Aulas 00, 07 e 03)",50,"21:30"],["RLM","rev","Equivalências e negações (Aula 00) — 25 questões",50,"22:30"],["REV","rev","Caderno de erros do dia",30,"23:30"]],
  "2026-10-01":[["REV","rev","Correção da 2ª Rodada com o gabarito definitivo e o relatório de desempenho (liberados hoje)",50,"07:30"],["CF","rev","Medicina legal relâmpago: tanatologia, traumatologia e identificação",50,"08:30"],["EST","rev","Medidas de posição, dispersão e outliers — 20 questões",50,"09:30"]],
@@ -837,6 +840,38 @@ function generate(){
   const sobra=[];
   for(const d in queues)queues[d].forEach(it=>sobra.push({id:d+"."+it.k,disc:d,tp:it.tp,t:it.t,src:it.src,min:50}));
   for(const day in RETA)plan[day]=RETA[day].map((b,i)=>({id:"F."+day+"."+i,disc:b[0],tp:b[1],t:b[2],src:"",min:b[3],time:b[4],date:day}));
+  /* dias fixados: recebem exatamente os blocos listados; o que estava no dia desce para o seguinte */
+  for(const day in PIN){
+    if(!plan[day])continue;
+    const desloc=plan[day].slice();
+    const escolhidos=[];
+    PIN[day].forEach(id=>{
+      for(const d2 in plan){
+        const k=plan[d2].findIndex(t=>t.id===id);
+        if(k>=0){escolhidos.push(plan[d2].splice(k,1)[0]);break}
+      }
+    });
+    plan[day]=escolhidos.map((t,i)=>Object.assign({},t,{date:day,time:slotTime(day,i)}));
+    desloc.forEach(t=>{
+      if(t.disc==="REV"&&t.min>=150)return;            /* simulado longo do dia some */
+      let alvo=addD(day,1);
+      while(alvo<=PHASE1_END){
+        const cap=(TEMPLATE[s2d(alvo).getDay()]||[]).length;
+        if(!plan[alvo])plan[alvo]=[];
+        if(plan[alvo].length<cap){
+          plan[alvo].push(Object.assign({},t,{date:alvo}));
+          /* caderno de erros sempre por último; horários reatribuídos em ordem */
+          plan[alvo].sort((a,b)=>{
+            const ea=a.id.indexOf("E.")===0?1:0, eb=b.id.indexOf("E.")===0?1:0;
+            return ea-eb;
+          });
+          plan[alvo].forEach((x,k)=>{x.time=slotTime(alvo,k)});
+          return;
+        }
+        alvo=addD(alvo,1);
+      }
+    });
+  }
   return{plan:plan,sobra:sobra};
 }
 const G=generate(),PLAN=G.plan;
@@ -846,7 +881,7 @@ let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{}
 STATE.logs=[];
 let TAB="plano",FILTER="all",ONLYOPEN=false,VIEW="semana",WEEK=null;
 async function grab(k){try{const r=await window.storage.get(k);return r&&r.value?JSON.parse(r.value):null}catch(e){return null}}
-let RECUP="";
+let RECUP="",MIGROU=0;
 async function load(){
   let d=await grab("pcpr-v4");
   if(!d||!d.links||!Object.keys(d.links).length){
@@ -858,6 +893,11 @@ async function load(){
     }
   }
   if(d)STATE=Object.assign(STATE,d);
+  if(Array.isArray(STATE.logs)){
+    let n=0;
+    STATE.logs.forEach((l,i)=>{if(!l.id){l.id="L"+(l.d||"")+"-"+i+"-"+Math.random().toString(36).slice(2,6);n++}});
+    if(n){MIGROU=n;save()}
+  }
 }
 let sT=null;function save(){STATE.updatedAt=Date.now();syncSoon();clearTimeout(sT);sT=setTimeout(async()=>{
   const j=JSON.stringify(STATE);
@@ -1205,7 +1245,8 @@ function viewDesemp(P){
    (P.T?('Base: '+P.T+' questões resolvidas, '+Math.round(P.geral*100)+'% de acerto geral. '+(P.known<100?('Matérias sem registro próprio entram pela média geral — '+(100-P.known)+' das 100 questões estão nessa condição.'):'Todas as matérias já têm registro próprio.')):'Registre suas baterias para a projeção valer.')+'</p></div>'+
    '<div class="cols"><div class="card"><h3>Acerto por matéria</h3>'+bars+'<p class="note">Verde acima de 75%, amarelo de 60 a 75%, laranja de 45 a 60%, vermelho abaixo disso.</p></div>'+
    '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+'<p class="note">Conta como simulado toda bateria de 80 questões ou mais.</p></div></div>'+
-   '<div class="card"><h3>Todos os registros · '+todos.length+'</h3>'+regs+
+   '<div class="card"><h3>Todos os registros · '+todos.length+'</h3>'+
+   (MIGROU?'<p class="note" style="margin-top:0;color:var(--ok)">'+MIGROU+' registros antigos foram migrados e agora podem ser corrigidos.</p>':'')+regs+
    '<p class="note">Clique no ✎ para corrigir acertos, total, matéria ou data. Também dá para corrigir clicando na pílula colorida dentro do bloco, no cronograma.</p></div>';
 }
 
