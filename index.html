@@ -442,7 +442,10 @@ a.at:hover{color:var(--dc);text-shadow:0 0 14px currentColor}
 .act .as{color:var(--ink-4)}
 .a-log{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);color:var(--ink-3);border-radius:20px}
 .a-log:hover{border-color:var(--dc);color:var(--dc);background:rgba(255,255,255,.09);box-shadow:0 0 12px -2px var(--dc)}
-.a-sc{box-shadow:0 0 12px -3px currentColor;color:#06111A;font-weight:800}
+.a-sc{box-shadow:0 0 12px -3px currentColor;color:#06111A;font-weight:800;border:0;cursor:pointer;font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:20px}
+  .a-sc:hover{filter:brightness(1.18);box-shadow:0 0 16px -2px currentColor}
+  .score{border:0;cursor:pointer;font-family:var(--mono)}
+  .score:hover{filter:brightness(1.18)}
 .act.dn{opacity:.34}
 
 /* checkbox */
@@ -954,7 +957,8 @@ function taskHtml(t){
   h+='<div class="t-title">'+(_u?'<a href="'+esc(_u)+'" target="_blank" rel="noopener" title="Abrir o material desta aula">'+esc(t.t)+'</a>':esc(t.t))+'</div>';
   if(t.src)h+='<div class="src">'+esc(t.src)+'</div>';
   if(lk&&safeUrl(lk.url))h+='<a class="mat" href="'+esc(safeUrl(lk.url))+'" target="_blank" rel="noopener">📄 <span>'+esc(lk.label||lk.url)+'</span></a>';
-  lg.forEach(x=>{const a=x.hit/x.tot;h+='<span class="score" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+' · '+Math.round(a*100)+'%</span>'});
+  lg.forEach(x=>{const a=x.hit/x.tot;
+    h+='<button class="score" data-editlog="'+esc(x.id||"")+'" data-disc="'+t.disc+'" title="Clique para corrigir" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+' · '+Math.round(a*100)+'%</button>'});
   h+='</div><div class="t-act"><button class="ico" data-log="'+t.id+'" data-disc="'+t.disc+'" title="Registrar acertos">◎</button><button class="ico" data-link="'+t.id+'" title="Vincular material">📎</button><button class="ico" data-edit="'+t.id+'" title="Editar">✎</button><button class="ico" data-push="'+t.id+'" title="Adiar um dia">→</button><button class="ico rm" data-rm="'+t.id+'" title="Remover">✕</button></div></div>';
   return h;
 }
@@ -1149,7 +1153,8 @@ function actHtml(t,day){
       :'<div class="at">'+esc(t.t)+'</div>';
   if(t.src)h+='<span class="as">'+esc(t.src)+'</span>';
   h+='<div class="a-foot"><button class="a-log" data-log="'+t.id+'" data-disc="'+t.disc+'" data-day="'+day+'">◎ Registrar Acertos</button>';
-  lg.forEach(x=>{const a=x.hit/x.tot;h+='<span class="a-sc" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+'</span>'});
+  lg.forEach(x=>{const a=x.hit/x.tot;
+    h+='<button class="a-sc" data-editlog="'+esc(x.id||"")+'" data-disc="'+t.disc+'" data-day="'+day+'" title="Clique para corrigir" style="background:'+accColor(a)+'">'+x.hit+'/'+x.tot+'</button>'});
   h+='</div></div>';
   return h;
 }
@@ -1182,6 +1187,16 @@ function viewDesemp(P){
       '<span class="qt">'+DISC[k].q+'q na prova</span></span>'+
       '<span class="pc'+(a?"":" none")+'">'+(a?pc+"%":"sem dados")+(a?'<br><span class="qt">'+a.h+"/"+a.t+' acertos</span>':"")+'</span>'+
       '<span class="track"><span class="fill" style="width:'+pc+'%;background:'+(a?accColor(a.a):"transparent")+'"></span></span></div>'});
+  const todos=STATE.logs.slice().sort((a,b)=>(b.d||"").localeCompare(a.d||""));
+  let regs=todos.length?todos.map(l=>{const a=l.hit/l.tot;
+    return '<div class="mrow"><div class="mt"><span class="chip" style="background:'+DISC[l.disc].c+'">'+esc(DISC[l.disc].n)+'</span> '+
+      '<b style="font-family:var(--mono);margin-left:6px">'+l.hit+'/'+l.tot+'</b> '+
+      '<span style="font-family:var(--mono);font-size:11px;color:'+accColor(a)+'">'+Math.round(a*100)+'%</span>'+
+      '<div class="src">'+fmt(l.d)+'</div></div>'+
+      (l.id?'<button class="ico" data-editlog="'+esc(l.id)+'" data-disc="'+l.disc+'" data-day="'+l.d+'" title="Corrigir">✎</button>'
+           :'<button class="ico rm" data-dellog="'+esc(l.d+"|"+l.disc+"|"+l.hit+"|"+l.tot)+'" title="Apagar (registro antigo)">✕</button>')+
+      '</div>'}).join("")
+    :'<div class="empty">Nenhum registro ainda.</div>';
   const sims=STATE.logs.filter(l=>l.tot>=80);
   const simHtml=sims.length?sims.slice().sort((a,b)=>a.d.localeCompare(b.d)).map(s=>'<div class="stat"><span class="nm">'+fmt(s.d)+'</span><span class="track"><span class="fill" style="width:'+Math.round(100*s.hit/s.tot)+'%;background:'+accColor(s.hit/s.tot)+'"></span></span><span class="pc">'+s.hit+'/'+s.tot+'</span></div>').join(""):'<div class="empty">Nenhum simulado registrado. O primeiro está marcado para domingo, 23/08.</div>';
   return '<div class="bar"><button class="btn pri" id="newlog">+ Registrar bateria de questões</button><span class="spacer"></span><button class="btn" id="expLog">Exportar registros</button><button class="btn warn" id="rstLog">Apagar registros</button></div>'+
@@ -1189,7 +1204,9 @@ function viewDesemp(P){
    '<p class="note">A projeção multiplica sua taxa de acerto recente em cada matéria (últimas 4 baterias) pelo número de questões que ela vale na prova. A linha tracejada é o corte de 50 pontos. '+
    (P.T?('Base: '+P.T+' questões resolvidas, '+Math.round(P.geral*100)+'% de acerto geral. '+(P.known<100?('Matérias sem registro próprio entram pela média geral — '+(100-P.known)+' das 100 questões estão nessa condição.'):'Todas as matérias já têm registro próprio.')):'Registre suas baterias para a projeção valer.')+'</p></div>'+
    '<div class="cols"><div class="card"><h3>Acerto por matéria</h3>'+bars+'<p class="note">Verde acima de 75%, amarelo de 60 a 75%, laranja de 45 a 60%, vermelho abaixo disso.</p></div>'+
-   '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+'<p class="note">Conta como simulado toda bateria de 80 questões ou mais.</p></div></div>';
+   '<div class="card"><h3>Histórico de simulados</h3>'+simHtml+'<p class="note">Conta como simulado toda bateria de 80 questões ou mais.</p></div></div>'+
+   '<div class="card"><h3>Todos os registros · '+todos.length+'</h3>'+regs+
+   '<p class="note">Clique no ✎ para corrigir acertos, total, matéria ou data. Também dá para corrigir clicando na pílula colorida dentro do bloco, no cronograma.</p></div>';
 }
 
 function bankList(){const o=[];for(const d in BANK)BANK[d].forEach(x=>o.push({id:d+"."+x.k,d:d,t:x.t||x.t}));return o}
@@ -1279,10 +1296,24 @@ function bind(){
   $$("[data-rm]").forEach(el=>el.onclick=()=>{STATE.removed[el.dataset.rm]=1;save();render()});
   $$("[data-push]").forEach(el=>el.onclick=()=>{const id=el.dataset.push,cur=el.closest(".day").querySelector(".day-h").dataset.toggle;
     STATE.moved[id]=addD(cur,1);save();render()});
+  $$("[data-editlog]").forEach(el=>el.onclick=()=>{
+    const lid=el.dataset.editlog;
+    if(!lid){alert("Este registro é antigo e não pode ser editado. Apague-o na aba Desempenho e registre de novo.");return}
+    logModal(null,el.dataset.disc||"TI",el.dataset.day||today(),lid);
+  });
   $$("[data-log]").forEach(el=>el.onclick=()=>{const id=el.dataset.log,disc=el.dataset.disc;
     let day=el.dataset.day;
     if(!day){const d=el.closest(".day");day=d?d.querySelector(".day-h").dataset.toggle:today()}
     logModal(id,DISC[disc]&&DISC[disc].q?disc:"TI",day)});
+  $$("[data-dellog]").forEach(el=>el.onclick=()=>{
+    const[d,disc,hit,tot]=el.dataset.dellog.split("|");
+    if(!confirm("Apagar o registro de "+fmt(d)+" ("+hit+"/"+tot+")?"))return;
+    let rm=false;
+    STATE.logs=STATE.logs.filter(l=>{
+      if(!rm&&!l.id&&l.d===d&&l.disc===disc&&String(l.hit)===hit&&String(l.tot)===tot){rm=true;return false}
+      return true});
+    save();render();
+  });
   if($("#newlog"))$("#newlog").onclick=()=>logModal(null,"TI",today());
   $$("[data-link]").forEach(el=>el.onclick=()=>{const id=el.dataset.link;linkModal(id,STATE.links[id]||{},el.closest(".task").querySelector(".t-title").textContent)});
   $$("[data-linkkey]").forEach(el=>el.onclick=()=>{const k=el.dataset.linkkey;linkModal(k,STATE.links[k]||{},el.closest(".mrow").querySelector(".mt").childNodes[0].textContent)});
@@ -1373,13 +1404,21 @@ function bind(){
     document.onkeydown=e=>{if(e.key==="Escape")closeModal()};
   }else document.onkeydown=null;
 }
-function logModal(id,disc,day){
-  openModal({title:"Registrar bateria de questões",sub:"Entra no gráfico de desempenho e na nota projetada.",
-    fields:[{label:"Matéria",type:"select",value:disc,options:Object.keys(DISC).filter(k=>DISC[k].q).map(k=>[k,DISC[k].n])},
-            {label:"Acertos",type:"number",value:"",ph:"22"},{label:"Total de questões",type:"number",value:"",ph:"30"},
-            {label:"Data",type:"date",value:day}],
-    ok:"Registrar",
-    onSave:v=>{const h=+v[1],t=+v[2];if(!(t>0)||!(h>=0)||h>t)return;STATE.logs.push({d:v[3]||day,disc:v[0],hit:h,tot:t,task:id})}});
+function logModal(id,disc,day,edit){
+  const L=edit?STATE.logs.find(x=>x.id===edit):null;
+  openModal({title:L?"Corrigir registro":"Registrar bateria de questões",
+    sub:L?"Ajuste os números e salve. A nota projetada é recalculada na hora.":"Entra no gráfico de desempenho e na nota projetada.",
+    fields:[{label:"Matéria",type:"select",value:L?L.disc:disc,options:Object.keys(DISC).filter(k=>DISC[k].q).map(k=>[k,DISC[k].n])},
+            {label:"Acertos",type:"number",value:L?L.hit:"",ph:"22"},{label:"Total de questões",type:"number",value:L?L.tot:"",ph:"30"},
+            {label:"Data",type:"date",value:L?L.d:day}],
+    ok:L?"Salvar correção":"Registrar",
+    extra:L?"Apagar registro":null,
+    onExtra:()=>{STATE.logs=STATE.logs.filter(x=>x.id!==edit)},
+    onSave:v=>{const h=+v[1],t=+v[2];
+      if(!(t>0)){alert("Informe um total de questões maior que zero.");return}
+      if(!(h>=0)||h>t){alert("Os acertos precisam estar entre 0 e "+t+".");return}
+      if(edit){const L=STATE.logs.find(x=>x.id===edit);if(L){L.d=v[3]||day;L.disc=v[0];L.hit=h;L.tot=t;return}}
+      STATE.logs.push({id:"L"+Date.now()+Math.random().toString(36).slice(2,6),d:v[3]||day,disc:v[0],hit:h,tot:t,task:id})}});
 }
 function dropLink(k){delete STATE.links[k];STATE.delLinks=STATE.delLinks||{};STATE.delLinks[k]=Date.now()}
 function linkModal(k,cur,titulo){
