@@ -797,16 +797,16 @@ const REV_DAYS={
  "2026-08-16":{t:"Revisão da semana: releitura ativa dos resumos e refazimento integral do caderno de erros",min:150},
  "2026-08-23":{t:"Simulado próprio — 100 questões montadas por você no banco, das 13h às 18h",min:300},
  "2026-08-30":{t:"SIMULADO — 1ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",min:300},
- "2026-09-06":{t:"Correção da 1ª Rodada com o gabarito definitivo e o relatório de desempenho (liberados em 03/09) + refazimento dos erros",min:180},
+ "2026-09-06":{t:"Caderno de erros da 1ª Rodada: registrar os 33 erros por matéria e marcar os que viraram bloco de reforço",min:30},
  "2026-09-13":{t:"Volta da prova do CRA-PR: leitura leve do caderno de erros, sem questão nova",min:30},
  "2026-09-20":{t:"Simulado próprio — 100 questões, das 13h às 18h (remanejado do dia 13, por causa da prova do CRA-PR)",min:300},
  "2026-09-27":{t:"SIMULADO — 2ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",min:300}
 };
 
 /* dias com janela própria: prova do CRA-PR em 13/09 */
-const DAYSLOTS={"2026-09-13":["PORT","REV"]};
-const DAYTIMES={"2026-09-13":["20:00","21:10"]};
-const DAYJANELA={"2026-09-13":"prova do CRA-PR · só 20h–21h40"};
+const DAYSLOTS={"2026-09-06":["PORT","RLM"],"2026-09-13":["PORT","REV"]};
+const DAYTIMES={"2026-09-06":["21:30","22:30"],"2026-09-13":["20:00","21:10"]};
+const DAYJANELA={"2026-09-06":"volta do simulado · 21h30–23h20","2026-09-13":"prova do CRA-PR · só 20h–21h40"};
 const TEMPLATE={1:["TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PORT","PORT","CF","LEG","DIR","ERR"],4:["TI","CF","EST"],5:["TI","TI","PORT","RLM","CF","DIR","CONT","ERR"],6:["TI","TI","PORT","CF","DIR","LEG","PR"],0:["PORT","RLM","EST","REV"]};
 const TIMES={1:["19:30","20:40","21:50","23:00"],2:["07:30","08:40","09:50"],3:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],4:["07:30","08:40","09:50"],5:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],6:["08:30","09:40","10:50","14:00","15:10","16:20","17:30"],0:["08:30","09:40","10:50","13:00"]};
 const JANELA={1:"19h30–23h30",2:"7h30–10h40",3:"7h30–11h50 · 18h30–22h30",4:"7h30–10h40",5:"7h30–11h50 · 18h30–22h30",6:"8h30–11h40 · 14h–18h20",0:"8h30–11h40 · 13h"};
@@ -816,7 +816,7 @@ const PIN={"2026-08-23":["PORT.pt08","TI.if06","TI.if07"]};
 
 const RETA={
  "2026-09-23":[["TI","quest","Bateria: Marco Civil, LGPD e crimes cibernéticos — 30 questões",50,"07:30"],["TI","rev","2ª passada: redes, IP, DNS, VPN × intranet e firewall + 25 questões",50,"08:40"],["PORT","rev","Termos da oração: vocativo, aposto e predicativo — refazer o caderno de erros + 20 questões",50,"09:50"],["PORT","quest","Interpretação FGV: 2 textos longos, 15 questões cronometradas",50,"11:00"],["DIR","aula","Provas; cadeia de custódia; preservação de local de crime; busca e apreensão; reconhecimento de pessoas e coisas; sigilo de dados",50,"18:30","DIR.pp07","Estratégia · Proc. Penal · Aula 07"],["LEG","rev","Lei seca: Lei Orgânica da PCPR (Lei 23.213/2026)",50,"19:40"],["EST","gap","Detecção de outliers: boxplot, intervalo interquartil e escore-z; padrões, inconsistências e anomalias",50,"20:50","EST.es-g1","LACUNA do Estratégia — itens 4.6 e 4.7 do edital"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
- "2026-09-24":[["TI","quest","Fundamentos: BIOS × UEFI e GPT, TPM 2.0 e Windows 11 — 25 questões",50,"07:30"],["CF","rev","Criminologia, escolas e vitimologia — 25 questões",50,"08:40"],["EST","gap","Estatística aplicada a indicadores de criminalidade e à atividade policial",50,"09:50","EST.es-g2","LACUNA do Estratégia — item 4.8 do edital"]],
+ "2026-09-24":[["TI","quest","Fundamentos: BIOS × UEFI e GPT, TPM 2.0 e Windows 11 — 25 questões",50,"07:30"],["EST","aula","Amostragem",50,"08:40","EST.es06","Estratégia · Estatística · Aula 06"],["EST","gap","Estatística aplicada a indicadores de criminalidade e à atividade policial",50,"09:50","EST.es-g2","LACUNA do Estratégia — item 4.8 do edital"]],
  "2026-09-25":[["TI","rev","2ª passada: segurança da informação, autenticação, logs e certificados + 30 questões",50,"07:30"],["TI","quest","Bateria: malware, phishing e engenharia social — 30 questões",50,"08:40"],["PORT","rev","Pronomes: demonstrativo, oblíquo e relativo — 20 questões",50,"09:50"],["RLM","aula","Juros simples",50,"11:00","RLM.rl14","Estratégia · RLM · Aula 14"],["DIR","aula","Lei de Abuso de Autoridade (Lei 13.869/2019)",50,"18:30","DIR.pp18","Estratégia · Proc. Penal · Aula 18"],["CONT","aula","Princípios contábeis",50,"19:40","CONT.co13","Estratégia · Contabilidade · Aula 13"],["EST","quest","Outliers e indicadores de criminalidade — 20 questões",50,"20:50","EST.es-q3","Banco de questões FGV"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
  "2026-09-26":[["TI","quest","Excel, Word, Writer e Calc — 25 questões",50,"08:30"],["TI","sim","Simulado temático de TI — 25 questões em 50 minutos",50,"09:40"],["PORT","quest","Bateria: crase, pontuação e concordância — 30 questões",50,"10:50"],["CF","quest","Ciências Forenses mistas — 30 questões",50,"14:00"],["DIR","aula","Organizações Criminosas (12.850/2013) e Marco Legal do Combate ao Crime Organizado (Lei 15.358/2026)",50,"15:10","DIR.pp21","Estratégia · Proc. Penal · Aulas 17 e 21"],["LEG","rev","Lei seca: LC 259/2023 e Código Disciplinar 21.894/2024",50,"16:20"],["PR","aula","História do Paraná Republicano",50,"17:30","PR.pr04","Estratégia · Realidade do PR · Aula 04"]],
  "2026-09-27":[["PORT","quest","Funções da linguagem, tipologia textual e semântica — 15 questões",50,"08:30"],["RLM","aula","Juros compostos",50,"09:40","RLM.rl15","Estratégia · RLM · Aula 15"],["RLM","aula","Medidas de comprimento, massa e volume",50,"10:50","RLM.rl13","Estratégia · RLM · Aula 13"],["REV","sim","SIMULADO — 2ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",300,"13:00"]],
