@@ -535,7 +535,7 @@ a.at:hover{color:var(--dc);text-shadow:0 0 14px currentColor}
 <body>
 <div id="root"><div class="boot">Montando o plano…</div></div>
 <script>
-const EXAM="2026-10-11", START="2026-08-10", PHASE1_END="2026-09-29";
+const EXAM="2026-10-11", START="2026-08-10", PHASE1_END="2026-09-22";
 const DISC={
   TI:{n:"Tecnologia & Cibersegurança",q:25,c:"#22D3EE"},
   PORT:{n:"Língua Portuguesa",q:25,c:"#34D399"},
@@ -546,6 +546,7 @@ const DISC={
   LEG:{n:"Legisl. Estadual/Instit.",q:5,c:"#FBBF24"},
   PR:{n:"Realidade do Paraná",q:5,c:"#2DD4BF"},
   CONT:{n:"Contabilidade Geral",q:5,c:"#C084FC"},
+  TURBO:{n:"Revisão Turbo CEISC",q:0,c:"#F472B6"},
   REV:{n:"Revisão & Simulados",q:0,c:"#94A3B8"}
 };
 const KIND={aula:"aula",quest:"questões",sim:"simulado",gap:"sem aula no curso",rev:"revisão"};
@@ -577,8 +578,11 @@ PORT:[
  {k:"pt09",t:"Tempos e modos verbais",src:"Estratégia · Português · Aula 09",tp:"aula"},
  Q("pt-q8","Tipologia textual e verbos — 25 questões"),
  {k:"ptS2",t:"Simulado 02 — conteúdo das aulas 5 a 8",src:"Estratégia · Português · Simulado 02",tp:"sim"},
- {k:"ptS3",t:"Simulado 03 — conteúdo das aulas 9 e 10",src:"Estratégia · Português · Simulado 03",tp:"sim"}],
-
+ {k:"ptS3",t:"Simulado 03 — conteúdo das aulas 9 e 10",src:"Estratégia · Português · Simulado 03",tp:"sim"},
+ {k:"r1pt1",a:"2026-09-06",t:"Termos da oração na prática: vocativo, aposto, predicativo do sujeito e do objeto, adjunto adnominal e complemento nominal — quadro comparativo + 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q08 e Q13)",tp:"quest"},
+ {k:"r1pt2",a:"2026-09-06",t:"Pronomes: o/a demonstrativo, o/a oblíquo e o relativo que — teste da substituição por aquilo que + 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q06)",tp:"quest"},
+ {k:"r1pt3",a:"2026-09-06",t:"Funções da linguagem e tipologia textual: emotiva, fática, apelativa, referencial e metalinguística — 15 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q09 e Q10)",tp:"quest"},
+ {k:"r1pt4",a:"2026-09-06",t:"Semântica FGV: persuadir × convencer, ambiguidade, paralelismo e redundância — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q15 e Q20)",tp:"quest"}],
 TI:[
  {k:"if08",t:"Segurança da informação: confidencialidade, integridade, disponibilidade, autenticidade e rastreabilidade; controle de acesso, autenticação, logs, auditoria, criptografia, certificados digitais e políticas",src:"Estratégia · Informática · Aula 08 + CEISC · Informática · Aulas 22 e 23",tp:"aula"},
  Q("ti-q1","Segurança da informação e controle de acesso — 30 questões"),
@@ -616,6 +620,7 @@ TI:[
  {k:"if16",t:"LibreOffice/BrOffice: Writer",src:"Estratégia · Informática · Aula 16 + CEISC · Informática · Aula 06",tp:"aula"},
  Q("ti-q11","Word, Writer e Calc — 25 questões"),
  {k:"ifS3",t:"Simulado 3 — pacotes de escritório",src:"Estratégia · Informática · Aula 17",tp:"sim"},
+ {k:"r1ti1",a:"2026-09-06",t:"Erros da 1ª Rodada: BIOS × UEFI e GPT, TPM 2.0, alinhamento da barra do Windows 11, VPN × intranet e prazos do Marco Civil — 25 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q36 a Q38, Q44 e Q60)",tp:"quest"},
  {k:"if20",t:"Sistemas operacionais: Microsoft Windows 11 (BR)",src:"Estratégia · Informática · Aula 20",tp:"aula"},
  Q("ti-q12","Windows 11 — 25 questões"),
  {k:"if21",t:"Android; iOS; instalação, atualização, configuração e segurança de sistemas",src:"Estratégia · Informática · Aula 21",tp:"aula"},
@@ -657,6 +662,7 @@ CF:[
  {k:"cf13",t:"Nova Criminologia e criminologias contemporâneas: crítica, labelling, teorias contemporâneas",src:"CEISC · Criminologia · Aula 14",tp:"aula"},
  Q("cf-q6","Criminologia, escolas e teorias criminológicas — 25 questões"),
  {k:"cf14",t:"Vitimologia, vitimização e vitimodogmática",src:"CEISC · Criminologia · Aula 15",tp:"aula"},
+ {k:"r1cf1",a:"2026-09-06",t:"Traumatologia e tanatologia revisitadas: escoriação × equimose, livores e áreas de compressão, enforcamento × estrangulamento — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q62 e Q63)",tp:"quest"},
  {k:"cf15",t:"Modelos de prevenção e reação ao fenômeno criminal; política criminal",src:"CEISC · Criminologia · Aula 16",tp:"aula"},
  {k:"cf16",t:"Papel das instituições policiais no controle formal e informal da criminalidade; perfil criminal e indicadores",src:"CEISC · Criminologia · Aula 17",tp:"aula"},
  Q("cf-q7","Vitimologia, prevenção e controle social — 25 questões"),
@@ -680,6 +686,9 @@ DIR:[
  {k:"ct01",t:"Direitos e deveres individuais e coletivos, art. 5º (Partes 1 e 2) — 37,37%, disparado o mais cobrado",src:"Estratégia · Const. · Aulas 01 e 02",tp:"aula"},
  {k:"ct03",t:"Direitos e deveres individuais e coletivos (Parte 3) e remédios constitucionais",src:"Estratégia · Const. · Aula 03",tp:"aula"},
  {k:"ct14",t:"Segurança pública na CF: art. 144 e Defesa do Estado e das Instituições Democráticas — 15,15%",src:"Estratégia · Const. · Aula 14",tp:"aula"},
+ {k:"r1dh1",a:"2026-09-06",t:"Direitos Humanos: PNDH-3 (eixos, diretrizes e objetivos estratégicos), cidadania formal e material, direito antidiscriminatório e ações afirmativas",src:"Reforço dirigido — erros da 1ª Rodada — zerou o bloco (Q98 a Q100)",tp:"aula"},
+ {k:"r1ct1",a:"2026-09-06",t:"Constitucional: direitos políticos, sufrágio × voto, plebiscito × referendo e o alcance da cláusula pétrea do art. 60, § 4.º — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q93 e Q94)",tp:"quest"},
+ {k:"r1ad1",a:"2026-09-06",t:"Administrativo: regime jurídico como prerrogativas e sujeições; atributos do ato administrativo, um a um — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q95 e Q97)",tp:"quest"},
  {k:"ct08",t:"Organização do Estado: União, Estados, Municípios, DF e competências — 19,19%",src:"Estratégia · Const. · Aula 08",tp:"aula"},
  Q("dir-q3","Constitucional: art. 5º, art. 144 e organização do Estado — 25 questões"),
  {k:"pe05",t:"Crimes contra a pessoa — 34,72%, a maior incidência de Direito Penal",src:"Estratégia · Penal · Aula 05",tp:"aula"},
@@ -704,6 +713,8 @@ RLM:[
  {k:"rl06",t:"Problemas aritméticos — Parte 3",src:"Estratégia · RLM · Aula 06",tp:"aula"},
  {k:"rlS2",t:"Simulado 02 — problemas aritméticos",src:"Estratégia · RLM · Aula 07",tp:"sim"},
  {k:"rl08",t:"Análise combinatória",src:"Estratégia · RLM · Aula 08",tp:"aula"},
+ {k:"r1rl1",a:"2026-09-06",t:"Negação e equivalência: De Morgan, negação da condicional e dos quantificadores — 30 questões só de negação",src:"Reforço dirigido — erros da 1ª Rodada (Q26)",tp:"quest"},
+ {k:"r1rl2",a:"2026-09-06",t:"Variação percentual: aumentar em X% × passar a X%, efeito sobre raio, diâmetro e área; razão e proporção inversa — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q29 e Q30)",tp:"quest"},
  {k:"rl09",t:"Probabilidade",src:"Estratégia · RLM · Aula 09",tp:"aula"},
  Q("rl-q3","Contagem e probabilidade — 25 questões"),
  {k:"rl10",t:"Problemas geométricos e medidas de comprimento",src:"Estratégia · RLM · Aula 10",tp:"aula"},
@@ -723,6 +734,8 @@ EST:[
  {k:"esS1",t:"Simulado 01 — descritiva, posição e dispersão",src:"Estratégia · Estatística · Aula 03",tp:"sim"},
  {k:"es04",t:"Porcentagem",src:"Estratégia · Estatística · Aula 04",tp:"aula"},
  {k:"es05",t:"Probabilidade",src:"Estratégia · Estatística · Aula 05",tp:"aula"},
+ {k:"r1es1",a:"2026-09-06",t:"Propriedades da média e do desvio padrão sob transformação linear: somar constante desloca, multiplicar escala — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q78)",tp:"quest"},
+ {k:"r1es2",a:"2026-09-06",t:"Tendência central × dispersão × separatrizes; média teórica de uniforme discreta × média amostral — 15 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q76 e Q77)",tp:"quest"},
  Q("es-q2","Dispersão, porcentagem e probabilidade — 25 questões"),
  {k:"es06",t:"Amostragem",src:"Estratégia · Estatística · Aula 06",tp:"aula"},
  {k:"esS2",t:"Simulado 02 — porcentagem, probabilidade e amostragem",src:"Estratégia · Estatística · Aula 07",tp:"sim"},
@@ -749,6 +762,7 @@ PR:[
  {k:"pr01",t:"Geografia do Paraná — aspectos humanos e econômicos",src:"Estratégia · Realidade do PR · Aula 01",tp:"aula"},
  Q("pr-q1","Geografia do Paraná — 20 questões"),
  {k:"pr02",t:"História do Paraná Colonial",src:"Estratégia · Realidade do PR · Aula 02",tp:"aula"},
+ {k:"r1pr1",a:"2026-09-06",t:"Paraná colonial revisitado: Ontiveros e Ciudad Real do Guairá, reduções jesuíticas, sambaquis e Caminho do Peabiru — 15 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q31 e Q34)",tp:"quest"},
  {k:"pr03",t:"História do Paraná Imperial",src:"Estratégia · Realidade do PR · Aula 03",tp:"aula"},
  {k:"pr04",t:"História do Paraná Republicano",src:"Estratégia · Realidade do PR · Aula 04",tp:"aula"},
  Q("pr-q2","História, cultura, indicadores e temas atuais do PR — 20 questões")],
@@ -758,6 +772,8 @@ CONT:[
  {k:"co08",t:"Demonstração do Resultado do Exercício",src:"Estratégia · Contabilidade · Aula 08",tp:"aula"},
  {k:"co01",t:"Balanço patrimonial e demonstrações pela legislação societária e CPC",src:"Estratégia · Contabilidade · Aula 01",tp:"aula"},
  Q("co-q1","Patrimônio, escrituração, BP e DRE — 20 questões"),
+ {k:"r1co1",a:"2026-09-06",t:"Custo do ativo imobilizado (CPC 27): frete e instalação entram, treinamento não; despesas antecipadas e regime de competência — 20 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q71 e Q73)",tp:"quest"},
+ {k:"r1co2",a:"2026-09-06",t:"CPC 00 (R2) e CPC 25: usuários primários do relatório financeiro; provisão × passivo contingente — 15 questões",src:"Reforço dirigido — erros da 1ª Rodada (Q74 e Q75)",tp:"quest"},
  {k:"co13",t:"Princípios contábeis",src:"Estratégia · Contabilidade · Aula 13",tp:"aula",a:"2026-08-27"},
  {k:"co17",t:"Análise das demonstrações contábeis e identificação de irregularidades e ocultação patrimonial",src:"Estratégia · Contabilidade · Aula 17",tp:"aula",a:"2026-09-01"},
  Q("co-q2","Análise das demonstrações e indícios de fraude — 20 questões")]
@@ -782,11 +798,15 @@ const REV_DAYS={
  "2026-08-23":{t:"Simulado próprio — 100 questões montadas por você no banco, das 13h às 18h",min:300},
  "2026-08-30":{t:"SIMULADO — 1ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",min:300},
  "2026-09-06":{t:"Correção da 1ª Rodada com o gabarito definitivo e o relatório de desempenho (liberados em 03/09) + refazimento dos erros",min:180},
- "2026-09-13":{t:"Simulado próprio — 100 questões, das 13h às 18h",min:300},
- "2026-09-20":{t:"Revisão da semana + caderno de erros acumulado",min:150},
+ "2026-09-13":{t:"Volta da prova do CRA-PR: leitura leve do caderno de erros, sem questão nova",min:30},
+ "2026-09-20":{t:"Simulado próprio — 100 questões, das 13h às 18h (remanejado do dia 13, por causa da prova do CRA-PR)",min:300},
  "2026-09-27":{t:"SIMULADO — 2ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",min:300}
 };
 
+/* dias com janela própria: prova do CRA-PR em 13/09 */
+const DAYSLOTS={"2026-09-13":["PORT","REV"]};
+const DAYTIMES={"2026-09-13":["20:00","21:10"]};
+const DAYJANELA={"2026-09-13":"prova do CRA-PR · só 20h–21h40"};
 const TEMPLATE={1:["TI","PORT","DIR","ERR"],2:["TI","CF","RLM"],3:["TI","TI","PORT","PORT","CF","LEG","DIR","ERR"],4:["TI","CF","EST"],5:["TI","TI","PORT","RLM","CF","DIR","CONT","ERR"],6:["TI","TI","PORT","CF","DIR","LEG","PR"],0:["PORT","RLM","EST","REV"]};
 const TIMES={1:["19:30","20:40","21:50","23:00"],2:["07:30","08:40","09:50"],3:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],4:["07:30","08:40","09:50"],5:["07:30","08:40","09:50","11:00","18:30","19:40","20:50","22:00"],6:["08:30","09:40","10:50","14:00","15:10","16:20","17:30"],0:["08:30","09:40","10:50","13:00"]};
 const JANELA={1:"19h30–23h30",2:"7h30–10h40",3:"7h30–11h50 · 18h30–22h30",4:"7h30–10h40",5:"7h30–11h50 · 18h30–22h30",6:"8h30–11h40 · 14h–18h20",0:"8h30–11h40 · 13h"};
@@ -795,17 +815,24 @@ const JANELA={1:"19h30–23h30",2:"7h30–10h40",3:"7h30–11h50 · 18h30–22h3
 const PIN={"2026-08-23":["PORT.pt08","TI.if06","TI.if07"]};
 
 const RETA={
- "2026-09-30":[["TI","rev","Revisão relâmpago: segurança da informação (Aula 08) + 30 questões",50,"07:30"],["TI","rev","Revisão relâmpago: malware, phishing e engenharia social (Aula 09) + 30 questões",50,"08:30"],["PORT","quest","Interpretação FGV — 15 questões cronometradas",50,"09:30"],["LEG","rev","Lei seca: Lei 23.213/2026 (Lei Orgânica da PCPR)",50,"10:30"],["CF","rev","Cadeia de custódia (158-A a 158-F) e criminalística",50,"18:30"],["TI","rev","Revisão: redes, IP, DNS, VPN e firewall (Aulas 00 a 02 e 10)",50,"19:30"],["DIR","rev","Direitos Humanos: teoria geral e sistemas de proteção (Aulas 00 e 02)",50,"20:30"],["PORT","rev","Crase, pontuação e concordância (Aulas 00, 07 e 03)",50,"21:30"],["RLM","rev","Equivalências e negações (Aula 00) — 25 questões",50,"22:30"],["REV","rev","Caderno de erros do dia",30,"23:30"]],
- "2026-10-01":[["REV","rev","Correção da 2ª Rodada com o gabarito definitivo e o relatório de desempenho (liberados hoje)",50,"07:30"],["CF","rev","Medicina legal relâmpago: tanatologia, traumatologia e identificação",50,"08:30"],["EST","rev","Medidas de posição, dispersão e outliers — 20 questões",50,"09:30"]],
- "2026-10-02":[["TI","rev","LGPD e Marco Civil (Aulas TI 08 e 09) — 30 questões",50,"07:30"],["TI","rev","Crimes cibernéticos, evidências digitais e OSINT",50,"08:30"],["PORT","rev","Semântica e regência (Aula 04)",50,"09:30"],["LEG","rev","Lei seca: LC 259/2023 e Lei 21.894/2024",50,"10:30"],["DIR","rev","Administrativo por incidência: organização, poderes e princípios",50,"18:30"],["DIR","rev","Constitucional: art. 5º, art. 144 e organização do Estado",50,"19:30"],["CONT","rev","BP, DRE e análise das demonstrações",50,"20:30"],["PR","rev","Revisão geral da Realidade do Paraná",50,"21:30"],["CF","rev","Criminologia, teorias e vitimologia",50,"22:30"],["REV","rev","Caderno de erros do dia",30,"23:30"]],
- "2026-10-03":[["REV","sim","SIMULADO FINAL — 100 questões, das 13h às 18h, nas condições exatas da prova",300,"13:00"]],
- "2026-10-04":[["REV","rev","Correção detalhada do simulado final, questão por questão",150,"08:30"],["REV","rev","Refazimento dos erros e anotação dos padrões que se repetem",60,"11:30"],["REV","rev","Revisão dirigida só dos tópicos que você errou",60,"14:00"]],
- "2026-10-05":[["TI","rev","Excel e Windows 11 (Aulas 13 e 20) — 30 questões",50,"19:30"],["PORT","quest","Interpretação — 15 questões",50,"20:30"],["DIR","quest","Penal: crimes contra a pessoa e o patrimônio — 30 questões",50,"21:30"],["LEG","rev","Lei seca: Lei 14.735/2023 e Lei 6.174/1970",50,"22:30"],["REV","rev","Caderno de erros do dia",30,"23:30"]],
- "2026-10-06":[["TI","rev","Fundamentos, navegadores e correio eletrônico (Aulas 23, 06 e 07)",50,"07:30"],["CF","rev","Identificação humana e criminalística",50,"08:30"],["EST","quest","Questões mistas de Estatística e RLM",50,"09:30"]],
- "2026-10-07":[["REV","rev","Caderno de erros de TI — releitura integral",50,"07:30"],["PORT","quest","Interpretação — 15 questões",50,"08:30"],["LEG","rev","Flashcards de legislação institucional",50,"09:30"],["PR","rev","Flashcards da Realidade do Paraná",50,"10:30"],["DIR","rev","Direitos Humanos — revisão final por incidência",50,"18:30"],["CF","rev","Ciências Forenses — revisão relâmpago geral",50,"19:30"],["TI","rev","TI — revisão relâmpago geral",50,"20:30"],["REV","rev","Caderno de erros do dia e fechamento (dormir antes das 00h)",30,"21:30"]],
- "2026-10-08":[["REV","rev","Caderno de erros geral — todas as matérias",50,"07:30"],["TI","rev","Resumo final de TI: os 10 pontos que mais caem",50,"08:30"],["PORT","quest","15 questões de interpretação para manter o ritmo",50,"09:30"]],
- "2026-10-09":[["REV","rev","Revisão passiva: resumos de TI e cibersegurança",50,"07:30"],["REV","rev","Revisão passiva: Direitos Humanos e legislação institucional",50,"08:30"],["REV","rev","Revisão passiva: Realidade do Paraná e Ciências Forenses",50,"09:30"],["REV","rev","Fechamento leve. Noite livre: dormir cedo e ajustar o relógio",30,"10:30"]],
- "2026-10-10":[["REV","rev","Revisão passiva leve, no máximo 90 minutos. Nada de conteúdo novo",90,"09:00"],["REV","rev","Logística: documento oficial com foto, canetas, local de prova (divulgado em 05/10), trajeto e horário de chegada",20,"10:30"]],
+ "2026-09-23":[["TI","quest","Bateria: Marco Civil, LGPD e crimes cibernéticos — 30 questões",50,"07:30"],["TI","rev","2ª passada: redes, IP, DNS, VPN × intranet e firewall + 25 questões",50,"08:40"],["PORT","rev","Termos da oração: vocativo, aposto e predicativo — refazer o caderno de erros + 20 questões",50,"09:50"],["PORT","quest","Interpretação FGV: 2 textos longos, 15 questões cronometradas",50,"11:00"],["DIR","aula","Provas; cadeia de custódia; preservação de local de crime; busca e apreensão; reconhecimento de pessoas e coisas; sigilo de dados",50,"18:30","DIR.pp07","Estratégia · Proc. Penal · Aula 07"],["LEG","rev","Lei seca: Lei Orgânica da PCPR (Lei 23.213/2026)",50,"19:40"],["EST","gap","Detecção de outliers: boxplot, intervalo interquartil e escore-z; padrões, inconsistências e anomalias",50,"20:50","EST.es-g1","LACUNA do Estratégia — itens 4.6 e 4.7 do edital"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
+ "2026-09-24":[["TI","quest","Fundamentos: BIOS × UEFI e GPT, TPM 2.0 e Windows 11 — 25 questões",50,"07:30"],["CF","rev","Criminologia, escolas e vitimologia — 25 questões",50,"08:40"],["EST","gap","Estatística aplicada a indicadores de criminalidade e à atividade policial",50,"09:50","EST.es-g2","LACUNA do Estratégia — item 4.8 do edital"]],
+ "2026-09-25":[["TI","rev","2ª passada: segurança da informação, autenticação, logs e certificados + 30 questões",50,"07:30"],["TI","quest","Bateria: malware, phishing e engenharia social — 30 questões",50,"08:40"],["PORT","rev","Pronomes: demonstrativo, oblíquo e relativo — 20 questões",50,"09:50"],["RLM","aula","Juros simples",50,"11:00","RLM.rl14","Estratégia · RLM · Aula 14"],["DIR","aula","Lei de Abuso de Autoridade (Lei 13.869/2019)",50,"18:30","DIR.pp18","Estratégia · Proc. Penal · Aula 18"],["CONT","aula","Princípios contábeis",50,"19:40","CONT.co13","Estratégia · Contabilidade · Aula 13"],["EST","quest","Outliers e indicadores de criminalidade — 20 questões",50,"20:50","EST.es-q3","Banco de questões FGV"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
+ "2026-09-26":[["TI","quest","Excel, Word, Writer e Calc — 25 questões",50,"08:30"],["TI","sim","Simulado temático de TI — 25 questões em 50 minutos",50,"09:40"],["PORT","quest","Bateria: crase, pontuação e concordância — 30 questões",50,"10:50"],["CF","quest","Ciências Forenses mistas — 30 questões",50,"14:00"],["DIR","aula","Organizações Criminosas (12.850/2013) e Marco Legal do Combate ao Crime Organizado (Lei 15.358/2026)",50,"15:10","DIR.pp21","Estratégia · Proc. Penal · Aulas 17 e 21"],["LEG","rev","Lei seca: LC 259/2023 e Código Disciplinar 21.894/2024",50,"16:20"],["PR","aula","História do Paraná Republicano",50,"17:30","PR.pr04","Estratégia · Realidade do PR · Aula 04"]],
+ "2026-09-27":[["PORT","quest","Funções da linguagem, tipologia textual e semântica — 15 questões",50,"08:30"],["RLM","aula","Juros compostos",50,"09:40","RLM.rl15","Estratégia · RLM · Aula 15"],["RLM","aula","Medidas de comprimento, massa e volume",50,"10:50","RLM.rl13","Estratégia · RLM · Aula 13"],["REV","sim","SIMULADO — 2ª Rodada Avançada do Estratégia (caderno liberado hoje), das 13h às 18h",300,"13:00"]],
+ "2026-09-28":[["REV","rev","Correção da 2ª Rodada: gabarito definitivo, erro por erro, com registro no caderno de erros",70,"19:30"],["PORT","quest","Semântica: persuadir × convencer, ambiguidade, paralelismo e redundância — 20 questões",50,"20:40"],["DIR","quest","Proc. Penal: provas, cadeia de custódia, ORCRIM e abuso de autoridade — 25 questões",50,"21:50","DIR.dir-q5","Banco de questões FGV"],["REV","rev","Caderno de erros do dia",30,"23:00"]],
+ "2026-09-29":[["TI","rev","Caderno de erros de TI — releitura e refazimento",50,"07:30"],["CF","rev","Caderno de erros de Ciências Forenses",50,"08:40"],["RLM","quest","Juros, porcentagem e medidas — 25 questões",50,"09:50","RLM.rl-q4","Banco de questões FGV"]],
+ "2026-09-30":[["TI","rev","Revisão relâmpago: segurança da informação (Aula 08) + 30 questões",50,"07:30"],["TI","rev","Revisão relâmpago: malware, phishing e engenharia social (Aula 09) + 30 questões",50,"08:40"],["PORT","quest","Interpretação FGV — 15 questões cronometradas",50,"09:50"],["RLM","sim","Simulado Final de RLM",50,"11:00","RLM.rlS4","Estratégia · RLM · Aula 16"],["CF","rev","Cadeia de custódia (158-A a 158-F) e criminalística",50,"18:30"],["DIR","aula","Lei de Execução Penal (7.210/1984) e Crimes Hediondos (8.072/1990) — visão geral",50,"19:40","DIR.lp00","Estratégia · Legisl. Penal Especial · Aulas 00 e 01"],["DIR","rev","Direitos Humanos: PNDH-3, cidadania formal e material, ações afirmativas — 25 questões",50,"20:50"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
+ "2026-10-01":[["TI","rev","Revisão: redes, IP, DNS, VPN e firewall (Aulas 00 a 02 e 10)",50,"07:30"],["CF","rev","Medicina legal relâmpago: tanatologia, traumatologia e identificação",50,"08:40"],["CONT","aula","Análise das demonstrações contábeis e identificação de irregularidades e ocultação patrimonial",50,"09:50","CONT.co17","Estratégia · Contabilidade · Aula 17"]],
+ "2026-10-02":[["TI","rev","LGPD e Marco Civil (Aulas TI 08 e 09) — 30 questões",50,"07:30"],["TI","rev","Crimes cibernéticos, evidências digitais e OSINT",50,"08:40"],["PORT","rev","Sintaxe: termos da oração e pronomes — revisão final",50,"09:50"],["EST","sim","Simulado 02 — porcentagem, probabilidade e amostragem",50,"11:00","EST.esS2","Estratégia · Estatística · Aula 07"],["DIR","rev","Administrativo: regime jurídico, poderes e atributos do ato administrativo",50,"18:30"],["DIR","rev","Constitucional: art. 5.º, art. 144, organização do Estado e direitos políticos",50,"19:40"],["CONT","quest","Análise das demonstrações e indícios de fraude — 20 questões",50,"20:50","CONT.co-q2","Banco de questões FGV"],["REV","rev","Caderno de erros do dia",30,"22:00"]],
+ "2026-10-03":[["TURBO","rev","Revisão Turbo CEISC — Língua Portuguesa, Direito Penal Geral e Direito Penal Especial",240,"08:00",null,"CEISC · Patrick Meneghetti, Vitor Falcão e Róbinson Orlando Freitas Palominio · 08h00 às 12h00"],["PORT","rev","Caderno de erros de Português: refazer tudo o que caiu de sintaxe e semântica",50,"14:00"],["PR","quest","História, cultura, indicadores e temas atuais do PR — 20 questões",50,"15:10","PR.pr-q2","Banco de questões FGV"],["LEG","rev","Flashcards de legislação estadual e institucional",50,"16:20"],["REV","rev","Caderno de erros do dia",30,"17:30"]],
+ "2026-10-04":[["REV","rev","Revisão passiva leve antes do simulado: resumos de TI e Ciências Forenses. Nada de conteúdo novo",90,"09:00"],["REV","sim","SIMULADO FINAL — 100 questões, das 13h às 18h, no mesmo dia da semana e no mesmo horário da prova",300,"13:00"]],
+ "2026-10-05":[["TURBO","rev","Revisão Turbo CEISC — Estatística, Segurança Cibernética e Crimes Digitais",130,"19:00",null,"CEISC · Dudan e Deodato Neto · 19h00 às 21h10"],["REV","rev","Correção do simulado final: questão por questão, começando pelos erros",120,"21:20"]],
+ "2026-10-06":[["REV","rev","Simulado final: refazimento dos erros e anotação dos padrões que se repetem",50,"07:30"],["PORT","quest","Interpretação — 15 questões para manter o ritmo",50,"08:40"],["EST","quest","Questões mistas de Estatística e RLM",50,"09:50"],["TURBO","rev","Revisão Turbo CEISC — Legislação Penal Especial, Direito Processual Penal e Matemática",180,"19:00",null,"CEISC · Pedro Almeida Sturmer, Dudan e Gabriel Silva Borges · 19h00 às 22h00"]],
+ "2026-10-07":[["TI","rev","TI — revisão relâmpago geral: os 10 pontos que mais caem",50,"07:30"],["TI","quest","Excel, Windows 11 e fundamentos — 25 questões",50,"08:40"],["PORT","rev","Sintaxe e semântica: revisão final (vocativo, predicativo, pronomes, funções da linguagem)",50,"09:50"],["LEG","rev","Lei seca: Lei 23.213/2026 e Lei 6.174/1970",50,"11:00"],["TURBO","rev","Revisão Turbo CEISC — Direito Constitucional, RLM e Criminologia",180,"19:00",null,"CEISC · João Vitor Herédia, Gustavo Rodrigues e Fabiana Rossi Valia · 19h00 às 22h00"],["REV","rev","Caderno de erros do dia",30,"22:10"]],
+ "2026-10-08":[["REV","rev","Caderno de erros geral — todas as matérias",50,"07:30"],["CF","rev","Ciências Forenses — revisão relâmpago geral",50,"08:40"],["CONT","rev","Contabilidade: competência, custo do imobilizado, provisões e usuários do CPC 00",50,"09:50"],["TURBO","rev","Revisão Turbo CEISC — Direito Administrativo, Direitos Humanos e Realidade do Estado do Paraná",180,"19:00",null,"CEISC · Ariel Rocha Zvoziak, Raquel Peruzzo Jardim e Heitor Ferreira · 19h00 às 22h00"]],
+ "2026-10-09":[["REV","rev","Revisão passiva: resumos de TI e cibersegurança",50,"07:30"],["REV","rev","Revisão passiva: Direitos Humanos e legislação institucional",50,"08:40"],["PORT","quest","10 questões de interpretação, só para manter o ritmo",50,"09:50"],["TURBO","rev","Revisão Turbo CEISC — Medicina Legal, Legislação Estadual e Institucional e Contabilidade",180,"19:00",null,"CEISC · Ricardo Averbach Rebouças, Pedro Almeida Sturmer e Luís Filipe Chaves Mello · 19h00 às 22h00"]],
+ "2026-10-10":[["REV","rev","Revisão passiva leve, no máximo 90 minutos. Nada de conteúdo novo",90,"09:00"],["REV","rev","Logística: documento oficial com foto, canetas, local de prova, trajeto e horário de chegada",20,"10:30"]],
  "2026-10-11":[["REV","sim","PROVA OBJETIVA — 13h às 18h · 100 questões · corte de 50 pontos",300,"13:00"]]
 };
 
@@ -827,7 +854,7 @@ function generate(){
   for(const d in DRILL)dr[d]=0;
   let cur=START;
   while(cur<=PHASE1_END){
-    const wd=s2d(cur).getDay(),slots=TEMPLATE[wd],ts=TIMES[wd];plan[cur]=[];
+    const wd=s2d(cur).getDay(),slots=DAYSLOTS[cur]||TEMPLATE[wd],ts=DAYTIMES[cur]||TIMES[wd];plan[cur]=[];
     slots.forEach((d,i)=>{
       if(d==="ERR"){plan[cur].push({id:"E."+cur,disc:"REV",tp:"rev",t:"Caderno de erros: registrar e refazer os erros do dia",src:"",min:30,date:cur,time:ts[i]});return}
       if(d==="REV"){const r=REV_DAYS[cur];if(r)plan[cur].push({id:"R."+cur,disc:"REV",tp:r.min>=300?"sim":"rev",t:r.t,src:"",min:r.min,date:cur,time:ts[i]});return}
@@ -839,7 +866,7 @@ function generate(){
   }
   const sobra=[];
   for(const d in queues)queues[d].forEach(it=>sobra.push({id:d+"."+it.k,disc:d,tp:it.tp,t:it.t,src:it.src,min:50}));
-  for(const day in RETA)plan[day]=RETA[day].map((b,i)=>({id:"F."+day+"."+i,disc:b[0],tp:b[1],t:b[2],src:"",min:b[3],time:b[4],date:day}));
+  for(const day in RETA)plan[day]=RETA[day].map((b,i)=>({id:b[5]||("F."+day+"."+i),disc:b[0],tp:b[1],t:b[2],src:b[6]||"",min:b[3],time:b[4],date:day}));
   /* dias fixados: recebem exatamente os blocos listados; o que estava no dia desce para o seguinte */
   for(const day in PIN){
     if(!plan[day])continue;
@@ -856,7 +883,7 @@ function generate(){
       if(t.disc==="REV"&&t.min>=150)return;            /* simulado longo do dia some */
       let alvo=addD(day,1);
       while(alvo<=PHASE1_END){
-        const cap=(TEMPLATE[s2d(alvo).getDay()]||[]).length;
+        const cap=((DAYSLOTS[alvo]||TEMPLATE[s2d(alvo).getDay()])||[]).length;
         if(!plan[alvo])plan[alvo]=[];
         if(plan[alvo].length<cap){
           plan[alvo].push(Object.assign({},t,{date:alvo}));
@@ -893,6 +920,18 @@ async function load(){
     }
   }
   if(d)STATE=Object.assign(STATE,d);
+  /* replanejamento de 06/09: reposiciona só o que ainda não foi feito, preservando marcações e vínculos */
+  if(!STATE.replan0609){
+    STATE.moved=STATE.moved||{};STATE.reTime=STATE.reTime||{};STATE.removed=STATE.removed||{};
+    for(const day in PLAN){
+      if(day<"2026-09-06")continue;
+      PLAN[day].forEach(t=>{
+        if(STATE.done[t.id])return;
+        delete STATE.moved[t.id];delete STATE.reTime[t.id];delete STATE.removed[t.id];
+      });
+    }
+    STATE.replan0609=1;save();
+  }
   if(Array.isArray(STATE.logs)){
     let n=0;
     STATE.logs.forEach((l,i)=>{if(!l.id){l.id="L"+(l.d||"")+"-"+i+"-"+Math.random().toString(36).slice(2,6);n++}});
@@ -1021,13 +1060,13 @@ function viewPlano(map,tod){
   Object.keys(map).sort().forEach(day=>{
     if(day<START)return;
     const l=map[day].filter(t=>FILTER==="all"||t.disc===FILTER).filter(t=>!ONLYOPEN||!STATE.done[t.id]);
-    const ph=day<="2026-09-07"?"F1":(day<="2026-09-29"?"F2":"F3");
-    if(ph!==lp){lp=ph;const m={F1:["Fase 1 · 10/08 a 07/09 — Construção","Primeira passada nas aulas de maior peso"],F2:["Fase 2 · 08/09 a 29/09 — Consolidação","2ª passada + volume de questões e Rodadas Avançadas"],F3:["Fase 3 · 30/09 a 11/10 — Reta final","Só revisão, lei seca e simulado"]}[ph];
+    const ph=day<="2026-09-05"?"F1":(day<="2026-09-22"?"F2":"F3");
+    if(ph!==lp){lp=ph;const m={F1:["Fase 1 · 10/08 a 05/09 — Construção","Primeira passada nas aulas de maior peso"],F2:["Fase 2 · 06/09 a 22/09 — Consolidação comprimida","Fecha o conteúdo novo e ataca os erros da 1ª Rodada"],F3:["Fase 3 · 23/09 a 11/10 — Reta final","Revisão, lei seca, simulados e Revisões Turbo do CEISC"]}[ph];
       body+='<div class="phase"><h2>'+m[0]+'</h2><p>'+m[1]+'</p></div>'}
     if(!l.length&&(FILTER!=="all"||ONLYOPEN))return;
     const mins=l.reduce((a,t)=>a+t.min,0),d2=l.filter(t=>STATE.done[t.id]).length,p2=l.length?Math.round(100*d2/l.length):0,col=STATE.collapsed[day],wd=s2d(day).getDay();
     body+='<div class="day '+(ALT++%2?"b":"a")+(day===tod?" today":"")+(day<tod?" past":"")+(day===EXAM?" exam":"")+(p2===100&&l.length?" full":"")+'"><div class="day-h" data-toggle="'+day+'"><span class="day-d">'+fmt(day)+'</span><span class="day-w">'+WD[wd]+'</span>';
-    if(day<=PHASE1_END)body+='<span class="win">'+JANELA[wd]+'</span>';
+    if(day<=PHASE1_END)body+='<span class="win">'+((typeof DAYJANELA!=="undefined"&&DAYJANELA[day])||JANELA[wd])+'</span>';
     if(day===tod)body+='<span class="tag">hoje</span>';
     body+='<span class="day-m"><span class="mini"><i style="width:'+p2+'%"></i></span>'+d2+'/'+l.length+' · '+(mins/60).toFixed(1).replace(".",",")+'h '+(col?"▸":"▾")+'</span></div>';
     if(!col){body+='<div class="day-b">';l.forEach(t=>{body+=taskHtml(t)});body+='<button class="add" data-add="'+day+'">+ acrescentar bloco neste dia</button></div>'}
@@ -1096,7 +1135,7 @@ let pT=null;
 function syncSoon(){if(!SYNC.token)return;clearTimeout(pT);pT=setTimeout(()=>syncNow(true),5000)}
 /* ---------- replanejamento a partir de hoje ---------- */
 function slotTime(day,i){
-  const wd=s2d(day).getDay(),ts=TIMES[wd]||[];
+  const wd=s2d(day).getDay(),ts=(typeof DAYTIMES!=="undefined"&&DAYTIMES[day])||TIMES[wd]||[];
   if(i<ts.length)return ts[i];
   const base=ts.length?ts[ts.length-1]:"20:00";
   const[h,m]=base.split(":").map(Number);
@@ -1128,7 +1167,7 @@ function replanejar(soAulas){
     let posto=false;
     let cur=d;
     while(cur<=PHASE1_END){
-      const wd=s2d(cur).getDay(),cap=(TEMPLATE[wd]||[]).length+2;
+      const wd=s2d(cur).getDay(),cap=((DAYSLOTS[cur]||TEMPLATE[wd])||[]).length+(DAYSLOTS[cur]?0:2);
       const n=ocup[cur]||0;
       if(n<cap){
         STATE.moved[t.id]=cur;
