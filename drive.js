@@ -91,9 +91,11 @@ function bootCache(){
 }
 
 /* ---------- progresso ---------- */
+let GAGAIN=false;
 async function gSync(){
-  if(!gOn()||GBUSY)return;
-  GBUSY=true;GST="sincronizando…";
+  if(!gOn())return;
+  if(GBUSY){GAGAIN=true;return}
+  GBUSY=true;GAGAIN=false;GST="sincronizando…";
   try{
     await gFolder();
     if(!DRV.prog){
@@ -102,7 +104,12 @@ async function gSync(){
     }
     if(DRV.prog){
       const remote=await(await gfetch(GAPI+"/"+DRV.prog+"?alt=media")).json();
-      if(remote&&remote.done){const novo=(remote.updatedAt||0)>(STATE.updatedAt||0);STATE=Object.assign(STATE,novo?mergeState(STATE,remote):mergeState(remote,STATE))}
+      if(remote&&remote.done){
+        const rR=remote.resetAt||0,rL=STATE.resetAt||0;
+        if(rR>rL){const v=STATE.view;for(const k in STATE)delete STATE[k];Object.assign(STATE,blankState(),remote,{view:v})}   /* outro aparelho zerou tudo depois */
+        else if(rL>rR){}                                                                     /* este aparelho zerou: sobrescreve o Drive */
+        else{const novo=(remote.updatedAt||0)>(STATE.updatedAt||0);Object.assign(STATE,novo?mergeState(STATE,remote):mergeState(remote,STATE))}
+      }
       STATE.updatedAt=Date.now();await gUpload(DRV.prog,{},STATE);
     }else{
       STATE.updatedAt=Date.now();
@@ -110,9 +117,10 @@ async function gSync(){
       try{DRV.prog=await gUpload(null,meta,STATE)}catch(e){delete meta.parents;DRV.prog=await gUpload(null,meta,STATE)}
     }
     const j=JSON.stringify(STATE);try{await window.storage.set("deleg-v1",j);await window.storage.set("deleg-v1-bak",j)}catch(e){}
-    GST="salvo no Drive às "+hhmm();GERR="";
+    GST="salvo no Drive às "+hhmm();GERR="";lsSet("deleg-lastsync",String(STATE.updatedAt));
   }catch(e){GST="";GERR=e.message}
   GBUSY=false;render();
+  if(GAGAIN)setTimeout(gSync,500);
 }
 async function gConnect(){
   try{await gToken()}catch(e){GERR=e.message;render();return}
@@ -124,7 +132,7 @@ async function gConnect(){
 function gOff(){if(GTOK&&gReady())try{google.accounts.oauth2.revoke(GTOK,()=>{})}catch(e){}GTOK="";GEXP=0;DRV={root:"",prog:"",files:null};lsDel("deleg-google");GST="";render()}
 
 /* ---------- leitor de PDF ---------- */
-const PDFJS_V="3.11.174";
+const PDFJS_V="3.11.174",PDF_MAX=20;   /* PDFs guardados para abrir offline; os mais antigos saem */
 let PDOC={id:"",doc:null},VW=null;
 function loadPdfJs(){
   if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
@@ -139,7 +147,8 @@ async function pdfBytes(f){
   const buf=await(await gfetch(GAPI+"/"+f.id+"?alt=media")).arrayBuffer();
   try{const c=await caches.open("deleg-pdf");
     for(const k of await c.keys())if(k.url.indexOf("/pdf/"+f.id+"/")>=0)await c.delete(k);
-    await c.put(key,new Response(buf.slice(0),{headers:{"Content-Type":"application/pdf"}}))}catch(e){}
+    await c.put(key,new Response(buf.slice(0),{headers:{"Content-Type":"application/pdf"}}));
+    const ks=await c.keys();for(let i=0;i<ks.length-PDF_MAX;i++)await c.delete(ks[i])}catch(e){}
   return buf;
 }
 function refsOf(tk){return(INDICE.topicos&&INDICE.topicos[tk])||[]}
@@ -175,7 +184,7 @@ function viewerShell(tk,r,blockId){
     if(a==="x")closeViewer();
     else if(a==="ini")vwGo(VW.r.pag);
     else if(a==="zm"||a==="zp"){VW.zoom=Math.max(.6,Math.min(2.4,VW.zoom+(a==="zp"?.2:-.2)));const p=vwCur();vwBuild(p)}
-    else if(a==="ok"){if(VW.blockId){STATE.done[VW.blockId]=1;save()}closeViewer();render()}});
+    else if(a==="ok"){if(VW.blockId){STATE.done[VW.blockId]=Date.now();save()}closeViewer();render()}});
   VW.onkey=e=>{if(e.key==="Escape")closeViewer()};document.addEventListener("keydown",VW.onkey);
 }
 function vwMsg(t,err){const m=VW&&VW.el.querySelector("#pvM");if(m){m.textContent=t;m.classList.toggle("err",!!err)}}
@@ -232,10 +241,10 @@ function viewCaderno(){
     '<div class="rot"><div><b>para hoje</b>'+due.length+'</div><div><b>no caderno</b>'+ids.length+'</div><div><b>fixadas</b>'+out+'</div></div>'+
     '<p class="note">Cada questão errada entra aqui e volta em 1, 3, 7 e 15 dias. Errou de novo, o ciclo recomeça; acertou duas vezes seguidas, ela sai do caderno e conta como fixada.</p>'+
     (ids.length?'<div class="bar"><button class="btn pri" id="cadGo"'+(due.length?'':' disabled')+'>Revisar as '+due.length+' de hoje</button><button class="btn" id="cadAll">Revisar todas agora</button></div>':'')+'</div>';
-  const fila=CAD.all?ids.slice().sort((a,b)=>S[a].due.localeCompare(S[b].due)):due;
+  const fila=(CAD.q||[]).filter(id=>Q.some(q=>q.id===id));
   if(CAD.on&&CAD.i<fila.length){
-    const id=fila[CAD.i],q=Q.find(x=>x.id===id),d=DISC[q.disc],r=CAD.r;
-    h+='<div class="card qz" style="--dc:'+d.c+'"><div class="q-h"><span class="a-mat">'+esc(d.n)+' · revisão '+(CAD.all?CAD.i+1:1)+' de '+(CAD.all?fila.length:fila.length)+'</span><span class="src">'+esc(topName(q.tk))+' · '+(S[id]?S[id].n:0)+' revisões · '+(S[id]?S[id].ok:0)+' acerto(s) seguido(s)</span></div>'+
+    const id=fila[CAD.i],q=Q.find(x=>x.id===id),d=DISC[q.disc],r=CAD.r;   /* ordem fixada no início: respostas não embaralham a fila */
+    h+='<div class="card qz" style="--dc:'+d.c+'"><div class="q-h"><span class="a-mat">'+esc(d.n)+' · revisão '+(CAD.i+1)+' de '+fila.length+'</span><span class="src">'+esc(topName(q.tk))+' · '+(S[id]?S[id].n:0)+' revisões · '+(S[id]?S[id].ok:0)+' acerto(s) seguido(s)</span></div>'+
       '<div class="q-e">'+esc(q.enun).replace(/\n/g,"<br>")+'</div><div class="q-alts">';
     "ABCDE".split("").forEach((L,j)=>{let cls="";if(r){if(L===q.gab)cls=" ok";else if(L===r)cls=" no"}
       h+='<button class="q-alt'+cls+'" data-cad="'+id+'|'+L+'"'+(r?" disabled":"")+'><b>'+L+'</b><span>'+esc(q.alts[j])+'</span></button>'});
@@ -260,7 +269,7 @@ function perf(){
   const add=(o,k,h,t,d)=>{(o[k]=o[k]||[]).push({h:h,t:t,d:d})};
   (STATE.logs||[]).forEach(l=>{if(!DISC[l.disc]||!DISC[l.disc].q||l.task==="INEDITAS")return;add(disc,l.disc,l.hit,l.tot,l.d);
     const b=B[l.task];if(b&&b.tk)add(tk,b.tk,l.hit,l.tot,l.d)});
-  Object.keys(STATE.qa||{}).forEach(id=>{const q=Q.find(x=>x.id===id),a=STATE.qa[id];if(!q)return;add(disc,q.disc,a.ok,1,a.d);add(tk,q.tk,a.ok,1,a.d)});
+  Object.keys(STATE.qa||{}).forEach(id=>{const q=Q.find(x=>x.id===id),a=STATE.qa[id];if(!q||!a)return;add(disc,q.disc,a.ok,1,a.d);add(tk,q.tk,a.ok,1,a.d)});
   const sum=(arr,maxQ)=>{arr=arr.slice().sort((a,b)=>(a.d||"").localeCompare(b.d||""));let h=0,t=0;for(let i=arr.length-1;i>=0&&t<maxQ;i--){h+=arr[i].h;t+=arr[i].t}return{h:h,t:t,a:t?h/t:null}};
   const D={},T={};for(const k in disc)D[k]=sum(disc[k],80);for(const k in tk)T[k]=sum(tk[k],40);
   return{D:D,T:T};
@@ -356,8 +365,12 @@ function driveCard(){
 }
 function gBanner(){
   if(gOn())return GERR?'<div class="card alert" style="padding:12px 16px"><p class="note" style="margin:0;color:var(--carmim)">'+esc(GERR)+'</p></div>':"";
-  return '<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="note" style="margin:0;flex:1;min-width:180px">'+(GERR?'<b style="color:var(--carmim)">'+esc(GERR)+'.</b> ':'')+'Conecte o Google Drive para abrir os PDFs e salvar o progresso.</span><button class="btn pri" id="gConn">Conectar Google Drive</button></div>';
+  const pend=lsGet("deleg-google")&&(STATE.updatedAt||0)>(+lsGet("deleg-lastsync")||0);
+  return '<div class="card'+(pend?" alert":"")+'" style="padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="note" style="margin:0;flex:1;min-width:180px">'+(GERR?'<b style="color:var(--carmim)">'+esc(GERR)+'.</b> ':'')+(pend?'<b>Há alterações salvas só neste aparelho.</b> Conecte para enviá-las ao Drive.':'Conecte o Google Drive para abrir os PDFs e salvar o progresso.')+'</span><button class="btn pri" id="gConn">Conectar Google Drive</button></div>';
 }
+/* ao voltar para a aba (outro aparelho pode ter salvo), busca o progresso no Drive */
+let GVIS=0;
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&gOn()&&Date.now()-GVIS>30000){GVIS=Date.now();gSync().then(()=>render()).catch(()=>{})}});
 function bindDrive(R){
   const $=s=>R.querySelector(s),$$=s=>R.querySelectorAll(s);
   $$("#gConn").forEach(b=>b.onclick=gConnect);
@@ -369,10 +382,10 @@ function bindDrive(R){
   $$("[data-qc]").forEach(b=>b.onclick=e=>{e.stopPropagation();const tk=b.dataset.qc;
     openModal({title:"Filtro no QConcursos",sub:esc(topName(tk))+' · <a href="https://www.qconcursos.com/questoes-de-concursos/questoes" target="_blank" rel="noopener" style="color:var(--neon)">abrir o QConcursos ↗</a>',
       fields:[{label:"Filtros",type:"textarea",value:qcText(tk),rows:9,hint:"Erros no QC: anote o número da questão no caderno do próprio QC; aqui registre o placar no ◎ do bloco."}],ok:"Fechar",onSave:()=>{}})});
-  if($("#cadGo"))$("#cadGo").onclick=()=>{CAD={i:0,r:null,on:true,all:false};render()};
-  if($("#cadAll"))$("#cadAll").onclick=()=>{CAD={i:0,r:null,on:true,all:true};render()};
+  if($("#cadGo"))$("#cadGo").onclick=()=>{CAD={i:0,r:null,on:true,all:false,q:srsDue()};render()};
+  if($("#cadAll"))$("#cadAll").onclick=()=>{const S=STATE.srs||{};CAD={i:0,r:null,on:true,all:true,q:Object.keys(S).filter(id=>(window.QUESTOES||[]).some(q=>q.id===id)).sort((a,b)=>S[a].due.localeCompare(S[b].due))};render()};
   $$("[data-cad]").forEach(b=>b.onclick=()=>{const[id,L]=b.dataset.cad.split("|"),q=(window.QUESTOES||[]).find(x=>x.id===id);if(!q||CAD.r)return;
     CAD.r=L;CAD.id=id;CAD.ok=L===q.gab;render()});
-  if($("#cadNext"))$("#cadNext").onclick=()=>{if(CAD.id)srsAnswer(CAD.id,CAD.ok);if(CAD.all)CAD.i++;else CAD.i=0;CAD.r=null;CAD.id=null;save();render();window.scrollTo({top:0})};
+  if($("#cadNext"))$("#cadNext").onclick=()=>{if(CAD.id)srsAnswer(CAD.id,CAD.ok);CAD.i++;CAD.r=null;CAD.id=null;save();render();window.scrollTo({top:0})};
 }
 bootCache();

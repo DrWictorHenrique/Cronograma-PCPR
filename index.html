@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080B11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Delegado">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080B11'/%3E%3Cpath d='M32 10l18 7v13c0 12-8 20-18 24-10-4-18-12-18-24V17z' fill='none' stroke='%2322D3EE' stroke-width='4'/%3E%3C/svg%3E">
 <meta name="robots" content="noindex">
 <title>Cronograma Delegado — núcleo comum</title>
 <script>
@@ -756,11 +760,11 @@ const BANK={};
 for(const d in TOP){
   const L=[];
   TOP[d].forEach(x=>{
-    L.push({k:x[0],t:"Teoria: "+x[1],src:"Resumo na aba Teoria · lei seca: "+x[2],tp:"aula",tk:d+"."+x[0],ph:1});
-    L.push({k:x[0]+"q",t:"Questões: "+x[1],src:"15 questões de provas de Delegado no seu banco + inéditas do planner",tp:"quest",tk:d+"."+x[0],ph:1});
+    L.push({k:x[0],t:"Teoria: "+x[1],src:"Resumo da aba Teoria e PDF indicado (📄) · lei seca: "+x[2],tp:"aula",tk:d+"."+x[0],ph:1});
+    L.push({k:x[0]+"q",t:"Questões: "+x[1],src:"Questões comentadas do PDF (✎) e filtro de Delegado no QConcursos (🔎) + inéditas do planner",tp:"quest",tk:d+"."+x[0],ph:1});
   });
   TOP[d].forEach(x=>{
-    L.push({k:x[0]+"r",t:"2ª passada: "+x[1],src:"Releitura ativa do resumo e da lei seca marcada + 20 questões de provas de Delegado + informativos do tema",tp:"rev",tk:d+"."+x[0],ph:2});
+    L.push({k:x[0]+"r",t:"2ª passada: "+x[1],src:"Roteiro do Passo Estratégico (↺), lei seca marcada + 20 questões de Delegado no QConcursos + informativos do tema",tp:"rev",tk:d+"."+x[0],ph:2});
   });
   for(let i=0;i<TOP[d].length;i+=2){
     const g=TOP[d].slice(i,i+2);
@@ -887,15 +891,14 @@ function generate(){
 const G=generate(),PLAN=G.plan;
 
 /* ---------- estado ---------- */
-let STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},reTime:{},logs:{},qa:{},srs:{},srsOut:{},fz:{},lido:{}};
-STATE.logs=[];
+let STATE=blankState();
 let TAB="plano",FILTER="all",ONLYOPEN=false,VIEW="semana",WEEK=null;
 async function grab(k){try{const r=await window.storage.get(k);return r&&r.value?JSON.parse(r.value):null}catch(e){return null}}
 let RECUP="",MIGROU=0;
 async function load(){
   const d=await grab("deleg-v1")||await grab("deleg-v1-bak");
   if(d)STATE=Object.assign(STATE,d);
-  STATE.qa=STATE.qa||{};["srs","srsOut","fz","lido"].forEach(k=>{STATE[k]=STATE[k]||{}});
+  const B0=blankState();for(const k in B0)if(STATE[k]==null)STATE[k]=B0[k];
   if(Array.isArray(STATE.logs)){
     let n=0;
     STATE.logs.forEach((l,i)=>{if(!l.id){l.id="L"+(l.d||"")+"-"+i+"-"+Math.random().toString(36).slice(2,6);n++}});
@@ -1051,59 +1054,33 @@ function viewPlano(map,tod){
 
 
 /* ---------- visão semanal ---------- */
-/* ---------- sincronização entre dispositivos (Gist privado) ---------- */
-let SYNC={token:"",gist:""},SYNCST="",SYNCING=false;
-const GFILE="cronograma-delegado.json";
-async function loadSync(){const d=await grab("deleg-sync");if(d)SYNC=Object.assign(SYNC,d)}
-async function saveSync(){try{await window.storage.set("deleg-sync",JSON.stringify(SYNC))}catch(e){}}
-function gh(path,opt){
-  opt=opt||{};opt.headers=Object.assign({"Accept":"application/vnd.github+json","Authorization":"Bearer "+SYNC.token},opt.headers||{});
-  return fetch("https://api.github.com"+path,opt);
-}
+function blankState(){return{done:{},undone:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},reTime:{},logs:[],delLogs:{},qa:{},srs:{},srsOut:{},fz:{},lido:{}}}
 function mergeState(a,b){ /* b é o mais recente em caso de conflito */
   const o={};
-  ["done","moved","removed","edited","collapsed","links","custom","qa","srs","srsOut","fz","lido"].forEach(k=>o[k]=Object.assign({},a[k]||{},b[k]||{}));
+  ["moved","removed","edited","collapsed","links","custom","qa","srs","srsOut","fz","reTime"].forEach(k=>o[k]=Object.assign({},a[k]||{},b[k]||{}));
+  /* leitura: guarda a página mais avançada */
+  o.lido=Object.assign({},a.lido||{});for(const k in (b.lido||{}))o.lido[k]=Math.max(o.lido[k]||0,b.lido[k]);
+  /* marcação de bloco: vence a ação mais recente (marcar x desmarcar) entre os aparelhos */
+  const ts=v=>v===true?1:(+v||0);
+  o.done={};o.undone=Object.assign({},a.undone||{});
+  for(const k in (b.undone||{}))o.undone[k]=Math.max(o.undone[k]||0,b.undone[k]);
+  for(const src of [a.done||{},b.done||{}])for(const k in src)o.done[k]=Math.max(o.done[k]||0,ts(src[k]));
+  for(const k in o.done)if(o.undone[k]&&o.undone[k]>=o.done[k])delete o.done[k];
+  /* caderno: questão fixada depois do último erro sai da fila */
+  for(const k in o.srs){const s=o.srs[k],out=o.srsOut[k];if(!s||out&&out>=(s.em||"")&&!(s.last&&s.last>out))delete o.srs[k]}
   /* exclusões: uma remoção feita em qualquer aparelho vence, se for posterior ao vínculo */
   o.delLinks=Object.assign({},a.delLinks||{},b.delLinks||{});
   for(const k in o.delLinks){
     const lk=o.links[k];
     if(!lk||!(lk.at>o.delLinks[k]))delete o.links[k];
   }
-  const seen={},lg=[];
-  (a.logs||[]).concat(b.logs||[]).forEach(l=>{const k=l.d+"|"+l.disc+"|"+l.hit+"|"+l.tot+"|"+(l.task||"");if(!seen[k]){seen[k]=1;lg.push(l)}});
-  o.logs=lg;o.view=b.view||a.view;o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0);
+  /* registros de questões: por identificador; a versão mais recente vence e exclusões se propagam */
+  o.delLogs=Object.assign({},a.delLogs||{},b.delLogs||{});
+  const byId={},lg=[];
+  (a.logs||[]).concat(b.logs||[]).forEach(l=>{const k=l.id||(l.d+"|"+l.disc+"|"+l.hit+"|"+l.tot+"|"+(l.task||""));if(o.delLogs[k])return;if(!(k in byId))lg.push(k);byId[k]=l});
+  o.logs=lg.map(k=>byId[k]);
+  o.view=b.view||a.view;o.resetAt=Math.max(a.resetAt||0,b.resetAt||0);o.updatedAt=Math.max(a.updatedAt||0,b.updatedAt||0);
   return o;
-}
-async function syncNow(silent){
-  if(!SYNC.token||SYNCING)return;
-  SYNCING=true;SYNCST="sincronizando…";if(!silent)render();
-  try{
-    if(!SYNC.gist){
-      const r=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Cronograma Delegado — progresso",public:false,files:{[GFILE]:{content:JSON.stringify(STATE)}}})});
-      if(!r.ok)throw new Error("HTTP "+r.status);
-      SYNC.gist=(await r.json()).id;await saveSync();
-      SYNCST="conectado · gist criado";
-    }else{
-      const r=await gh("/gists/"+SYNC.gist);
-      if(!r.ok)throw new Error("HTTP "+r.status);
-      const g=await r.json(),f=g.files&&g.files[GFILE];
-      let remote=null;
-      if(f){ let c=f.content; if(f.truncated&&f.raw_url)c=await(await fetch(f.raw_url)).text(); remote=JSON.parse(c) }
-      if(remote){
-        const novo=(remote.updatedAt||0)>(STATE.updatedAt||0);
-        const m=novo?mergeState(STATE,remote):mergeState(remote,STATE);
-        STATE=Object.assign(STATE,m);
-      }
-      STATE.updatedAt=Date.now();
-      const p=await gh("/gists/"+SYNC.gist,{method:"PATCH",body:JSON.stringify({files:{[GFILE]:{content:JSON.stringify(STATE)}}})});
-      if(!p.ok)throw new Error("HTTP "+p.status);
-      SYNCST="sincronizado às "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    }
-    try{const j=JSON.stringify(STATE);await window.storage.set("deleg-v1",j);await window.storage.set("deleg-v1-bak",j)}catch(e){}
-  }catch(e){
-    SYNCST="falha na sincronização ("+e.message+") — seus dados locais estão intactos";
-  }
-  SYNCING=false;render();
 }
 let pT=null;
 function syncSoon(){clearTimeout(pT);pT=setTimeout(()=>{if(typeof gOn==="function"&&gOn())gSync()},4000)}
@@ -1314,7 +1291,7 @@ function viewTeoria(){
       '<p class="note">Os pontos marcados <span class="cf">conferir</span> dependem de precedente ou de lei recente: confirme no texto oficial antes de levar para a prova.</p></article>';
   }
   const tot=Object.values(TOP).reduce((a,l)=>a+l.length,0),ok=Object.keys(T).length;
-  let out='<div class="card"><h3>Teoria do núcleo comum · '+ok+' de '+tot+' tópicos prontos</h3><p class="note" style="margin-top:0">Cada tópico do cronograma tem um resumo aqui. Os que ainda aparecem como <b>a gerar</b> chegam por rodadas: peça a próxima no chat e substitua o arquivo banco.js.</p></div>';
+  let out='<div class="card"><h3>Teoria do núcleo comum · '+ok+' de '+tot+' tópicos prontos</h3><p class="note" style="margin-top:0">Cada tópico do cronograma tem um resumo aqui. Os que ainda aparecem como <b>a gerar</b> chegam por rodadas no arquivo banco.json da pasta Delegado-DB: depois de cada rodada, clique em <b>Recarregar índice e banco</b> nas Configurações.</p></div>';
   for(const d in TOP){
     out+='<div class="card mgroup"><h4><span class="dot" style="background:'+DISC[d].c+'"></span>'+esc(DISC[d].n)+'<span style="margin-left:auto;font-weight:400;color:var(--ink-4)">'+TOP[d].filter(x=>T[d+"."+x[0]]).length+'/'+TOP[d].length+'</span></h4>';
     TOP[d].forEach(x=>{const tk=d+"."+x[0],has=!!T[tk],nq=qOf(tk).length;
@@ -1340,7 +1317,7 @@ function viewQuestoes(){
     '<select class="sel" id="qTk"><option value="all">Todos os tópicos</option>'+tks.map(t=>'<option value="'+t+'"'+(QF.tk===t?" selected":"")+'>'+esc(topName(t).slice(0,60))+'</option>').join("")+'</select>'+
     '<button class="btn'+(QF.open?" on":"")+'" id="qOpen">Só não respondidas</button><span class="spacer"></span>'+
     (pend?'<button class="btn pri" id="qLog">Lançar '+pend+' no desempenho</button>':'')+'<button class="btn warn" id="qReset">Zerar respostas do filtro</button></div>';
-  out+='<div class="card"><h3>Inéditas · '+Object.keys(qa).filter(k=>all.some(q=>q.id===k)).length+' de '+all.length+' respondidas</h3>'+(bars||'<div class="empty">Responda a primeira questão para o placar aparecer.</div>')+
+  out+='<div class="card"><h3>Inéditas · '+Object.keys(qa).filter(k=>qa[k]&&all.some(q=>q.id===k)).length+' de '+all.length+' respondidas</h3>'+(bars||'<div class="empty">Responda a primeira questão para o placar aparecer.</div>')+
     '<p class="note">Questões escritas no estilo FGV, caso concreto e cinco alternativas. São treino complementar: o termômetro continua sendo a prova real da banca. Respostas lançadas entram na nota projetada da aba Desempenho.</p></div>';
   if(!L.length)return out+'<div class="empty" style="margin-top:14px">Nenhuma questão neste filtro.</div>';
   L.forEach((q,i)=>{
@@ -1370,12 +1347,12 @@ function viewAjuda(){
    PH.map(p=>'<div class="mrow"><div class="mt"><b>'+esc(p.nome)+'</b><div class="src">'+esc(p.desc)+'</div></div></div>').join("")+
    '<p class="note">Na Fase 1, cada tópico ocupa dois blocos: teoria (resumo do planner e lei seca) e questões. Na Fase 2 entram duas escritas por semana e um bloco rotativo entre Direitos Humanos, Medicina Legal e Criminologia. Na Fase 3, sexta à noite vira treino de prova oral.</p></div>'+
    '<div class="card"><h3>Etiquetas dos blocos</h3>'+
-   '<div class="mrow"><div class="mt"><span class="kind aula">teoria</span> Ler o resumo do tópico na aba Teoria e a lei seca indicada, marcando o texto legal.</div></div>'+
-   '<div class="mrow"><div class="mt"><span class="kind quest">questões</span> Questões de provas reais de Delegado no seu banco, filtradas pelo tópico, e depois as inéditas do planner. Registre no ◎.</div></div>'+
+   '<div class="mrow"><div class="mt"><span class="kind aula">teoria</span> Ler o resumo da aba Teoria e o trecho do PDF indicado no bloco (📄), com a lei seca aberta, marcando o texto legal.</div></div>'+
+   '<div class="mrow"><div class="mt"><span class="kind quest">questões</span> Questões comentadas do PDF (✎) e de provas de Delegado pelo filtro do QConcursos (🔎), depois as inéditas do planner. Registre o placar no ◎.</div></div>'+
    '<div class="mrow"><div class="mt"><span class="kind esc">escrita</span> Discursiva de 20 linhas ou peça de até 60 linhas, cronometrada.</div></div>'+
    '<div class="mrow"><div class="mt"><span class="kind sim">simulado</span> Prova montada com questões de Delegado de todas as matérias, nas condições da prova.</div></div></div>'+
-   '<div class="card"><h3>Teoria e inéditas por rodadas</h3><p class="note" style="margin-top:0">O conteúdo fica no arquivo <b>banco.js</b>, ao lado do index.html. A cada rodada, peça no chat a teoria e as questões dos próximos tópicos e substitua o banco.js no repositório. Suas respostas ficam guardadas pelo identificador de cada questão e não se perdem na troca.</p></div>'+
-   '<div class="card"><h3>Zona de risco</h3><p class="note" style="margin-top:0">Limpar os dados de navegação apaga as marcações. Exporte antes.</p><div class="bar"><button class="btn warn" id="rst">Zerar tudo e voltar ao plano original</button></div></div>';
+   '<div class="card"><h3>Teoria e inéditas por rodadas</h3><p class="note" style="margin-top:0">As rodadas novas chegam no arquivo <b>banco.json</b>, na pasta Delegado-DB do seu Drive, e somam-se ao banco.js do site. Depois de cada rodada, clique em <b>Recarregar índice e banco</b>. Suas respostas ficam guardadas pelo identificador de cada questão e não se perdem na troca.</p></div>'+
+   '<div class="card"><h3>Zona de risco</h3><p class="note" style="margin-top:0">Com o Google Drive conectado, o progresso fica salvo no progresso.json. Sem conexão, ele fica só neste navegador até você conectar de novo; limpar os dados de navegação nesse intervalo apaga o que não foi sincronizado.</p><div class="bar"><button class="btn warn" id="rst">Zerar tudo e voltar ao plano original</button></div></div>';
 }
 
 /* ---------- eventos ---------- */
@@ -1383,10 +1360,10 @@ function bind(){
   const R=document.getElementById("root"),$=s=>R.querySelector(s),$$=s=>R.querySelectorAll(s);
   bindDrive(R);
   $$("[data-tab]").forEach(el=>el.onclick=()=>{TAB=el.dataset.tab;render();window.scrollTo({top:0,behavior:"smooth"})});
-  $$("[data-done]").forEach(el=>{const f=()=>{const id=el.dataset.done;if(STATE.done[id]){delete STATE.done[id];if(STATE.fz)delete STATE.fz[id]}else{freezeIfAdapted(id);STATE.done[id]=1}save();render()};
+  $$("[data-done]").forEach(el=>{const f=()=>{const id=el.dataset.done;if(STATE.done[id]){delete STATE.done[id];(STATE.undone=STATE.undone||{})[id]=Date.now();if(STATE.fz)delete STATE.fz[id]}else{freezeIfAdapted(id);STATE.done[id]=Date.now()}save();render()};
     el.onclick=f;el.onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();f()}}});
   $$("[data-toggle]").forEach(el=>el.onclick=e=>{if(e.target.closest("button"))return;
-    const d=el.dataset.toggle;STATE.collapsed[d]?delete STATE.collapsed[d]:STATE.collapsed[d]=1;save();render()});
+    const d=el.dataset.toggle;STATE.collapsed[d]=STATE.collapsed[d]?0:1;save();render()});
   $$("[data-edit]").forEach(el=>el.onclick=()=>{const id=el.dataset.edit,cur=el.closest(".task").querySelector(".t-title").textContent;
     openModal({title:"Editar bloco",fields:[{label:"Descrição",value:cur}],onSave:v=>{if(v[0].trim())STATE.edited[id]=v[0].trim()}})});
   $$("[data-rm]").forEach(el=>el.onclick=()=>{STATE.removed[el.dataset.rm]=1;save();render()});
@@ -1420,18 +1397,6 @@ function bind(){
       {label:"Horário",value:"20:30"},{label:"Duração (min)",type:"number",value:"50"}],
       onSave:v=>{if(!v[0].trim())return;STATE.custom[day]=STATE.custom[day]||[];
         STATE.custom[day].push({id:"C."+Date.now(),disc:DISC[v[1]]?v[1]:"REV",tp:v[2],t:v[0].trim(),src:"Bloco criado por você",min:+v[4]||50,time:v[3]})}})});
-  if($("#syNow"))$("#syNow").onclick=()=>syncNow(false);
-  if($("#syOff"))$("#syOff").onclick=()=>{if(!confirm("Desconectar este aparelho? Os dados locais continuam aqui e o gist permanece no GitHub."))return;
-    SYNC={token:"",gist:""};SYNCST="";saveSync();render()};
-  if($("#syOn"))$("#syOn").onclick=()=>{
-    openModal({title:"Conectar sincronização",
-      sub:"Crie um token em <b>github.com/settings/tokens</b> → Fine-grained → Account permissions → <b>Gists: Read and write</b>.",
-      fields:[{label:"Token do GitHub",value:"",ph:"github_pat_…",hint:"Fica guardado só neste aparelho e nunca é enviado ao gist."},
-              {label:"ID do gist (vazio na primeira vez)",value:SYNC.gist||"",ph:"no outro aparelho, cole o ID mostrado aqui"}],
-      ok:"Conectar",
-      onSave:v=>{const t=String(v[0]).trim();if(!t)return;
-        SYNC.token=t;SYNC.gist=String(v[1]).trim();saveSync();setTimeout(()=>syncNow(false),50)}});
-  };
   if($("#wipeL"))$("#wipeL").onclick=()=>{
     const n=Object.keys(STATE.links||{}).length;
     if(!n){alert("Não há vínculos para remover.");return}
@@ -1448,8 +1413,8 @@ function bind(){
       fields:[{label:"Cole o backup",type:"textarea",value:"",rows:12,ph:'{"done":{...},"links":{...}}'}],
       ok:"Restaurar",
       onSave:v=>{try{const d=JSON.parse(v[0]);
-        ["done","moved","removed","edited","collapsed","links","delLinks","reTime","custom"].forEach(k=>{if(d[k])STATE[k]=Object.assign({},d[k],STATE[k])});
-        if(Array.isArray(d.logs)){const seen={};STATE.logs=(d.logs.concat(STATE.logs)).filter(l=>{const k=l.d+l.disc+l.hit+l.tot+(l.task||"");if(seen[k])return false;seen[k]=1;return true})}
+        if(!d||typeof d!=="object"||!d.done)throw new Error("formato");
+        STATE=Object.assign(STATE,mergeState(Object.assign(blankState(),d),STATE));
         alert("Backup restaurado.")}catch(e){alert("Não consegui ler esse backup. Confira se copiou o texto inteiro.")}}});
   };
   if($("#bulk"))$("#bulk").onclick=()=>{
@@ -1489,25 +1454,25 @@ function bind(){
     STATE.logs.slice().sort((a,b)=>a.d.localeCompare(b.d)).forEach(l=>o+=l.d+";"+DISC[l.disc].n+";"+l.hit+";"+l.tot+";"+Math.round(100*l.hit/l.tot)+"%\n");
     o+="\nJSON completo:\n"+JSON.stringify(STATE);dump(o)};
   if($("#rstLog"))$("#rstLog").onclick=()=>{if(confirm("Apagar todos os registros de desempenho? O cronograma não é afetado."))
-    {STATE.logs=[];save();render()}};
-  if($("#rst"))$("#rst").onclick=()=>{if(confirm("Isso apaga marcações, edições, links e registros. Continuar?"))
-    {STATE={done:{},moved:{},removed:{},edited:{},custom:{},collapsed:{},links:{},delLinks:{},reTime:{},logs:[],qa:{}};save();render()}};
+    {STATE.delLogs=STATE.delLogs||{};STATE.logs.forEach(l=>{if(l.id)STATE.delLogs[l.id]=Date.now()});STATE.logs=[];save();render()}};
+  if($("#rst"))$("#rst").onclick=()=>{if(confirm("Isso apaga marcações, edições, links, registros, respostas e caderno de erros, também no Drive e nos outros aparelhos. Continuar?"))
+    {const v=STATE.view;STATE=Object.assign(blankState(),{view:v,resetAt:Date.now()});save();render()}};
   $$("[data-teo]").forEach(el=>el.onclick=e=>{e.preventDefault();TEO=el.dataset.teo;TAB="teoria";render();window.scrollTo({top:0})});
   if($("#teoBack"))$("#teoBack").onclick=()=>{TEO=null;render()};
   $$("[data-qtk]").forEach(el=>el.onclick=()=>{QF={disc:el.dataset.qtk.split(".")[0],tk:el.dataset.qtk,open:false};TAB="quest";render();window.scrollTo({top:0})});
   if($("#qDisc"))$("#qDisc").onchange=e=>{QF.disc=e.target.value;QF.tk="all";render()};
   if($("#qTk"))$("#qTk").onchange=e=>{QF.tk=e.target.value;render()};
   if($("#qOpen"))$("#qOpen").onclick=()=>{QF.open=!QF.open;render()};
-  if($("#qReset"))$("#qReset").onclick=()=>{const L=qList();if(!L.length)return;if(!confirm("Apagar as respostas das "+L.length+" questões deste filtro para refazê-las?"))return;L.forEach(q=>{delete STATE.qa[q.id]});save();render()};
+  if($("#qReset"))$("#qReset").onclick=()=>{const L=qList();if(!L.length)return;if(!confirm("Apagar as respostas das "+L.length+" questões deste filtro para refazê-las?"))return;L.forEach(q=>{STATE.qa[q.id]=null});save();render()};
   $$("[data-ans]").forEach(el=>el.onclick=()=>{const[id,r]=el.dataset.ans.split("|"),q=(window.QUESTOES||[]).find(x=>x.id===id);if(!q)return;
     STATE.qa[id]={r:r,ok:r===q.gab?1:0,d:today(),lg:0};if(r!==q.gab&&!STATE.srs[id])srsAdd(id);save();render()});
-  $$("[data-redo]").forEach(el=>el.onclick=()=>{delete STATE.qa[el.dataset.redo];save();render()});
+  $$("[data-redo]").forEach(el=>el.onclick=()=>{STATE.qa[el.dataset.redo]=null;save();render()});
   if($("#qLog"))$("#qLog").onclick=()=>{const by={},all=window.QUESTOES||[];
     all.forEach(q=>{const r=STATE.qa[q.id];if(!r||r.lg)return;const k=q.disc+"|"+r.d;(by[k]=by[k]||{h:0,t:0,ids:[]});by[k].t++;if(r.ok)by[k].h++;by[k].ids.push(q.id)});
     let n=0;for(const k in by){const[disc,d]=k.split("|");STATE.logs.push({id:"L"+Date.now()+Math.random().toString(36).slice(2,6),d:d,disc:disc,hit:by[k].h,tot:by[k].t,task:"INEDITAS"});by[k].ids.forEach(i=>STATE.qa[i].lg=1);n++}
     save();render();alert(n+" registro(s) lançados na aba Desempenho.")};
   if(MODAL){const c=document.getElementById("mdl"),val=()=>[...c.querySelectorAll(".fld input,.fld select,.fld textarea")].map(x=>x.value);
-    document.getElementById("mdlS").onclick=()=>{MODAL.onSave(val());save();closeModal()};
+    document.getElementById("mdlS").onclick=()=>{if(MODAL.onSave(val())===false)return;save();closeModal()};
     document.getElementById("mdlC").onclick=closeModal;
     if(MODAL.extra)document.getElementById("mdlX").onclick=()=>{MODAL.onExtra();save();closeModal()};
     c.onclick=e=>{if(e.target===c)closeModal()};
@@ -1523,10 +1488,10 @@ function logModal(id,disc,day,edit){
             {label:"Data",type:"date",value:L?L.d:day}],
     ok:L?"Salvar correção":"Registrar",
     extra:L?"Apagar registro":null,
-    onExtra:()=>{STATE.logs=STATE.logs.filter(x=>x.id!==edit)},
+    onExtra:()=>{STATE.logs=STATE.logs.filter(x=>x.id!==edit);(STATE.delLogs=STATE.delLogs||{})[edit]=Date.now()},
     onSave:v=>{const h=+v[1],t=+v[2];
-      if(!(t>0)){alert("Informe um total de questões maior que zero.");return}
-      if(!(h>=0)||h>t){alert("Os acertos precisam estar entre 0 e "+t+".");return}
+      if(!(t>0)){alert("Informe um total de questões maior que zero.");return false}
+      if(!(h>=0)||h>t){alert("Os acertos precisam estar entre 0 e "+t+".");return false}
       if(edit){const L=STATE.logs.find(x=>x.id===edit);if(L){L.d=v[3]||day;L.disc=v[0];L.hit=h;L.tot=t;return}}
       STATE.logs.push({id:"L"+Date.now()+Math.random().toString(36).slice(2,6),d:v[3]||day,disc:v[0],hit:h,tot:t,task:id})}});
 }
