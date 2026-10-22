@@ -218,11 +218,25 @@ async function vwBuild(goto){
 }
 
 /* ---------- filtros do QConcursos ---------- */
-const QCD={PEN:"Direito Penal",PP:"Direito Processual Penal",LPE:"Legislação Penal Especial (no QC, filtre pela lei do tópico)",CON:"Direito Constitucional",ADM:"Direito Administrativo",DH:"Direitos Humanos",ML:"Medicina Legal",CRIM:"Criminologia"};
-function qcText(tk){
-  const f=INDICE.filtros&&INDICE.filtros[tk],d=tk.split(".")[0],x=(TOP[d]||[]).find(y=>d+"."+y[0]===tk);
-  if(f)return Object.keys(f).map(k=>k+": "+(Array.isArray(f[k])?f[k].join("; "):f[k])).join("\n");
-  return "Disciplina: "+QCD[d]+"\nAssunto: "+(x?x[1]:tk)+" (escolha o assunto equivalente na árvore do QC)\nLei de apoio: "+(x?x[2]:"")+"\nCargo: Delegado de Polícia\nBanca: FGV; CESPE/CEBRASPE\nAno: 2018 a 2026\nOcultar: anuladas e desatualizadas\n\nFiltro provisório: a versão afinada pelo índice dos PDFs entra quando o tópico for indexado.";
+/* Cada tópico aponta para os assuntos equivalentes da árvore do QConcursos (ids lidos dos filtros do próprio site).
+   d = disciplinas, s = assuntos (o assunto-pai já inclui os filhos), q = palavra-chave quando o QC ainda não tem assunto próprio. */
+const QCMAP={"PEN.p01":{"d":[9],"s":[16670,16668,16669]},"PEN.p02":{"d":[9],"s":[16672]},"PEN.p03":{"d":[9],"s":[16673,16671]},"PEN.p04":{"d":[9],"s":[16675,16677,16769,16680,16770,16681,16771,16772,16683,16682,16684]},"PEN.p05":{"d":[9],"s":[2216,3170,16773,16774,16775,16700,16778]},"PEN.p06":{"d":[9],"s":[16685,16686,16687,16688]},"PEN.p07":{"d":[9],"s":[16691]},"PEN.p08":{"d":[9],"s":[1134]},"PEN.p09":{"d":[9],"s":[128]},"PEN.p10":{"d":[9],"s":[17210,17215,17228,17234]},"PEN.p11":{"d":[9],"s":[16780,17232,17233,17246]},"PEN.p12":{"d":[9],"s":[17253,17258,17239]},"PEN.p13":{"d":[9],"s":[17271]},"PEN.p14":{"d":[9],"s":[17293]},"PEN.p15":{"d":[9],"s":[17298,17303,17310]},"PEN.p16":{"d":[9],"s":[17311,17317,17322,17323,17324]},"PEN.p17":{"d":[9],"s":[17326,17327,17328,17329,17330]},"PEN.p18":{"d":[9],"s":[17331,17332,17333,17334,17335,17336,17337,17338]},"PEN.p19":{"d":[9],"s":[17343]},"PEN.p20":{"d":[9],"s":[17383]},"PEN.p21":{"d":[9],"s":[17399,17400,17401,17402,17403,17404,17405,17406,17408,17409,17410,17411,17412,17413,17414,17415,17416,17417]},"PEN.p22":{"d":[9],"s":[17418,17419,17420,17421,23715,17423,17424,20769,17425,17427,17429,17422,30969,17430,17431,17432,17434,17436,17437,17438,17439,17440,17441,17442,17444,17446,17448,17450,17452]},"PEN.p23":{"d":[9],"s":[17374,17378,17454]},"PP.pp01":{"d":[10,53],"s":[18401,18556,18557,18678,18679,18680,20815]},"PP.pp02":{"d":[10],"s":[18681,18702]},"PP.pp03":{"d":[10],"s":[18711,19263,19278]},"PP.pp04":{"d":[10],"s":[17630,17613,17978,31442,31385]},"PP.pp05":{"d":[10,9],"s":[28114,6423,34750]},"PP.pp06":{"d":[10,9],"s":[150,17262]},"PP.pp07":{"d":[10],"s":[152]},"PP.pp08":{"d":[10],"s":[153,2555]},"PP.pp09":{"d":[10,530],"s":[20536,20537,20538,20539,17622,26170]},"PP.pp10":{"d":[10],"s":[20540,20541,20542]},"PP.pp11":{"d":[10],"s":[20543,20544,20545,20546,20547,20548]},"PP.pp12":{"d":[10],"s":[20549]},"PP.pp13":{"d":[10],"s":[903]},"PP.pp14":{"d":[10],"s":[5335,9317]},"PP.pp15":{"d":[10],"s":[20576,20577,20578,20581,7809]},"PP.pp16":{"d":[10],"s":[23513]},"PP.pp17":{"d":[10,53],"s":[20550,20926]},"PP.pp18":{"d":[10],"s":[4284,157,6683]},"PP.pp19":{"d":[10],"s":[1969,3834,161,162]},"PP.pp20":{"d":[10,3],"s":[1968,1973,20765]},"LPE.l01":{"d":[9],"s":[17457]},"LPE.l02":{"d":[10,9],"s":[20592,17457]},"LPE.l03":{"d":[10,53],"s":[23515,21704]},"LPE.l04":{"d":[9],"s":[1771]},"LPE.l05":{"d":[9],"s":[17455,17462]},"LPE.l06":{"d":[9],"s":[17456]},"LPE.l07":{"d":[9,10],"s":[34747,17302,23514]},"LPE.l08":{"d":[233],"s":[5302,21015,21020,21341,23783]},"LPE.l09":{"d":[9],"s":[17461]},"LPE.l10":{"d":[9,200],"s":[34749,18890]},"LPE.l11":{"d":[76],"s":[18545,18431]},"LPE.l12":{"d":[9],"s":[17463]},"LPE.l13":{"d":[9],"s":[17466]},"LPE.l14":{"d":[9,10],"s":[34750,6423,18901]},"LPE.l15":{"d":[53],"s":[20815,8476]},"LPE.l16":{"d":[9],"s":[17467]},"LPE.l17":{"d":[9],"s":[17324,30962,17334]},"LPE.l18":{"d":[534,579],"s":[17949,20909]},"LPE.l19":{"d":[53,9],"s":[23053,30963]},"LPE.l20":{"d":[10,53],"s":[7172,9436]},"LPE.l21":{"d":[9,10,53],"s":[],"q":"15.358"},"CON.c01":{"d":[3],"s":[18351,16325]},"CON.c02":{"d":[3],"s":[16265]},"CON.c03":{"d":[3],"s":[1418]},"CON.c04":{"d":[3],"s":[8827,49]},"CON.c05":{"d":[3],"s":[16294,16295,16296,16297,16298,1412]},"CON.c06":{"d":[3],"s":[16299,16301,16303,16300,16302,16304]},"CON.c07":{"d":[3],"s":[438,437]},"CON.c08":{"d":[3],"s":[1979]},"CON.c09":{"d":[3],"s":[806]},"CON.c10":{"d":[3],"s":[748,731]},"CON.c11":{"d":[3],"s":[16251]},"CON.c12":{"d":[3],"s":[16254,16255,751]},"CON.c13":{"d":[3],"s":[16256]},"CON.c14":{"d":[3],"s":[16257]},"ADM.a01":{"d":[2],"s":[15938,15940]},"ADM.a02":{"d":[2],"s":[775]},"ADM.a03":{"d":[2],"s":[16022]},"ADM.a04":{"d":[2],"s":[5]},"ADM.a05":{"d":[2,3],"s":[1269,16268]},"ADM.a06":{"d":[2],"s":[10]},"ADM.a07":{"d":[2],"s":[16073]},"ADM.a08":{"d":[2],"s":[27513,27522]},"ADM.a09":{"d":[2],"s":[11]},"ADM.a10":{"d":[2,53],"s":[12,22750]},"ADM.a11":{"d":[2],"s":[853,14]},"ADM.a12":{"d":[26],"s":[]},"DH.h01":{"d":[214],"s":[18760,18821]},"DH.h02":{"d":[214],"s":[18766,18774,18775,18776,18777,18780]},"DH.h03":{"d":[214],"s":[18792,18795]},"DH.h04":{"d":[53,214],"s":[27981,27125,18830]},"DH.h05":{"d":[214],"s":[18800,18785,18781,28043,18779]},"DH.h06":{"d":[214],"s":[19051,18826]},"DH.h07":{"d":[214],"s":[18778]},"ML.m01":{"d":[104,530],"s":[7627,12391,26163]},"ML.m02":{"d":[104],"s":[8082]},"ML.m03":{"d":[104],"s":[20282,9771,12390]},"ML.m04":{"d":[104,530],"s":[9768,26171]},"ML.m05":{"d":[104],"s":[5325]},"ML.m06":{"d":[104,530],"s":[9708,11383,25205,12727]},"ML.m07":{"d":[104],"s":[3940]},"ML.m08":{"d":[104],"s":[9795,9706]},"ML.m09":{"d":[530],"s":[24549,26164,26165,26166,26167,26170,26229]},"CRIM.r01":{"d":[554],"s":[19206]},"CRIM.r02":{"d":[554],"s":[19207]},"CRIM.r03":{"d":[554],"s":[19208]},"CRIM.r04":{"d":[554],"s":[19208,19210]},"CRIM.r05":{"d":[554],"s":[],"q":"vitimologia"},"CRIM.r06":{"d":[554],"s":[19211]},"CRIM.r07":{"d":[554],"s":[19209]}};
+const QC_URL="https://www.qconcursos.com/questoes-de-concursos/questoes";
+const QC_DELEGADO=169;                       /* cargo "Delegado de Polícia" no QC */
+function qcUrl(tk,soDelegado,minhas){   /* minhas: "not_resolved" (padrão), "wrong" ou "all" */
+  const m=QCMAP[tk];if(!m)return "";
+  const p=m.d.map(x=>"discipline_ids[]="+x).concat(m.s.map(x=>"subject_ids[]="+x));
+  if(m.q)p.push("q="+encodeURIComponent(m.q));
+  p.push("exclude_nullified=true","exclude_outdated=true");
+  if(soDelegado)p.push("job_ids[]="+QC_DELEGADO);
+  p.push("my_questions="+(minhas||"not_resolved"));
+  return QC_URL+"?"+p.join("&");
+}
+function qcChips(tk,tp){
+  if(!QCMAP[tk])return "";
+  return '<a class="chip-t" href="'+esc(qcUrl(tk,false))+'" target="_blank" rel="noopener" title="Questões do tema que você ainda não resolveu no QConcursos, sem anuladas e desatualizadas">🔎 QC · todas do tema</a>'+
+         '<a class="chip-t" href="'+esc(qcUrl(tk,true))+'" target="_blank" rel="noopener" title="Só provas para Delegado de Polícia, ainda não resolvidas">🔎 QC · só Delegado</a>'+
+         (tp==="rev"?'<a class="chip-t" href="'+esc(qcUrl(tk,false,"wrong"))+'" target="_blank" rel="noopener" title="Questões do tema que você errou no QConcursos">🔎 QC · que errei</a>':'');
 }
 
 /* ---------- caderno de erros (repetição espaçada) ---------- */
@@ -308,7 +322,7 @@ function adaptPlan(map){
       t.disc=alvo;t.tk=tkk||undefined;t.adapt=1;t.tp="rev";
       t.t="Reforço de "+DISC[alvo].n+(tkk?": "+topName(tkk):"")+de;
       const rf=tkk&&refsOf(tkk)[0];
-      t.src=(rf?"Reler "+refLabel(rf)+" · ":"")+"refazer o caderno de erros do tópico + 15 questões pelo filtro do QC";
+      t.src=(rf?"Reler "+refLabel(rf)+" · ":"")+"refazer o caderno de erros do tópico + 15 questões do tema no QConcursos (🔎)";
       ADAPT.moved++;
     });
   });
@@ -335,7 +349,7 @@ function adaptCard(){
   return '<div class="card'+(ADAPT.weak.length?" alert":"")+'"><h3>Ajuste automático do cronograma</h3>'+
     '<p class="note" style="margin-top:0">'+(ADAPT.weak.length?'Até '+fmt(ADAPT.until)+', <b>'+ADAPT.moved+' blocos</b> de volume foram redirecionados para '+ADAPT.weak.map(k=>DISC[k].n).join(", ")+'. Eles aparecem marcados com ↻ no cronograma e voltam ao normal quando o acerto passar de '+Math.round(WEAK*100)+'%.':'Nenhuma matéria abaixo de '+Math.round(WEAK*100)+'% de acerto. O cronograma segue o plano original.')+'</p>'+rows+
     '<p class="note">Base: últimas 80 questões de cada matéria (registros no ◎ e inéditas). Só entra no ajuste a matéria com pelo menos '+ADAPT_MIN+' questões. Matéria fraca recebe os próprios blocos de volume e metade dos blocos de volume das matérias fortes, até 3 por semana, sempre no tópico de pior acerto.</p>'+
-    (tw.length?'<h3 style="margin-top:16px">Tópicos de pior acerto</h3>'+tw.map(k=>'<div class="mrow"><div class="mt">'+esc(topName(k))+'<div class="src">'+Math.round(P.T[k].a*100)+'% em '+P.T[k].t+' questões</div></div>'+(refsOf(k).length?'<button class="chip-t" data-pdf="'+k+'|0">📄 PDF</button>':'')+'</div>').join(""):'')+'</div>';
+    (tw.length?'<h3 style="margin-top:16px">Tópicos de pior acerto</h3>'+tw.map(k=>'<div class="mrow"><div class="mt">'+esc(topName(k))+'<div class="src">'+Math.round(P.T[k].a*100)+'% em '+P.T[k].t+' questões</div></div>'+(refsOf(k).length?'<button class="chip-t" data-pdf="'+k+'|0">📄 PDF</button>':'')+(QCMAP[k]?'<a class="chip-t" href="'+esc(qcUrl(k,false))+'" target="_blank" rel="noopener">🔎 QC</a>':'')+'</div>').join(""):'')+'</div>';
 }
 
 /* ---------- chips extras nos blocos ---------- */
@@ -349,7 +363,7 @@ function extraChips(t){
   let sel=all.filter(([r])=>want(r));if(!sel.length)sel=all;
   sel.forEach(([r,i])=>{h+='<button class="chip-t" data-pdf="'+t.tk+'|'+i+'|'+t.id+'" title="'+esc(r.secao||"")+'">'+(r.tipo==="questoes"?"✎ ":r.tipo==="revisao"?"↺ ":"📄 ")+esc(refLabel(r))+'</button>'});
   const nv=INDICE.niveis&&INDICE.niveis[t.tk];if(nv)h+='<button class="chip-t" data-nivel="'+t.tk+'" style="color:var(--ocre)">⚠ PDF parcial</button>';
-  h+='<button class="chip-t" data-qc="'+t.tk+'">🔎 filtro QC</button>';
+  h+=qcChips(t.tk,t.tp);
   return h;
 }
 
@@ -379,9 +393,6 @@ function bindDrive(R){
   if($("#gReload"))$("#gReload").onclick=async()=>{try{DRV.files=null;await gLoadJson(IDX_NAME,applyIndice,"deleg-indice");await gLoadJson(BANCO_NAME,applyBanco,"deleg-banco");GERR=""}catch(e){GERR=e.message}BID=null;render()};
   $$("[data-pdf]").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();const[tk,i,bid]=b.dataset.pdf.split("|");openPdf(tk,+i||0,bid||"")});
   $$("[data-nivel]").forEach(b=>b.onclick=e=>{e.stopPropagation();alert(INDICE.niveis[b.dataset.nivel])});
-  $$("[data-qc]").forEach(b=>b.onclick=e=>{e.stopPropagation();const tk=b.dataset.qc;
-    openModal({title:"Filtro no QConcursos",sub:esc(topName(tk))+' · <a href="https://www.qconcursos.com/questoes-de-concursos/questoes" target="_blank" rel="noopener" style="color:var(--neon)">abrir o QConcursos ↗</a>',
-      fields:[{label:"Filtros",type:"textarea",value:qcText(tk),rows:9,hint:"Erros no QC: anote o número da questão no caderno do próprio QC; aqui registre o placar no ◎ do bloco."}],ok:"Fechar",onSave:()=>{}})});
   if($("#cadGo"))$("#cadGo").onclick=()=>{CAD={i:0,r:null,on:true,all:false,q:srsDue()};render()};
   if($("#cadAll"))$("#cadAll").onclick=()=>{const S=STATE.srs||{};CAD={i:0,r:null,on:true,all:true,q:Object.keys(S).filter(id=>(window.QUESTOES||[]).some(q=>q.id===id)).sort((a,b)=>S[a].due.localeCompare(S[b].due))};render()};
   $$("[data-cad]").forEach(b=>b.onclick=()=>{const[id,L]=b.dataset.cad.split("|"),q=(window.QUESTOES||[]).find(x=>x.id===id);if(!q||CAD.r)return;

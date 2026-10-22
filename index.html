@@ -587,6 +587,7 @@ a.at:hover{color:var(--dc);text-shadow:0 0 14px currentColor}
 .pv-m{margin:auto;font-family:var(--mono);font-size:12px;color:var(--ink-3);padding:30px;text-align:center}
 .pv-m.err{color:var(--carmim)}
 .btn[disabled]{opacity:.4;cursor:default}
+a.btn,a.chip-t{text-decoration:none;display:inline-flex;align-items:center}
 </style>
 </head>
 <body>
@@ -761,7 +762,7 @@ for(const d in TOP){
   const L=[];
   TOP[d].forEach(x=>{
     L.push({k:x[0],t:"Teoria: "+x[1],src:"Resumo da aba Teoria e PDF indicado (📄) · lei seca: "+x[2],tp:"aula",tk:d+"."+x[0],ph:1});
-    L.push({k:x[0]+"q",t:"Questões: "+x[1],src:"Questões comentadas do PDF (✎) e filtro de Delegado no QConcursos (🔎) + inéditas do planner",tp:"quest",tk:d+"."+x[0],ph:1});
+    L.push({k:x[0]+"q",t:"Questões: "+x[1],src:"Questões comentadas do PDF (✎) e questões do tema no QConcursos (🔎) + inéditas do planner",tp:"quest",tk:d+"."+x[0],ph:1});
   });
   TOP[d].forEach(x=>{
     L.push({k:x[0]+"r",t:"2ª passada: "+x[1],src:"Roteiro do Passo Estratégico (↺), lei seca marcada + 20 questões de Delegado no QConcursos + informativos do tema",tp:"rev",tk:d+"."+x[0],ph:2});
@@ -1285,7 +1286,7 @@ function viewTeoria(){
   const T=window.TEORIA||{};
   if(TEO&&T[TEO]){
     const x=T[TEO],d=TEO.split(".")[0],nq=qOf(TEO).length;
-    return '<div class="bar"><button class="btn" id="teoBack">← Todos os tópicos</button><span class="spacer"></span>'+(nq?'<button class="btn pri" data-qtk="'+TEO+'">Resolver as '+nq+' inéditas</button>':'')+'</div>'+
+    return '<div class="bar"><button class="btn" id="teoBack">← Todos os tópicos</button><span class="spacer"></span>'+(QCMAP[TEO]?'<a class="btn" href="'+esc(qcUrl(TEO,false))+'" target="_blank" rel="noopener">🔎 Questões no QC</a>':'')+(nq?'<button class="btn pri" data-qtk="'+TEO+'">Resolver as '+nq+' inéditas</button>':'')+'</div>'+
       '<article class="card teo" style="--dc:'+DISC[d].c+'"><span class="a-mat">'+esc(DISC[d].n)+'</span><h2>'+esc(topName(TEO))+'</h2>'+
       (x.lei?'<p class="src">Lei seca: '+esc(x.lei)+'</p>':'')+'<div class="teo-b">'+cfm(x.html)+'</div>'+
       '<p class="note">Os pontos marcados <span class="cf">conferir</span> dependem de precedente ou de lei recente: confirme no texto oficial antes de levar para a prova.</p></article>';
@@ -1348,7 +1349,7 @@ function viewAjuda(){
    '<p class="note">Na Fase 1, cada tópico ocupa dois blocos: teoria (resumo do planner e lei seca) e questões. Na Fase 2 entram duas escritas por semana e um bloco rotativo entre Direitos Humanos, Medicina Legal e Criminologia. Na Fase 3, sexta à noite vira treino de prova oral.</p></div>'+
    '<div class="card"><h3>Etiquetas dos blocos</h3>'+
    '<div class="mrow"><div class="mt"><span class="kind aula">teoria</span> Ler o resumo da aba Teoria e o trecho do PDF indicado no bloco (📄), com a lei seca aberta, marcando o texto legal.</div></div>'+
-   '<div class="mrow"><div class="mt"><span class="kind quest">questões</span> Questões comentadas do PDF (✎) e de provas de Delegado pelo filtro do QConcursos (🔎), depois as inéditas do planner. Registre o placar no ◎.</div></div>'+
+   '<div class="mrow"><div class="mt"><span class="kind quest">questões</span> Questões comentadas do PDF (✎) e do tema no QConcursos (🔎: todas ou só Delegado), depois as inéditas do planner. Registre o placar no ◎.</div></div>'+
    '<div class="mrow"><div class="mt"><span class="kind esc">escrita</span> Discursiva de 20 linhas ou peça de até 60 linhas, cronometrada.</div></div>'+
    '<div class="mrow"><div class="mt"><span class="kind sim">simulado</span> Prova montada com questões de Delegado de todas as matérias, nas condições da prova.</div></div></div>'+
    '<div class="card"><h3>Teoria e inéditas por rodadas</h3><p class="note" style="margin-top:0">As rodadas novas chegam no arquivo <b>banco.json</b>, na pasta Delegado-DB do seu Drive, e somam-se ao banco.js do site. Depois de cada rodada, clique em <b>Recarregar índice e banco</b>. Suas respostas ficam guardadas pelo identificador de cada questão e não se perdem na troca.</p></div>'+
