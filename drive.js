@@ -73,7 +73,7 @@ async function gUpload(id,meta,obj){
 }
 
 /* ---------- índice e banco ---------- */
-function applyIndice(j){if(j&&j.pdfs){INDICE={pdfs:j.pdfs||{},topicos:j.topicos||{},filtros:j.filtros||{},gerado:j.gerado||""}}}
+function applyIndice(j){if(j&&j.pdfs){INDICE={pdfs:j.pdfs||{},topicos:j.topicos||{},filtros:j.filtros||{},niveis:j.niveis||{},gerado:j.gerado||""}}}
 function applyBanco(j){
   if(!j)return;
   if(j.TEORIA)Object.assign(window.TEORIA,j.TEORIA);
@@ -335,7 +335,11 @@ function extraChips(t){
   if(t.adapt)h+='<span class="chip-t" title="Bloco ajustado pelo desempenho">↻ ajustado</span>';
   if(t.srs)return'<button class="chip-t" data-tab="cad">✎ revisar agora</button>';
   if(!t.tk)return h;
-  refsOf(t.tk).forEach((r,i)=>{h+='<button class="chip-t" data-pdf="'+t.tk+'|'+i+'|'+t.id+'" title="'+esc(r.secao||"")+'">📄 '+esc(refLabel(r))+'</button>'});
+  const all=refsOf(t.tk).map((r,i)=>[r,i]);
+  const want=t.tp==="quest"?(r=>r.tipo==="questoes"):t.tp==="rev"?(r=>r.tipo==="revisao"||!r.tipo):(r=>!r.tipo);
+  let sel=all.filter(([r])=>want(r));if(!sel.length)sel=all;
+  sel.forEach(([r,i])=>{h+='<button class="chip-t" data-pdf="'+t.tk+'|'+i+'|'+t.id+'" title="'+esc(r.secao||"")+'">'+(r.tipo==="questoes"?"✎ ":r.tipo==="revisao"?"↺ ":"📄 ")+esc(refLabel(r))+'</button>'});
+  const nv=INDICE.niveis&&INDICE.niveis[t.tk];if(nv)h+='<button class="chip-t" data-nivel="'+t.tk+'" style="color:var(--ocre)">⚠ PDF parcial</button>';
   h+='<button class="chip-t" data-qc="'+t.tk+'">🔎 filtro QC</button>';
   return h;
 }
@@ -361,6 +365,7 @@ function bindDrive(R){
   if($("#gOff"))$("#gOff").onclick=()=>{if(confirm("Desconectar o Google neste aparelho? O progresso continua salvo no Drive."))gOff()};
   if($("#gReload"))$("#gReload").onclick=async()=>{try{DRV.files=null;await gLoadJson(IDX_NAME,applyIndice,"deleg-indice");await gLoadJson(BANCO_NAME,applyBanco,"deleg-banco");GERR=""}catch(e){GERR=e.message}BID=null;render()};
   $$("[data-pdf]").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();const[tk,i,bid]=b.dataset.pdf.split("|");openPdf(tk,+i||0,bid||"")});
+  $$("[data-nivel]").forEach(b=>b.onclick=e=>{e.stopPropagation();alert(INDICE.niveis[b.dataset.nivel])});
   $$("[data-qc]").forEach(b=>b.onclick=e=>{e.stopPropagation();const tk=b.dataset.qc;
     openModal({title:"Filtro no QConcursos",sub:esc(topName(tk))+' · <a href="https://www.qconcursos.com/questoes-de-concursos/questoes" target="_blank" rel="noopener" style="color:var(--neon)">abrir o QConcursos ↗</a>',
       fields:[{label:"Filtros",type:"textarea",value:qcText(tk),rows:9,hint:"Erros no QC: anote o número da questão no caderno do próprio QC; aqui registre o placar no ◎ do bloco."}],ok:"Fechar",onSave:()=>{}})});
